@@ -3,6 +3,7 @@ module Main where
 import Test.HUnit
 import System.IO
 import Data.Char
+import Data.Bits
 
 binToInt '0' = 0
 binToInt '1' = 1
@@ -124,11 +125,25 @@ testHex = TestList
 --         "mov ax,0x" ++ hex (fromLE 2 xs)
 -- とりあえずmov命令あたりから初めて行って、オペコードの場合をすべて網羅していく
 -- すべての命令を網羅するのが10とすると、今日の入門編でやるのは2
+-- disasm (x:xs)
+--     | 0xb0 <= x && x <= 0xb7 =
+--         "mov " ++ reg8  !! (x - 0xb0) ++ ",0x" ++ hex (xs !! 0)
+--     | 0xb8 <= x && x <= 0xbf =
+--         "mov " ++ reg16 !! (x - 0xb8) ++ ",0x" ++ hex (fromLE 2 xs)
+regs  = [reg8, reg16]
+
+-- Haskellは2進数を直接かけない
+-- 即値(ハードコードされた数値)
 disasm (x:xs)
-    | 0xb0 <= x && x <= 0xb7 =
-        "mov " ++ reg8  !! (x - 0xb0) ++ ",0x" ++ hex (xs !! 0)
-    | 0xb8 <= x && x <= 0xbf =
-        "mov " ++ reg16 !! (x - 0xb8) ++ ",0x" ++ hex (fromLE 2 xs)
+    -- DATA TRANSFER
+    -- MOV = Move:
+    -- Immediate to Register [1011wreg][data][data if w=1]
+    | 0xb0 <= x && x <= 0xbf =
+        "mov " ++ reg ++ "," ++ imm
+        where
+            w = (x `shiftR` 3) .&. 1
+            reg = regs !! w !! (x .&. 7)
+            imm = "0x" ++ hex (fromLE (w + 1) xs)
 
 -- べんりかんすう
 disasm' hex = disasm $ hexStrToList hex
@@ -137,6 +152,19 @@ disasm' hex = disasm $ hexStrToList hex
 reg16 = ["ax", "cx", "dx", "bx", "sp", "bp", "si", "di"]
 -- 機械語のなかの一番重要な部分がオペコード
 reg8  = ["al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"]
+
+-- >>> bin(0xb0)
+-- '0b10110000'
+-- >>> bin(0xb8)
+-- '0b10111000'
+-- >>> bin(0xb9)
+-- '0b10111001'
+-- >>> bin(0xbf)
+-- '0b10111111'
+-- w=1がword(2バイト)命令 w=0がbyte(1バイト)命令
+-- wの値によって、入れられるdata部分のサイズが8ビットか16ビットか分かるようになっている
+-- 割り算は遅い処理なので、ビット演算でやる
+
 testDisAsm = TestList
     [ "b8 1" ~: disasm [0xb8, 0, 0]       ~?= "mov ax,0x0"
     , "b8 2" ~: disasm [0xb8, 0x34, 0x12] ~?= "mov ax,0x1234"
