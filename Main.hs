@@ -210,6 +210,10 @@ getReg :: Int -> Int -> Int -> Int
 getReg r e g =
     (r `shiftL` 2) .|. (e `shiftL` 1) .|. g
 
+disp8 x
+    | x < 0x80  = "+0x" ++ hex x
+    | otherwise = "-0x" ++ hex (0x100 - x)
+
 testDisAsm = TestList
     [ "b8 1" ~: disasm [0xb8, 0, 0]       ~?= "mov ax,0x0"
     , "b8 2" ~: disasm [0xb8, 0x34, 0x12] ~?= "mov ax,0x1234"
@@ -249,6 +253,10 @@ testDisAsm = TestList
     , "88-8b mod=00 5" ~: disasm' "8924" ~?= "mov [si],sp"
     , "88-8b mod=00 6" ~: disasm' "892d" ~?= "mov [di],bp"
     , "88-8b mod=00 7" ~: disasm' "893f" ~?= "mov [bx],di"
+    , "disp8 1" ~: disp8 0    ~?= "+0x0"
+    , "disp8 2" ~: disp8 0x7f ~?= "+0x7f"
+    , "disp8 3" ~: disp8 0x80 ~?= "-0x80"
+    , "disp8 4" ~: disp8 0xff ~?= "-0x1"
     ]
 
 main = do
