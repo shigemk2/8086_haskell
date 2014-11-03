@@ -152,7 +152,6 @@ disasm (x:xs) = disasmB (getBits x) xs
 
 -- DATA TRANSFER
 -- MOV = Move:
--- Immediate to Register [1011wreg][data][data if w=1]
 -- Register/Memory to/from Register [100010dw][mod reg r/m]
 disasmB (1,0,0,0,1,0,d,w) xs
     | d == 0    = "mov " ++ rm  ++ "," ++ reg
@@ -160,6 +159,13 @@ disasmB (1,0,0,0,1,0,d,w) xs
     where
         (rm, r) = modrm xs
         reg = regs !! w !! r
+-- Immediate to Register [1011wreg][data][data if w=1]
+disasmB (1,0,1,1,w,r,e,g) xs =
+    "mov " ++ reg ++ "," ++ imm
+    where
+        reg = regs !! w !! getReg r e g
+        imm = "0x" ++ hex (fromLE (w + 1) xs)
+
 -- dがオペランドの順番、wがレジスタサイズを表します。modとr/mで1つのオペランドを表します。（以後ModR/M）
 modrm (x:_) = (f mode rm, reg)
     where
