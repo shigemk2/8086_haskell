@@ -175,6 +175,12 @@ getBits x = (b 7, b 6, b 5, b 4, b 3, b 2, b 1, b 0)
     where
         b n = (x `shiftR` n) .&. 1
 
+-- ビットごとに違うものをガチャっとくっつけるのはorでいける
+-- 名前 :: 引数の型 -> 引数の型 -> 引数の型 -> 戻り値の型
+getReg :: Int -> Int -> Int -> Int
+getReg r e g =
+    (r `shiftL` 2) .|. (e `shiftL` 1) .|. g
+
 testDisAsm = TestList
     [ "b8 1" ~: disasm [0xb8, 0, 0]       ~?= "mov ax,0x0"
     , "b8 2" ~: disasm [0xb8, 0x34, 0x12] ~?= "mov ax,0x1234"
@@ -199,7 +205,6 @@ testDisAsm = TestList
     , "b0-b7 8" ~: disasm' "b7ca" ~?= "mov bh,0xca"
     , "getBits" ~: getBits 0xbd ~?= (1,0,1,1,1,1,0,1)
     , "getReg" ~: getReg 1 0 1 ~?= 5
-    , "getReg" ~: getReg 1 1 1 1 ~?= 15
     ]
 
 main = do
