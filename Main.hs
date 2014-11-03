@@ -41,6 +41,12 @@ hexn n x
         x' = hex x
         r  = n - length x'
 
+hexStrToList ""       = []
+hexStrToList (h:l:xs) = hexStrToInt [h, l] : hexStrToList xs
+
+listToHexStr []     = ""
+listToHexStr (x:xs) = hexn 2 x ++ listToHexStr xs
+
 tests = TestList
         [ "reverse"       ~: reverse     "11001"  ~?= "10011" 
         , "binStrToInt 5" ~: binStrToInt "101"    ~?= 5
@@ -65,6 +71,10 @@ tests = TestList
         , "hexn 2" ~: hexn 2 255   ~?= "ff"
         , "hexn 3" ~: hexn 8 65535 ~?= "0000ffff"
         , "hexn 4" ~: hexn 2 256   ~?= "00"
+        , "hexStrToList 1" ~: hexStrToList "123456" ~?= [0x12, 0x34, 0x56]
+        , "hexStrToList 2" ~: hexStrToList "010203" ~?= [1, 2, 3]
+        , "listToHexStr 1" ~: listToHexStr [0x12, 0x34, 0x56] ~?= "123456"
+        , "listToHexStr 2" ~: listToHexStr [1, 2, 3]          ~?= "010203"
         ]
 
 main = do
