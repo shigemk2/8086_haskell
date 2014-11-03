@@ -28,7 +28,6 @@ hexStrToInt hex = f (reverse hex)
         f ""     = 0
         f (x:xs) = (digitToInt x) + 16 * (f xs)
 
--- メモリをシミュレートするためバイト区切りのリスト
 hex x
     | x1 == 0   = x2
     | otherwise = hex x1 ++ x2
@@ -49,23 +48,12 @@ hexStrToList (h:l:xs) = hexStrToInt [h, l] : hexStrToList xs
 listToHexStr []     = ""
 listToHexStr (x:xs) = hexn 2 x ++ listToHexStr xs
 
--- バイトオーダー
--- メモリはバイトごとに区切られています。1バイトに収まりきらない数値は分割して格納します
--- 分割した際に逆順に並べ替える方式をリトルエンディアンと呼びます。並べ替えない方式はビッグエンディアン
--- 8086以降はリトルエンディアン
--- バイトごとに手で区切る
--- バイトオーダーを考えるのは分割後です。分割前のバイトオーダーは考えません
--- 数値→リトルエンディアン
 toLE 0 _ = []
 toLE n x = x `mod` 0x100 : toLE (n - 1) (x `div` 0x100)
--- リトルエンディアン→数値
 fromLE 0 _      = 0
 fromLE n (x:xs) = x + 0x100 * fromLE (n - 1) xs
--- 数値→ビッグエンディアン
--- 計算がリトルエンディアンより計算が難しい
 toBE 0 _ = []
 toBE n x = x `div` (0x100 ^ (n - 1)) `mod` 0x100 : toBE (n - 1) x
--- ビッグエンディアン→数値
 fromBE 0 _ = 0
 fromBE n (x:xs) = x * 0x100^(n - 1) + fromBE (n - 1) xs
 
@@ -98,8 +86,7 @@ testHex = TestList
         , "listToHexStr 1" ~: listToHexStr [0x12, 0x34, 0x56] ~?= "123456"
         , "listToHexStr 2" ~: listToHexStr [1, 2, 3]          ~?= "010203"
         , "toLE 1" ~: toLE 2 1          ~?= [1, 0]
-        -- 桁数制限ではみ出した奴は消える
-        , "toLE 2" ~: toLE 2 0x10000    ~?= [0, 0]
+                , "toLE 2" ~: toLE 2 0x10000    ~?= [0, 0]
         , "toLE 3" ~: toLE 4 0x12345678 ~?= [0x78, 0x56, 0x34, 0x12]
         , "fromLE 1" ~: fromLE 2 [0, 1]                   ~?= 0x100
         , "fromLE 2" ~: fromLE 2 [0x78, 0x56, 0x34, 0x12] ~?= 0x5678
@@ -113,60 +100,26 @@ testHex = TestList
         ]
 
 
--- 逆アセンブル結果
--- アセンブリをみてマシン語をみて、なんとなくわかればいいんじゃなかろうか
--- B83412            mov ax,0x1234
--- B83412を機械語、movをニーモニック、axや0x1234をオペランドと呼びます。
--- 機械語はマシン語ともいう
--- 命令の分量はi7の1/5
 
--- disasm (x:xs)
---     | x == 0xb8 =
---         "mov ax,0x" ++ hex (fromLE 2 xs)
--- とりあえずmov命令あたりから初めて行って、オペコードの場合をすべて網羅していく
--- すべての命令を網羅するのが10とすると、今日の入門編でやるのは2
--- disasm (x:xs)
---     | 0xb0 <= x && x <= 0xb7 =
---         "mov " ++ reg8  !! (x - 0xb0) ++ ",0x" ++ hex (xs !! 0)
---     | 0xb8 <= x && x <= 0xbf =
---         "mov " ++ reg16 !! (x - 0xb8) ++ ",0x" ++ hex (fromLE 2 xs)
 regs  = [reg8, reg16]
 
--- Haskellは2進数を直接かけない
--- 即値(ハードコードされた数値)
--- disasm (x:xs)
---     -- DATA TRANSFER
---     -- MOV = Move:
---     -- Immediate to Register [1011wreg][data][data if w=1]
---     | 0xb0 <= x && x <= 0xbf =
---         "mov " ++ reg ++ "," ++ imm
---         where
---             w = (x `shiftR` 3) .&. 1
---             reg = regs !! w !! (x .&. 7)
---             imm = "0x" ++ hex (fromLE (w + 1) xs)
 
--- べんりかんすう
 disasm' hex = disasm $ hexStrToList hex
 
 disasm (x:xs) = disasmB (getBits x) xs
 
--- DATA TRANSFER
--- MOV = Move:
--- Register/Memory to/from Register [100010dw][mod reg r/m]
 disasmB (1,0,0,0,1,0,d,w) xs
     | d == 0    = "mov " ++ rm  ++ "," ++ reg
     | otherwise = "mov " ++ reg ++ "," ++ rm
     where
         (rm, r) = modrm xs
         reg = regs !! w !! r
--- Immediate to Register [1011wreg][data][data if w=1]
 disasmB (1,0,1,1,w,r,e,g) xs =
     "mov " ++ reg ++ "," ++ imm
     where
         reg = regs !! w !! getReg r e g
         imm = "0x" ++ hex (fromLE (w + 1) xs)
 
--- dがオペランドの順番、wがレジスタサイズを表します。modとr/mで1つのオペランドを表します。（以後ModR/M）
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm (x:xs) = (f mode rm, reg)
@@ -180,35 +133,15 @@ modrm (x:xs) = (f mode rm, reg)
             where
                 disp = disp8 (xs !! 0)
 
--- レジスタ=固定の変数のようなもの
 reg16 = ["ax", "cx", "dx", "bx", "sp", "bp", "si", "di"]
--- 機械語のなかの一番重要な部分がオペコード
 reg8  = ["al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"]
 
--- >>> bin(0xb0)
--- '0b10110000'
--- >>> bin(0xb8)
--- '0b10111000'
--- >>> bin(0xb9)
--- '0b10111001'
--- >>> bin(0xbf)
--- '0b10111111'
--- w=1がword(2バイト)命令 w=0がbyte(1バイト)命令
--- wの値によって、入れられるdata部分のサイズが8ビットか16ビットか分かるようになっている
--- 割り算は遅い処理なので、ビット演算でやる
 
--- ここまでの実装では16進数に変換して範囲チェックしていました。2進数のままパターンマッチできるように修正
--- byteは1バイトだけど、wordはCPUごとにバイト数が違う。8086だとwordは2バイトだが、ARMのwordは4バイト(wordは普遍じゃない)
-
--- 1バイトを8ビットに分解する関数(可変なのでtuppleで実装する)
--- 大抵の場合は型注釈を書かなくても型推論してくれるのだが、Haskellは本来型注釈を書くのが基本
 getBits :: Int -> (Int,Int,Int,Int,Int,Int,Int,Int)
 getBits x = (b 7, b 6, b 5, b 4, b 3, b 2, b 1, b 0)
     where
         b n = (x `shiftR` n) .&. 1
 
--- ビットごとに違うものをガチャっとくっつけるのはorでいける
--- 名前 :: 引数の型 -> 引数の型 -> 引数の型 -> 戻り値の型
 getReg :: Int -> Int -> Int -> Int
 getReg r e g =
     (r `shiftL` 2) .|. (e `shiftL` 1) .|. g
