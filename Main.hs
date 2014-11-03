@@ -71,8 +71,12 @@ testDisAsm = TestList
     , "b0-b7 6" ~: disasm' "b5ff" ~?= "mov ch,0xff"
     , "b0-b7 7" ~: disasm' "b6ee" ~?= "mov dh,0xee"
     , "b0-b7 8" ~: disasm' "b7ca" ~?= "mov bh,0xca"
-    , "getBits" ~: getBits 0xbd ~?= (1,0,1,1,1,1,0,1)
-    , "getReg" ~: getReg 1 0 1 ~?= 5
+    , "getBits 0" ~: getBits 0xbd ~?= (1,0,1,1,1,1,0,1)
+    , "getBits 1" ~: getBits 0xb8 ~?= (1,0,1,1,1,0,0,0)
+    , "getBits 2" ~: getBits 0xb9 ~?= (1,0,1,1,1,0,0,1)
+    , "getReg 0" ~: getReg 1 0 1 ~?= 5
+    , "getReg 1" ~: getReg 1 1 1 ~?= 7
+    , "getReg 2" ~: getReg 0 0 1 ~?= 1
     , "88-8b mod=00,r/m=000 1" ~: disasm' "8800" ~?= "mov [bx+si],al"
     , "88-8b mod=00,r/m=000 2" ~: disasm' "8900" ~?= "mov [bx+si],ax"
     , "88-8b mod=00,r/m=000 3" ~: disasm' "8A00" ~?= "mov al,[bx+si]"
