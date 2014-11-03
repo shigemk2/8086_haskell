@@ -68,7 +68,7 @@ toBE n x = x `div` (0x100 ^ (n - 1)) `mod` 0x100 : toBE (n - 1) x
 fromBE 0 _ = 0
 fromBE n (x:xs) = x * 0x100^(n - 1) + fromBE (n - 1) xs
 
-tests = TestList
+testHex = TestList
         [ "reverse"       ~: reverse     "11001"  ~?= "10011"
         , "binStrToInt 5" ~: binStrToInt "101"    ~?= 5
         , "binStrToInt 25" ~: binStrToInt "11001"  ~?= 25
@@ -111,5 +111,23 @@ tests = TestList
         , "fromBE 3" ~: fromBE 4 [0x78, 0x56, 0x34, 0x12] ~?= 0x78563412
         ]
 
+
+-- 逆アセンブル結果
+-- アセンブリをみてマシン語をみて、なんとなくわかればいいんじゃなかろうか
+-- B83412            mov ax,0x1234
+-- B83412を機械語、movをニーモニック、axや0x1234をオペランドと呼びます。
+-- 機械語はマシン語ともいう
+-- 命令の分量はi7の1/5
+
+disasm (x:xs)
+    | x == 0xb8 =
+        "mov ax,0x" ++ hex (fromLE 2 xs)
+
+testDisAsm = TestList
+    [ "b8 1" ~: disasm [0xb8, 0, 0]       ~?= "mov ax,0x0"
+    , "b8 2" ~: disasm [0xb8, 0x34, 0x12] ~?= "mov ax,0x1234"
+    , "b8 2" ~: disasm [0xb8, 0x78, 0x56] ~?= "mov ax,0x5678"
+    ]
+
 main = do
-    runTestText (putTextToHandle stderr False) tests
+    runTestText (putTextToHandle stderr False) (TestList [testHex, testDisAsm])
