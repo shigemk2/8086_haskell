@@ -27,6 +27,20 @@ hexStrToInt hex = f (reverse hex)
         f ""     = 0
         f (x:xs) = (digitToInt x) + 16 * (f xs)
 
+hex x
+    | x1 == 0   = x2
+    | otherwise = hex x1 ++ x2
+    where
+        x1 = x `div` 16
+        x2 = [intToDigit (x `mod` 16)]
+
+hexn n x
+    | r < 0     = drop (-r) x'
+    | otherwise = replicate r '0' ++ x'
+    where
+        x' = hex x
+        r  = n - length x'
+
 tests = TestList
         [ "reverse"       ~: reverse     "11001"  ~?= "10011" 
         , "binStrToInt 5" ~: binStrToInt "101"    ~?= 5
@@ -43,6 +57,14 @@ tests = TestList
         , "digitToInt" ~: digitToInt 'a' ~?= 10
         , "hexStrToInt 1" ~: hexStrToInt "100"  ~?= 256
         , "hexStrToInt 2" ~: hexStrToInt "ffff" ~?= 65535
+        , "replicate" ~: replicate 5 'a' ~?= "aaaaa"
+        , "intToDigit" ~: intToDigit 10  ~?= 'a'
+        , "hex 1" ~: hex 256   ~?= "100"
+        , "hex 2" ~: hex 65535 ~?= "ffff"
+        , "hexn 1" ~: hexn 2 1     ~?= "01"
+        , "hexn 2" ~: hexn 2 255   ~?= "ff"
+        , "hexn 3" ~: hexn 8 65535 ~?= "0000ffff"
+        , "hexn 4" ~: hexn 2 256   ~?= "00"
         ]
 
 main = do
