@@ -176,6 +176,9 @@ modrm (x:xs) = (f mode rm, reg)
         rm   =  x             .&. 7
         f 0 6  = "[0x" ++ hex (fromLE 2 xs) ++ "]"
         f 0 rm = "[" ++ regad !! rm ++ "]"
+        f 1 rm = "[" ++ regad !! rm ++ disp ++ "]"
+            where
+                disp = disp8 (xs !! 0)
 
 -- レジスタ=固定の変数のようなもの
 reg16 = ["ax", "cx", "dx", "bx", "sp", "bp", "si", "di"]
@@ -257,6 +260,15 @@ testDisAsm = TestList
     , "disp8 2" ~: disp8 0x7f ~?= "+0x7f"
     , "disp8 3" ~: disp8 0x80 ~?= "-0x80"
     , "disp8 4" ~: disp8 0xff ~?= "-0x1"
+    , "88-8b mod=01 1" ~: disasm' "894001" ~?= "mov [bx+si+0x1],ax"
+    , "88-8b mod=01 2" ~: disasm' "8949FF" ~?= "mov [bx+di-0x1],cx"
+    , "88-8b mod=01 3" ~: disasm' "895202" ~?= "mov [bp+si+0x2],dx"
+    , "88-8b mod=01 4" ~: disasm' "895BFE" ~?= "mov [bp+di-0x2],bx"
+    , "88-8b mod=01 5" ~: disasm' "896464" ~?= "mov [si+0x64],sp"
+    , "88-8b mod=01 6" ~: disasm' "896D9C" ~?= "mov [di-0x64],bp"
+    , "88-8b mod=01 7" ~: disasm' "897600" ~?= "mov [bp+0x0],si"
+    , "88-8b mod=01 8" ~: disasm' "897601" ~?= "mov [bp+0x1],si"
+    , "88-8b mod=01 9" ~: disasm' "897F01" ~?= "mov [bx+0x1],di"
     ]
 
 main = do
