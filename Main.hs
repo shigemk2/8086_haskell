@@ -119,18 +119,34 @@ testHex = TestList
 -- 機械語はマシン語ともいう
 -- 命令の分量はi7の1/5
 
+-- disasm (x:xs)
+--     | x == 0xb8 =
+--         "mov ax,0x" ++ hex (fromLE 2 xs)
 disasm (x:xs)
-    | x == 0xb8 =
-        "mov ax,0x" ++ hex (fromLE 2 xs)
+    | 0xb8 <= x && x <= 0xbf =
+        "mov " ++ reg16 !! (x - 0xb8) ++ ",0x" ++ hex (fromLE 2 xs)
 
 -- べんりかんすう
 disasm' hex = disasm $ hexStrToList hex
+
+-- レジスタ=固定の変数のようなもの
+reg16 = ["ax", "cx", "dx", "bx", "sp", "bp", "si", "di"]
+
+
 testDisAsm = TestList
     [ "b8 1" ~: disasm [0xb8, 0, 0]       ~?= "mov ax,0x0"
     , "b8 2" ~: disasm [0xb8, 0x34, 0x12] ~?= "mov ax,0x1234"
     , "b8 2" ~: disasm [0xb8, 0x78, 0x56] ~?= "mov ax,0x5678"
     , "b8 3" ~: disasm' "b80000" ~?= "mov ax,0x0"
     , "b8 4" ~: disasm' "b83412" ~?= "mov ax,0x1234"
+    , "b8-bf 0" ~: disasm' "b80100" ~?= "mov ax,0x1"
+    , "b8-bf 1" ~: disasm' "b90100" ~?= "mov cx,0x1"
+    , "b8-bf 2" ~: disasm' "ba1000" ~?= "mov dx,0x10"
+    , "b8-bf 3" ~: disasm' "bb0001" ~?= "mov bx,0x100"
+    , "b8-bf 4" ~: disasm' "bc0010" ~?= "mov sp,0x1000"
+    , "b8-bf 5" ~: disasm' "bdff00" ~?= "mov bp,0xff"
+    , "b8-bf 6" ~: disasm' "be00ff" ~?= "mov si,0xff00"
+    , "b8-bf 7" ~: disasm' "bffeca" ~?= "mov di,0xcafe"
     ]
 
 main = do
