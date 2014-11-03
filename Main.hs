@@ -165,6 +165,14 @@ reg8  = ["al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"]
 -- wの値によって、入れられるdata部分のサイズが8ビットか16ビットか分かるようになっている
 -- 割り算は遅い処理なので、ビット演算でやる
 
+-- ここまでの実装では16進数に変換して範囲チェックしていました。2進数のままパターンマッチできるように修正
+-- byteは1バイトだけど、wordはCPUごとにバイト数が違う。8086だとwordは2バイトだが、ARMのwordは4バイト(wordは普遍じゃない)
+
+-- 1バイトを8ビットに分解する関数(可変なのでtuppleで実装する)
+getBits x = (b 7, b 6, b 5, b 4, b 3, b 2, b 1, b 0)
+    where
+        b n = (x `shiftR` n) .&. 1
+
 testDisAsm = TestList
     [ "b8 1" ~: disasm [0xb8, 0, 0]       ~?= "mov ax,0x0"
     , "b8 2" ~: disasm [0xb8, 0x34, 0x12] ~?= "mov ax,0x1234"
@@ -187,6 +195,7 @@ testDisAsm = TestList
     , "b0-b7 6" ~: disasm' "b5ff" ~?= "mov ch,0xff"
     , "b0-b7 7" ~: disasm' "b6ee" ~?= "mov dh,0xee"
     , "b0-b7 8" ~: disasm' "b7ca" ~?= "mov bh,0xca"
+    , "getBits" ~: getBits 0xbd ~?= (1,0,1,1,1,1,0,1)
     ]
 
 main = do
