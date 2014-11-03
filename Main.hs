@@ -122,7 +122,11 @@ testHex = TestList
 -- disasm (x:xs)
 --     | x == 0xb8 =
 --         "mov ax,0x" ++ hex (fromLE 2 xs)
+-- とりあえずmov命令あたりから初めて行って、オペコードの場合をすべて網羅していく
+-- すべての命令を網羅するのが10とすると、今日の入門編でやるのは2
 disasm (x:xs)
+    | 0xb0 <= x && x <= 0xb7 =
+        "mov " ++ reg8  !! (x - 0xb0) ++ ",0x" ++ hex (xs !! 0)
     | 0xb8 <= x && x <= 0xbf =
         "mov " ++ reg16 !! (x - 0xb8) ++ ",0x" ++ hex (fromLE 2 xs)
 
@@ -131,8 +135,8 @@ disasm' hex = disasm $ hexStrToList hex
 
 -- レジスタ=固定の変数のようなもの
 reg16 = ["ax", "cx", "dx", "bx", "sp", "bp", "si", "di"]
-
-
+-- 機械語のなかの一番重要な部分がオペコード
+reg8  = ["al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"]
 testDisAsm = TestList
     [ "b8 1" ~: disasm [0xb8, 0, 0]       ~?= "mov ax,0x0"
     , "b8 2" ~: disasm [0xb8, 0x34, 0x12] ~?= "mov ax,0x1234"
@@ -147,6 +151,14 @@ testDisAsm = TestList
     , "b8-bf 5" ~: disasm' "bdff00" ~?= "mov bp,0xff"
     , "b8-bf 6" ~: disasm' "be00ff" ~?= "mov si,0xff00"
     , "b8-bf 7" ~: disasm' "bffeca" ~?= "mov di,0xcafe"
+    , "b0-b7 1" ~: disasm' "b000" ~?= "mov al,0x0"
+    , "b0-b7 2" ~: disasm' "b101" ~?= "mov cl,0x1"
+    , "b0-b7 3" ~: disasm' "b210" ~?= "mov dl,0x10"
+    , "b0-b7 4" ~: disasm' "b311" ~?= "mov bl,0x11"
+    , "b0-b7 5" ~: disasm' "b412" ~?= "mov ah,0x12"
+    , "b0-b7 6" ~: disasm' "b5ff" ~?= "mov ch,0xff"
+    , "b0-b7 7" ~: disasm' "b6ee" ~?= "mov dh,0xee"
+    , "b0-b7 8" ~: disasm' "b7ca" ~?= "mov bh,0xca"
     ]
 
 main = do
