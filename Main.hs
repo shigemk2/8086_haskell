@@ -169,6 +169,8 @@ reg8  = ["al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"]
 -- byteは1バイトだけど、wordはCPUごとにバイト数が違う。8086だとwordは2バイトだが、ARMのwordは4バイト(wordは普遍じゃない)
 
 -- 1バイトを8ビットに分解する関数(可変なのでtuppleで実装する)
+-- 大抵の場合は型注釈を書かなくても型推論してくれるのだが、Haskellは本来型注釈を書くのが基本
+getBits :: Int -> (Int,Int,Int,Int,Int,Int,Int,Int)
 getBits x = (b 7, b 6, b 5, b 4, b 3, b 2, b 1, b 0)
     where
         b n = (x `shiftR` n) .&. 1
