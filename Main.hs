@@ -167,12 +167,13 @@ disasmB (1,0,1,1,w,r,e,g) xs =
         imm = "0x" ++ hex (fromLE (w + 1) xs)
 
 -- dがオペランドの順番、wがレジスタサイズを表します。modとr/mで1つのオペランドを表します。（以後ModR/M）
-modrm (x:_) = (f mode rm, reg)
+modrm (x:xs) = (f mode rm, reg)
     where
         mode =  x `shiftR` 6
         reg  = (x `shiftR` 3) .&. 7
         rm   =  x             .&. 7
         f 0 0 = "[bx+si]"
+        f 0 6 = "[0x" ++ hex (fromLE 2 xs) ++ "]"
 
 -- レジスタ=固定の変数のようなもの
 reg16 = ["ax", "cx", "dx", "bx", "sp", "bp", "si", "di"]
@@ -235,6 +236,10 @@ testDisAsm = TestList
     , "88-8b mod=00,r/m=000 2" ~: disasm' "8900" ~?= "mov [bx+si],ax"
     , "88-8b mod=00,r/m=000 3" ~: disasm' "8A00" ~?= "mov al,[bx+si]"
     , "88-8b mod=00,r/m=000 4" ~: disasm' "8B00" ~?= "mov ax,[bx+si]"
+    , "88-8b mod=00,r/m=110 1" ~: disasm' "88063412" ~?= "mov [0x1234],al"
+    , "88-8b mod=00,r/m=110 2" ~: disasm' "89063412" ~?= "mov [0x1234],ax"
+    , "88-8b mod=00,r/m=110 3" ~: disasm' "8A063412" ~?= "mov al,[0x1234]"
+    , "88-8b mod=00,r/m=110 4" ~: disasm' "8B063412" ~?= "mov ax,[0x1234]"
     ]
 
 main = do
