@@ -153,11 +153,20 @@ disasm (x:xs) = disasmB (getBits x) xs
 -- DATA TRANSFER
 -- MOV = Move:
 -- Immediate to Register [1011wreg][data][data if w=1]
-disasmB (1,0,1,1,w,r,e,g) xs =
-    "mov " ++ reg ++ "," ++ imm
+-- Register/Memory to/from Register [100010dw][mod reg r/m]
+disasmB (1,0,0,0,1,0,d,w) xs
+    | d == 0    = "mov " ++ rm  ++ "," ++ reg
+    | otherwise = "mov " ++ reg ++ "," ++ rm
     where
-        reg = regs !! w !! getReg r e g
-        imm = "0x" ++ hex (fromLE (w + 1) xs)
+        (rm, r) = modrm xs
+        reg = regs !! w !! r
+-- dがオペランドの順番、wがレジスタサイズを表します。modとr/mで1つのオペランドを表します。（以後ModR/M）
+modrm (x:_) = (f mode rm, reg)
+    where
+        mode =  x `shiftR` 6
+        reg  = (x `shiftR` 3) .&. 7
+        rm   =  x             .&. 7
+        f 0 0 = "[bx+si]"
 
 -- レジスタ=固定の変数のようなもの
 reg16 = ["ax", "cx", "dx", "bx", "sp", "bp", "si", "di"]
@@ -216,6 +225,10 @@ testDisAsm = TestList
     , "b0-b7 8" ~: disasm' "b7ca" ~?= "mov bh,0xca"
     , "getBits" ~: getBits 0xbd ~?= (1,0,1,1,1,1,0,1)
     , "getReg" ~: getReg 1 0 1 ~?= 5
+    , "88-8b mod=00,r/m=000 1" ~: disasm' "8800" ~?= "mov [bx+si],al"
+    , "88-8b mod=00,r/m=000 2" ~: disasm' "8900" ~?= "mov [bx+si],ax"
+    , "88-8b mod=00,r/m=000 3" ~: disasm' "8A00" ~?= "mov al,[bx+si]"
+    , "88-8b mod=00,r/m=000 4" ~: disasm' "8B00" ~?= "mov ax,[bx+si]"
     ]
 
 main = do
