@@ -27,6 +27,7 @@ hexStrToInt hex = f (reverse hex)
         f ""     = 0
         f (x:xs) = (digitToInt x) + 16 * (f xs)
 
+-- メモリをシミュレートするためバイト区切りのリスト
 hex x
     | x1 == 0   = x2
     | otherwise = hex x1 ++ x2
