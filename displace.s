@@ -1,0 +1,9 @@
+mov [bx+si+0x1],ax
+mov [bx+di-0x1],cx
+mov [bp+si+0x2],dx
+mov [bp+di-0x2],bx
+mov [si+0x64],sp
+mov [di-0x64],bp
+mov [bp+0x0],si
+mov [bp+0x1],si
+mov [bx+0x1],di
