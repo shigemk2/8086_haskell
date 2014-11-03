@@ -48,8 +48,21 @@ hexStrToList (h:l:xs) = hexStrToInt [h, l] : hexStrToList xs
 listToHexStr []     = ""
 listToHexStr (x:xs) = hexn 2 x ++ listToHexStr xs
 
+-- バイトオーダー
+-- メモリはバイトごとに区切られています。1バイトに収まりきらない数値は分割して格納します
+-- 分割した際に逆順に並べ替える方式をリトルエンディアンと呼びます。並べ替えない方式はビッグエンディアン
+-- 8086以降はリトルエンディアン
+-- バイトごとに手で区切る
+-- バイトオーダーを考えるのは分割後です。分割前のバイトオーダーは考えません
+-- 数値→リトルエンディアン
+toLE 0 _ = []
+toLE n x = x `mod` 0x100 : toLE (n - 1) (x `div` 0x100)
+-- リトルエンディアン→数値
+fromLE 0 _      = 0
+fromLE n (x:xs) = x + 0x100 * fromLE (n - 1) xs
+
 tests = TestList
-        [ "reverse"       ~: reverse     "11001"  ~?= "10011" 
+        [ "reverse"       ~: reverse     "11001"  ~?= "10011"
         , "binStrToInt 5" ~: binStrToInt "101"    ~?= 5
         , "binStrToInt 25" ~: binStrToInt "11001"  ~?= 25
         , "binStrToInt 31" ~: binStrToInt "11111"  ~?= 31
@@ -76,6 +89,13 @@ tests = TestList
         , "hexStrToList 2" ~: hexStrToList "010203" ~?= [1, 2, 3]
         , "listToHexStr 1" ~: listToHexStr [0x12, 0x34, 0x56] ~?= "123456"
         , "listToHexStr 2" ~: listToHexStr [1, 2, 3]          ~?= "010203"
+        , "toLE 1" ~: toLE 2 1          ~?= [1, 0]
+        -- 桁数制限ではみ出した奴は消える
+        , "toLE 2" ~: toLE 2 0x10000    ~?= [0, 0]
+        , "toLE 3" ~: toLE 4 0x12345678 ~?= [0x78, 0x56, 0x34, 0x12]
+        , "fromLE 1" ~: fromLE 2 [0, 1]                   ~?= 0x100
+        , "fromLE 2" ~: fromLE 2 [0x78, 0x56, 0x34, 0x12] ~?= 0x5678
+        , "fromLE 3" ~: fromLE 4 [0x78, 0x56, 0x34, 0x12] ~?= 0x12345678
         ]
 
 main = do
