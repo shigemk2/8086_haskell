@@ -198,6 +198,8 @@ testDisAsm = TestList
     , "b0-b7 7" ~: disasm' "b6ee" ~?= "mov dh,0xee"
     , "b0-b7 8" ~: disasm' "b7ca" ~?= "mov bh,0xca"
     , "getBits" ~: getBits 0xbd ~?= (1,0,1,1,1,1,0,1)
+    , "getReg" ~: getReg 1 0 1 ~?= 5
+    , "getReg" ~: getReg 1 1 1 1 ~?= 15
     ]
 
 main = do
