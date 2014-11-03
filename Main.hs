@@ -134,19 +134,30 @@ regs  = [reg8, reg16]
 
 -- Haskellは2進数を直接かけない
 -- 即値(ハードコードされた数値)
-disasm (x:xs)
-    -- DATA TRANSFER
-    -- MOV = Move:
-    -- Immediate to Register [1011wreg][data][data if w=1]
-    | 0xb0 <= x && x <= 0xbf =
-        "mov " ++ reg ++ "," ++ imm
-        where
-            w = (x `shiftR` 3) .&. 1
-            reg = regs !! w !! (x .&. 7)
-            imm = "0x" ++ hex (fromLE (w + 1) xs)
+-- disasm (x:xs)
+--     -- DATA TRANSFER
+--     -- MOV = Move:
+--     -- Immediate to Register [1011wreg][data][data if w=1]
+--     | 0xb0 <= x && x <= 0xbf =
+--         "mov " ++ reg ++ "," ++ imm
+--         where
+--             w = (x `shiftR` 3) .&. 1
+--             reg = regs !! w !! (x .&. 7)
+--             imm = "0x" ++ hex (fromLE (w + 1) xs)
 
 -- べんりかんすう
 disasm' hex = disasm $ hexStrToList hex
+
+disasm (x:xs) = disasmB (getBits x) xs
+
+-- DATA TRANSFER
+-- MOV = Move:
+-- Immediate to Register [1011wreg][data][data if w=1]
+disasmB (1,0,1,1,w,r,e,g) xs =
+    "mov " ++ reg ++ "," ++ imm
+    where
+        reg = regs !! w !! getReg r e g
+        imm = "0x" ++ hex (fromLE (w + 1) xs)
 
 -- レジスタ=固定の変数のようなもの
 reg16 = ["ax", "cx", "dx", "bx", "sp", "bp", "si", "di"]
