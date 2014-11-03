@@ -5,54 +5,49 @@ import System.IO
 import Data.Char
 import Data.Bits
 import Hex
+import DisAsm
 
-regs  = [reg8, reg16]
-
-disasm' hex = disasm $ hexStrToList hex
-
-disasm (x:xs) = disasmB (getBits x) xs
-
-disasmB (1,0,0,0,1,0,d,w) xs
-    | d == 0    = "mov " ++ rm  ++ "," ++ reg
-    | otherwise = "mov " ++ reg ++ "," ++ rm
-    where
-        (rm, r) = modrm xs
-        reg = regs !! w !! r
-disasmB (1,0,1,1,w,r,e,g) xs =
-    "mov " ++ reg ++ "," ++ imm
-    where
-        reg = regs !! w !! getReg r e g
-        imm = "0x" ++ hex (fromLE (w + 1) xs)
-
-regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
-
-modrm (x:xs) = (f mode rm, reg)
-    where
-        mode =  x `shiftR` 6
-        reg  = (x `shiftR` 3) .&. 7
-        rm   =  x             .&. 7
-        f 0 6  = "[0x" ++ hex (fromLE 2 xs) ++ "]"
-        f 0 rm = "[" ++ regad !! rm ++ "]"
-        f 1 rm = "[" ++ regad !! rm ++ disp ++ "]"
-            where
-                disp = disp8 (xs !! 0)
-
-reg16 = ["ax", "cx", "dx", "bx", "sp", "bp", "si", "di"]
-reg8  = ["al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"]
-
-
-getBits :: Int -> (Int,Int,Int,Int,Int,Int,Int,Int)
-getBits x = (b 7, b 6, b 5, b 4, b 3, b 2, b 1, b 0)
-    where
-        b n = (x `shiftR` n) .&. 1
-
-getReg :: Int -> Int -> Int -> Int
-getReg r e g =
-    (r `shiftL` 2) .|. (e `shiftL` 1) .|. g
-
-disp8 x
-    | x < 0x80  = "+0x" ++ hex x
-    | otherwise = "-0x" ++ hex (0x100 - x)
+testHex = TestList
+        [ "reverse"       ~: reverse     "11001"  ~?= "10011"
+        , "binStrToInt 5" ~: binStrToInt "101"    ~?= 5
+        , "binStrToInt 25" ~: binStrToInt "11001"  ~?= 25
+        , "binStrToInt 31" ~: binStrToInt "11111"  ~?= 31
+        , "binStrToInt 350" ~: binStrToInt "110010" ~?= 50
+        , "div 1"         ~: 1 `div` 2     ~?= 0
+        , "bin 0" ~: bin 0 ~?= "0"
+        , "bin 1" ~: bin 1 ~?= "1"
+        , "bin 5" ~: bin 5 ~?= "101"
+        , "bin 25" ~: bin 25 ~?= "11001"
+        , "bin 31" ~: bin 31 ~?= "11111"
+        , "bin 50" ~: bin 50 ~?= "110010"
+        , "digitToInt" ~: digitToInt 'a' ~?= 10
+        , "hexStrToInt 1" ~: hexStrToInt "100"  ~?= 256
+        , "hexStrToInt 2" ~: hexStrToInt "ffff" ~?= 65535
+        , "replicate" ~: replicate 5 'a' ~?= "aaaaa"
+        , "intToDigit" ~: intToDigit 10  ~?= 'a'
+        , "hex 1" ~: hex 256   ~?= "100"
+        , "hex 2" ~: hex 65535 ~?= "ffff"
+        , "hexn 1" ~: hexn 2 1     ~?= "01"
+        , "hexn 2" ~: hexn 2 255   ~?= "ff"
+        , "hexn 3" ~: hexn 8 65535 ~?= "0000ffff"
+        , "hexn 4" ~: hexn 2 256   ~?= "00"
+        , "hexStrToList 1" ~: hexStrToList "123456" ~?= [0x12, 0x34, 0x56]
+        , "hexStrToList 2" ~: hexStrToList "010203" ~?= [1, 2, 3]
+        , "listToHexStr 1" ~: listToHexStr [0x12, 0x34, 0x56] ~?= "123456"
+        , "listToHexStr 2" ~: listToHexStr [1, 2, 3]          ~?= "010203"
+        , "toLE 1" ~: toLE 2 1          ~?= [1, 0]
+                , "toLE 2" ~: toLE 2 0x10000    ~?= [0, 0]
+        , "toLE 3" ~: toLE 4 0x12345678 ~?= [0x78, 0x56, 0x34, 0x12]
+        , "fromLE 1" ~: fromLE 2 [0, 1]                   ~?= 0x100
+        , "fromLE 2" ~: fromLE 2 [0x78, 0x56, 0x34, 0x12] ~?= 0x5678
+        , "fromLE 3" ~: fromLE 4 [0x78, 0x56, 0x34, 0x12] ~?= 0x12345678
+        , "toBE 1" ~: toBE 2 1          ~?= [0, 1]
+        , "toBE 2" ~: toBE 2 0x10000    ~?= [0, 0]
+        , "toBE 3" ~: toBE 4 0x12345678 ~?= [0x12, 0x34, 0x56, 0x78]
+        , "fromBE 1" ~: fromBE 2 [0, 1]                   ~?= 0x1
+        , "fromBE 2" ~: fromBE 2 [0x78, 0x56, 0x34, 0x12] ~?= 0x7856
+        , "fromBE 3" ~: fromBE 4 [0x78, 0x56, 0x34, 0x12] ~?= 0x78563412
+        ]
 
 testDisAsm = TestList
     [ "b8 1" ~: disasm [0xb8, 0, 0]       ~?= "mov ax,0x0"
