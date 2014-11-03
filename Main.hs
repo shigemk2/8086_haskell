@@ -60,6 +60,9 @@ toLE n x = x `mod` 0x100 : toLE (n - 1) (x `div` 0x100)
 -- リトルエンディアン→数値
 fromLE 0 _      = 0
 fromLE n (x:xs) = x + 0x100 * fromLE (n - 1) xs
+-- 数値→ビッグエンディアン
+toBE 0 _ = []
+toBE n x = x `div` (0x100 ^ (n - 1)) : toBE (n - 1) (x `mod` (0x100 ^ (n - 1)))
 
 tests = TestList
         [ "reverse"       ~: reverse     "11001"  ~?= "10011"
@@ -96,6 +99,9 @@ tests = TestList
         , "fromLE 1" ~: fromLE 2 [0, 1]                   ~?= 0x100
         , "fromLE 2" ~: fromLE 2 [0x78, 0x56, 0x34, 0x12] ~?= 0x5678
         , "fromLE 3" ~: fromLE 4 [0x78, 0x56, 0x34, 0x12] ~?= 0x12345678
+        , "toBE 1" ~: toBE 2 1          ~?= [0, 1]
+        , "toBE 2" ~: toBE 2 0x10000    ~?= [0, 0]
+        , "toBE 3" ~: toBE 4 0x12345678 ~?= [0x12, 0x34, 0x56, 0x78]
         ]
 
 main = do
