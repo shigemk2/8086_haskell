@@ -77,6 +77,11 @@ testDisAsm = TestList
     , "getReg 0" ~: getReg 1 0 1 ~?= 5
     , "getReg 1" ~: getReg 1 1 1 ~?= 7
     , "getReg 2" ~: getReg 0 0 1 ~?= 1
+    , "disAsmB 0" ~: disasmB (1,0,1,1,1,0,0,0) [0, 0] ~?= "mov ax,0x0"
+    , "disAsmB 1" ~: disasmB (1,0,0,0,1,0,1,1) [0, 0] ~?= "mov ax,[bx+si]"
+    , "disAsmB 2" ~: disasmB (1,0,0,0,1,0,0,1) [0, 0] ~?= "mov [bx+si],ax"
+    , "disAsmB 3" ~: disasmB (1,0,0,0,1,0,0,0) [0, 0] ~?= "mov [bx+si],al"
+    , "disAsmB 4" ~: disasmB (1,0,0,0,1,0,0,0) [2, 0] ~?= "mov [bp+si],al"
     , "88-8b mod=00,r/m=000 1" ~: disasm' "8800" ~?= "mov [bx+si],al"
     , "88-8b mod=00,r/m=000 2" ~: disasm' "8900" ~?= "mov [bx+si],ax"
     , "88-8b mod=00,r/m=000 3" ~: disasm' "8A00" ~?= "mov al,[bx+si]"
