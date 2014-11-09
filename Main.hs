@@ -110,6 +110,8 @@ testDisAsm = TestList
     , "88-8b mod=01 7" ~: disasm' "897600" ~?= "mov [bp+0x0],si"
     , "88-8b mod=01 8" ~: disasm' "897601" ~?= "mov [bp+0x1],si"
     , "88-8b mod=01 9" ~: disasm' "897F01" ~?= "mov [bx+0x1],di"
+    , "88-8b mod=01 10" ~: disasm' "897FFF" ~?= "mov [bx-0x1],di"
+    , "88-8b mod=01 10" ~: disasm' "897F81" ~?= "mov [bx-0x7f],di"
     ]
 
 main = do
