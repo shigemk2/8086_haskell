@@ -36,6 +36,7 @@ modrm (x:xs) = (f mode rm, reg)
         f 2 rm = "[" ++ regad !! rm ++ disp ++ "]"
             where
                 disp = disp16 (fromLE 2 xs)
+        f 3 rm = reg16 !! rm
 
 reg16 = ["ax", "cx", "dx", "bx", "sp", "bp", "si", "di"]
 reg8  = ["al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"]
