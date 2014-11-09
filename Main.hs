@@ -145,6 +145,7 @@ testDisAsm = TestList
     , "c6-c7 mod=00,w=0 1" ~: disasm' "C60012" ~?= "mov byte [bx+si],0x12"
     , "c6-c7 mod=00,w=0 2" ~: disasm' "C60112" ~?= "mov byte [bx+di],0x12"
     , "c6-c7 mod=00,w=0 3" ~: disasm' "C60212" ~?= "mov byte [bp+si],0x12"
+    , "c6-c7 mod=01,w=0 1" ~: disasm' "C6401234" ~?= "mov byte [bp+si+0x12],0x34"
     , "c6-c7 mod=00,w=1 1" ~: disasm' "C7001234" ~?= "mov word [bx+si],0x3412"
     ]
 
