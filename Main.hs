@@ -142,6 +142,7 @@ testDisAsm = TestList
     , "88-8b mod=11,w=0 6" ~: disasm' "88C5" ~?= "mov ch,al"
     , "88-8b mod=11,w=0 7" ~: disasm' "88C6" ~?= "mov dh,al"
     , "88-8b mod=11,w=0 8" ~: disasm' "88C7" ~?= "mov bh,al"
+    , "c6 mod=00,w=0 1" ~: disasm' "C60000" ~?= "mov byte [bx+si],0x0"
     ]
 
 main = do
