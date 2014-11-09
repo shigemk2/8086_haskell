@@ -15,11 +15,19 @@ disasmB (1,0,0,0,1,0,d,w) xs
     where
         (rm, r) = modrm w xs
         reg = regs !! w !! r
+
 disasmB (1,0,1,1,w,r,e,g) xs =
     "mov " ++ reg ++ "," ++ imm
     where
         reg = regs !! w !! getReg r e g
         imm = "0x" ++ hex (fromLE (w + 1) xs)
+
+disasmB (1,1,0,0,0,1,1,w) xs
+    | w == 0    = "mov byte " ++ rm  ++ "," ++ imm
+    | otherwise = "mov word " ++ rm  ++ "," ++ imm
+    where
+        (rm, r) = modrm w xs
+        imm = "0x" ++ hex (fromLE (w + 1) $ drop 1 xs)
 
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
