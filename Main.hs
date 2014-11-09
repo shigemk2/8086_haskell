@@ -126,15 +126,22 @@ testDisAsm = TestList
     , "disp16 2" ~: disp16 0x7fff ~?= "+0x7fff"
     , "disp16 3" ~: disp16 0x8000 ~?= "-0x8000"
     , "disp16 4" ~: disp16 0xffff ~?= "-0x1"
-    , "88-8b mod=11 1" ~: disasm' "89C0" ~?= "mov ax,ax"
-    , "88-8b mod=11 2" ~: disasm' "89C8" ~?= "mov ax,cx"
-    , "88-8b mod=11 3" ~: disasm' "89D0" ~?= "mov ax,dx"
-    , "88-8b mod=11 4" ~: disasm' "89D8" ~?= "mov ax,bx"
-    , "88-8b mod=11 5" ~: disasm' "89E0" ~?= "mov ax,sp"
-    , "88-8b mod=11 6" ~: disasm' "89E8" ~?= "mov ax,bp"
-    , "88-8b mod=11 7" ~: disasm' "89F0" ~?= "mov ax,si"
-    , "88-8b mod=11 8" ~: disasm' "89F8" ~?= "mov ax,di"
-    ]
+    , "88-8b mod=11,w=1 1" ~: disasm' "89C0" ~?= "mov ax,ax"
+    , "88-8b mod=11,w=1 2" ~: disasm' "89C1" ~?= "mov cx,ax"
+    , "88-8b mod=11,w=1 3" ~: disasm' "89C2" ~?= "mov dx,ax"
+    , "88-8b mod=11,w=1 4" ~: disasm' "89C3" ~?= "mov bx,ax"
+    , "88-8b mod=11,w=1 5" ~: disasm' "89C4" ~?= "mov sp,ax"
+    , "88-8b mod=11,w=1 6" ~: disasm' "89C5" ~?= "mov bp,ax"
+    , "88-8b mod=11,w=1 7" ~: disasm' "89C6" ~?= "mov si,ax"
+    , "88-8b mod=11,w=1 8" ~: disasm' "89C7" ~?= "mov di,ax"
+    , "88-8b mod=11,w=0 1" ~: disasm' "88C0" ~?= "mov al,al"
+    , "88-8b mod=11,w=0 2" ~: disasm' "88C1" ~?= "mov cl,al"
+    , "88-8b mod=11,w=0 3" ~: disasm' "88C2" ~?= "mov dl,al"
+    , "88-8b mod=11,w=0 4" ~: disasm' "88C3" ~?= "mov bl,al"
+    , "88-8b mod=11,w=0 5" ~: disasm' "88C4" ~?= "mov ah,al"
+    , "88-8b mod=11,w=0 6" ~: disasm' "88C5" ~?= "mov ch,al"
+    , "88-8b mod=11,w=0 7" ~: disasm' "88C6" ~?= "mov dh,al"
+    , "88-8b mod=11,w=0 8" ~: disasm' "88C7" ~?= "mov bh,al"    ]
 
 main = do
     runTestText (putTextToHandle stderr False) (TestList [testHex, testDisAsm])
