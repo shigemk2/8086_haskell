@@ -33,7 +33,9 @@ modrm (x:xs) = (f mode rm, reg)
         f 1 rm = "[" ++ regad !! rm ++ disp ++ "]"
             where
                 disp = disp8 (xs !! 0)
-        f 2 rm = "[" ++ regad !! rm ++ "+0x" ++ hex (fromLE 2 xs) ++ "]"
+        f 2 rm = "[" ++ regad !! rm ++ disp ++ "]"
+            where
+                disp = disp16 (fromLE 2 xs)
 
 reg16 = ["ax", "cx", "dx", "bx", "sp", "bp", "si", "di"]
 reg8  = ["al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"]
@@ -51,4 +53,8 @@ getReg r e g =
 disp8 x
     | x < 0x80  = "+0x" ++ hex x
     | otherwise = "-0x" ++ hex (0x100 - x)
+
+disp16 x
+    | x < 0x8000  = "+0x" ++ hex x
+    | otherwise = "-0x" ++ hex (0x10000 - x)
 

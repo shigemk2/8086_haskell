@@ -41,6 +41,7 @@ testHex = TestList
         , "fromLE 1" ~: fromLE 2 [0, 1]                   ~?= 0x100
         , "fromLE 2" ~: fromLE 2 [0x78, 0x56, 0x34, 0x12] ~?= 0x5678
         , "fromLE 3" ~: fromLE 4 [0x78, 0x56, 0x34, 0x12] ~?= 0x12345678
+        , "fromLE 4" ~: fromLE 2 [0x00, 0xFF] ~?= 0xFF00
         , "toBE 1" ~: toBE 2 1          ~?= [0, 1]
         , "toBE 2" ~: toBE 2 0x10000    ~?= [0, 0]
         , "toBE 3" ~: toBE 4 0x12345678 ~?= [0x12, 0x34, 0x56, 0x78]
@@ -114,7 +115,7 @@ testDisAsm = TestList
     , "88-8b mod=01 11" ~: disasm' "897F81" ~?= "mov [bx-0x7f],di"
     , "88-8b mod=10 1" ~: disasm' "89800000" ~?= "mov [bx+si+0x0],ax"
     , "88-8b mod=10 2" ~: disasm' "89800001" ~?= "mov [bx+si+0x100],ax"
-    , "88-8b mod=10 2" ~: disasm' "898000FF" ~?= "mov [bx+si-0x100],ax"
+    , "88-8b mod=10 3" ~: disasm' "898000FF" ~?= "mov [bx+si-0x100],ax"
     ]
 
 main = do
