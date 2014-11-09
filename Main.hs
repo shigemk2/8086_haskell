@@ -143,6 +143,8 @@ testDisAsm = TestList
     , "88-8b mod=11,w=0 7" ~: disasm' "88C6" ~?= "mov dh,al"
     , "88-8b mod=11,w=0 8" ~: disasm' "88C7" ~?= "mov bh,al"
     , "c6-c7 mod=00,w=0 1" ~: disasm' "C60012" ~?= "mov byte [bx+si],0x12"
+    , "c6-c7 mod=00,w=0 2" ~: disasm' "C60112" ~?= "mov byte [bx+di],0x12"
+    , "c6-c7 mod=00,w=0 2" ~: disasm' "C60212" ~?= "mov byte [bp+si],0x12"
     , "c6-c7 mod=00,w=1 1" ~: disasm' "C7001234" ~?= "mov word [bx+si],0x3412"
     ]
 
