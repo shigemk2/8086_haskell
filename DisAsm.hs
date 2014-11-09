@@ -13,7 +13,7 @@ disasmB (1,0,0,0,1,0,d,w) xs
     | d == 0    = "mov " ++ rm  ++ "," ++ reg
     | otherwise = "mov " ++ reg ++ "," ++ rm
     where
-        (rm, r) = modrm xs
+        (rm, r) = modrm w xs
         reg = regs !! w !! r
 disasmB (1,0,1,1,w,r,e,g) xs =
     "mov " ++ reg ++ "," ++ imm
@@ -23,7 +23,7 @@ disasmB (1,0,1,1,w,r,e,g) xs =
 
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
-modrm (x:xs) = (f mode rm, reg)
+modrm w (x:xs) = (f mode rm, reg)
     where
         mode =  x `shiftR` 6
         reg  = (x `shiftR` 3) .&. 7
@@ -36,7 +36,7 @@ modrm (x:xs) = (f mode rm, reg)
         f 2 rm = "[" ++ regad !! rm ++ disp ++ "]"
             where
                 disp = disp16 (fromLE 2 xs)
-        f 3 rm = reg16 !! rm
+        f 3 rm = regs !! w !! rm
 
 reg16 = ["ax", "cx", "dx", "bx", "sp", "bp", "si", "di"]
 reg8  = ["al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"]

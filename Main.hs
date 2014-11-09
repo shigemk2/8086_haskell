@@ -141,7 +141,8 @@ testDisAsm = TestList
     , "88-8b mod=11,w=0 5" ~: disasm' "88C4" ~?= "mov ah,al"
     , "88-8b mod=11,w=0 6" ~: disasm' "88C5" ~?= "mov ch,al"
     , "88-8b mod=11,w=0 7" ~: disasm' "88C6" ~?= "mov dh,al"
-    , "88-8b mod=11,w=0 8" ~: disasm' "88C7" ~?= "mov bh,al"    ]
+    , "88-8b mod=11,w=0 8" ~: disasm' "88C7" ~?= "mov bh,al"
+    ]
 
 main = do
     runTestText (putTextToHandle stderr False) (TestList [testHex, testDisAsm])
