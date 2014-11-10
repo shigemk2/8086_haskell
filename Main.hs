@@ -122,6 +122,7 @@ testDisAsm = TestList
     , "88-8b mod=10 7" ~: disasm' "89B60000" ~?= "mov [bp+0x0],si"
     , "88-8b mod=10 8" ~: disasm' "89B60001" ~?= "mov [bp+0x100],si"
     , "88-8b mod=10 9" ~: disasm' "89BF0001" ~?= "mov [bx+0x100],di"
+    , "88-8b mod=10 10" ~: disasm' "89BF1234" ~?= "mov [bx+0x3412],di"
     , "disp16 1" ~: disp16 0      ~?= "+0x0"
     , "disp16 2" ~: disp16 0x7fff ~?= "+0x7fff"
     , "disp16 3" ~: disp16 0x8000 ~?= "-0x8000"
@@ -156,7 +157,7 @@ testDisAsm = TestList
     , "c6-c7 mod=01,w=1 1" ~: disasm' "C740123456" ~?= "mov word [bx+si+0x12],0x5634"
     , "c6-c7 mod=01,w=1 2" ~: disasm' "C740FF1234" ~?= "mov word [bx+si-0x1],0x3412"
     , "c6-c7 mod=01,w=1 2" ~: disasm' "C740FF3456" ~?= "mov word [bx+si-0x1],0x5634"
-    -- , "c6-c7 mod=10,w=1 1" ~: disasm' "C74012345678" ~?= "mov word [bx+si+0x3412],0x7856"
+    , "c6-c7 mod=10,w=1 1" ~: disasm' "C78012345678" ~?= "mov word [bx+si+0x3412],0x7856"
     ]
 
 main = do
