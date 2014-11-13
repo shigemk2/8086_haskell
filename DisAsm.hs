@@ -28,6 +28,12 @@ disasmB (1,1,0,0,0,1,1,w) xs =
         (len, rm, _) = modrm True w xs
         imm = "0x" ++ hex (fromLE (w + 1) (drop len xs))
 
+disasmB (1,0,1,0,0,0,0,w) xs
+    | w == 0    = "mov al,[" ++ imm ++ "]"
+    | otherwise = "mov ax,[" ++ imm ++ "]"
+    where
+        imm = "0x" ++ hex (fromLE 2 xs)
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
