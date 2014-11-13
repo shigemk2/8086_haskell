@@ -162,7 +162,10 @@ testDisAsm = TestList
     , "c6-c7 mod=10,w=1 2" ~: disasm' "C781FFFFFFFF" ~?= "mov word [bx+di-0x1],0xffff"
     , "c6-c7 mod=11,w=0 1" ~: disasm' "C6C012" ~?= "mov al,0x12"
     , "c6-c7 mod=11,w=1 1" ~: disasm' "C7C01234" ~?= "mov ax,0x3412"
+    , "a0-a1 w=0" ~: disasm' "A01234" ~?= "mov al,[0x3412]"
+    , "a0-a1 w=1" ~: disasm' "A11234" ~?= "mov ax,[0x3412]"
     ]
+
 
 main = do
     runTestText (putTextToHandle stderr False) (TestList [testHex, testDisAsm])
