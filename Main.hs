@@ -166,8 +166,19 @@ testDisAsm = TestList
     , "a0-a1 w=1" ~: disasm' "A11234" ~?= "mov ax,[0x3412]"
     , "a2-a3 w=0" ~: disasm' "A21234" ~?= "mov [0x3412],al"
     , "a2-a3 w=1" ~: disasm' "A31234" ~?= "mov [0x3412],ax"
+    , "8c mod=00 1" ~: disasm' "8C00" ~?= "mov [bx+si],es"
+    , "8c mod=00 2" ~: disasm' "8C08" ~?= "mov [bx+si],cs"
+    , "8c mod=00 3" ~: disasm' "8C10" ~?= "mov [bx+si],ss"
+    , "8c mod=00 4" ~: disasm' "8C18" ~?= "mov [bx+si],ds"
+    , "8c mod=01 1" ~: disasm' "8C4012" ~?= "mov [bx+si+0x12],es"
+    , "8c mod=01 2" ~: disasm' "8C47FF" ~?= "mov [bx-0x1],es"
+    , "8c mod=10 1" ~: disasm' "8C801234" ~?= "mov [bx+si+0x3412],es"
+    , "8c mod=10 2" ~: disasm' "8C891234" ~?= "mov [bx+di+0x3412],cs"
+    , "8c mod=11 1" ~: disasm' "8CC0" ~?= "mov ax, es"
+    , "8c mod=11 2" ~: disasm' "8CC1" ~?= "mov cx, es"
+    , "8c mod=11 3" ~: disasm' "8CD0" ~?= "mov ax, ss"
+    , "8c mod=11 4" ~: disasm' "8CD8" ~?= "mov ax, ds"
     ]
-
 
 main = do
     runTestText (putTextToHandle stderr False) (TestList [testHex, testDisAsm])
