@@ -164,6 +164,8 @@ testDisAsm = TestList
     , "c6-c7 mod=11,w=1 1" ~: disasm' "C7C01234" ~?= "mov ax,0x3412"
     , "a0-a1 w=0" ~: disasm' "A01234" ~?= "mov al,[0x3412]"
     , "a0-a1 w=1" ~: disasm' "A11234" ~?= "mov ax,[0x3412]"
+    , "a2-a3 w=0" ~: disasm' "A21234" ~?= "mov [0x3412],al"
+    , "a2-a3 w=1" ~: disasm' "A31234" ~?= "mov [0x3412],ax"
     ]
 
 
