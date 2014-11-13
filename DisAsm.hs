@@ -34,6 +34,12 @@ disasmB (1,0,1,0,0,0,0,w) xs
     where
         imm = "0x" ++ hex (fromLE 2 xs)
 
+disasmB (1,0,1,0,0,0,1,w) xs
+    | w == 0    = "mov [" ++ imm ++ "],al"
+    | otherwise = "mov [" ++ imm ++ "],ax"
+    where
+        imm = "0x" ++ hex (fromLE 2 xs)
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
