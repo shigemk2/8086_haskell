@@ -195,8 +195,8 @@ testDisAsm = TestList
     , "b8 2" ~: disasm [0xb8, 0x34, 0x12] ~?= (3, "mov ax,0x1234")
     -- , "disasms" ~: disasms [0xc6, 0x47, 1, 1, 0xb0, 1]
     --     ~?= [(4, "mov byte [bx+0x1],0x1"), (2, "mov al,0x1")]
-    -- , "disasms'" ~: disasms' "C6470101B001"
-    --     ~?= ["mov byte [bx+0x1],0x1", "mov al,0x1"]
+    , "disasms' 0" ~: disasms' "C6470101B001"
+        ~?= ["mov byte [bx+0x1],0x1", "mov al,0x1"]
     , "disasms' 1" ~: disasms' "C6470101B001" ~?= ["mov byte [bx+0x1],0x1", "mov al,0x1"]
     , "disasms' 2" ~: disasms' "B001" ~?= ["mov al,0x1"]
     , "disasms' 3" ~: disasms' "C6470101B0018CD8" ~?= ["mov byte [bx+0x1],0x1", "mov al,0x1", "mov ax,ds"]
