@@ -18,8 +18,8 @@ disasm (x:xs) = disasmB (getBits x) xs
 
 -- Immediate to Register/Memory [100010dw][modregr/m]
 disasmB (1,0,0,0,1,0,d,w) xs
-    | d == 0    = (0, "mov " ++ rm  ++ "," ++ reg)
-    | otherwise = (0, "mov " ++ reg ++ "," ++ rm)
+    | d == 0    = (len + 1, "mov " ++ rm  ++ "," ++ reg)
+    | otherwise = (len + 1, "mov " ++ reg ++ "," ++ rm)
     where
         (len, rm, r) = modrm False w xs
         reg = regs !! w !! r
