@@ -193,6 +193,10 @@ testDisAsm = TestList
     , "8c mod=11 4" ~: disasm' "8CD8" ~?= "mov ax,ds"
     , "b8 1" ~: disasm [0xb8, 0, 0]       ~?= (3, "mov ax,0x0")
     , "b8 2" ~: disasm [0xb8, 0x34, 0x12] ~?= (3, "mov ax,0x1234")
+    , "disasms" ~: disasms [0xc6, 0x47, 1, 1, 0xb0, 1]
+        ~?= [(4, "mov byte [bx+0x1],0x1"), (2, "mov al,0x1")]
+    , "disasms'" ~: disasms' "C6470101B001"
+        ~?= ["mov byte [bx+0x1],0x1", "mov al,0x1"]
     ]
 
 main = do
