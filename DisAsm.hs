@@ -18,49 +18,50 @@ disasm (x:xs) = disasmB (getBits x) xs
 
 -- Immediate to Register/Memory [100010dw][modregr/m]
 disasmB (1,0,0,0,1,0,d,w) xs
-    | d == 0    = "mov " ++ rm  ++ "," ++ reg
-    | otherwise = "mov " ++ reg ++ "," ++ rm
+    | d == 0    = (0, "mov " ++ rm  ++ "," ++ reg)
+    | otherwise = (0, "mov " ++ reg ++ "," ++ rm)
     where
         (len, rm, r) = modrm False w xs
         reg = regs !! w !! r
 
 -- Immediate to Register [1011wreg][data][data if w=1]
 disasmB (1,0,1,1,w,r,e,g) xs =
-    "mov " ++ reg ++ "," ++ imm
+    (length xs + 1, "mov " ++ reg ++ "," ++ imm)
+    -- "mov " ++ reg ++ "," ++ imm
     where
         reg = regs !! w !! getReg r e g
         imm = "0x" ++ hex (fromLE (w + 1) xs)
 
 -- Immediate to Register/Memory [1100011w][mod000r/m][data][data if w=1]
 disasmB (1,1,0,0,0,1,1,w) xs =
-    "mov " ++ rm ++ "," ++ imm
+    (0, "mov " ++ rm ++ "," ++ imm)
     where
         (len, rm, _) = modrm True w xs
         imm = "0x" ++ hex (fromLE (w + 1) (drop len xs))
 
 -- Memory to Accumulator [1010000w][addr-low][addr-high]
 disasmB (1,0,1,0,0,0,0,w) xs
-    | w == 0    = "mov " ++ rm ++ ",[" ++ imm ++ "]"
-    | otherwise = "mov " ++ rm ++ ",[" ++ imm ++ "]"
+    | w == 0    = (0, "mov " ++ rm ++ ",[" ++ imm ++ "]")
+    | otherwise = (0, "mov " ++ rm ++ ",[" ++ imm ++ "]")
     where
         rm  = regs !! w !! 0
         imm = "0x" ++ hex (fromLE 2 xs)
 
 -- Accumulator to Memory [1010001w][addr-low][addr-high]
 disasmB (1,0,1,0,0,0,1,w) xs
-    | w == 0    = "mov [" ++ "0x" ++ hex (fromLE 2 xs) ++ "],al"
-    | otherwise = "mov [" ++ "0x" ++ hex (fromLE 2 xs) ++ "],ax"
+    | w == 0    = (0, "mov [" ++ "0x" ++ hex (fromLE 2 xs) ++ "],al")
+    | otherwise = (0, "mov [" ++ "0x" ++ hex (fromLE 2 xs) ++ "],ax")
 
 -- Register/Memory to Segment Register [10001110][mod0reg r/m]
 disasmB (1,0,0,0,1,1,1,0) xs =
-    "mov " ++ rmseg ++ "," ++ rm
+    (0, "mov " ++ rmseg ++ "," ++ rm)
     where
         (_, rm, r) = modrm False 1 xs
         rmseg = sreg !! r
 
 -- Segment Register to Register/Memory [10001100][mod0reg r/m]
 disasmB (1,0,0,0,1,1,0,0) xs =
-    "mov " ++ rm ++ "," ++ rmseg
+    (0, "mov " ++ rm ++ "," ++ rmseg)
     where
         (_, rm, r) = modrm False 1 xs
         rmseg = sreg !! r
