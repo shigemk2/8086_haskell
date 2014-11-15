@@ -31,17 +31,16 @@ disasmB (1,1,0,0,0,1,1,w) xs =
 
 -- Memory to Accumulator [1010000w][addr-low][addr-high]
 disasmB (1,0,1,0,0,0,0,w) xs
-    | w == 0    = "mov al,[" ++ imm ++ "]"
-    | otherwise = "mov ax,[" ++ imm ++ "]"
+    | w == 0    = "mov " ++ rm ++ ",[" ++ imm ++ "]"
+    | otherwise = "mov " ++ rm ++ ",[" ++ imm ++ "]"
     where
+        rm  = regs !! w !! 0
         imm = "0x" ++ hex (fromLE 2 xs)
 
 -- Accumulator to Memory [1010001w][addr-low][addr-high]
 disasmB (1,0,1,0,0,0,1,w) xs
-    | w == 0    = "mov [" ++ imm ++ "],al"
-    | otherwise = "mov [" ++ imm ++ "],ax"
-    where
-        imm = "0x" ++ hex (fromLE 2 xs)
+    | w == 0    = "mov [" ++ "0x" ++ hex (fromLE 2 xs) ++ "],al"
+    | otherwise = "mov [" ++ "0x" ++ hex (fromLE 2 xs) ++ "],ax"
 
 -- Register/Memory to Segment Register [10001110][mod0reg r/m]
 disasmB (1,0,0,0,1,1,1,0) xs =
