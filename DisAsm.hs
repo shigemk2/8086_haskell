@@ -5,7 +5,14 @@ import Hex
 
 regs  = [reg8, reg16]
 
-disasm' hex = disasm $ hexStrToList hex
+-- disasm' hex = disasm $ hexStrToList hex
+disasm' hex
+    | length bin == len = snd asm
+    | otherwise         = "length? " ++ show len
+    where
+        bin = hexStrToList hex
+        asm = disasm bin
+        len = fst asm
 
 disasm (x:xs) = disasmB (getBits x) xs
 

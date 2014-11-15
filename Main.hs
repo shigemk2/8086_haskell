@@ -190,6 +190,8 @@ testDisAsm = TestList
     , "8c mod=11 2" ~: disasm' "8CC1" ~?= "mov cx,es"
     , "8c mod=11 3" ~: disasm' "8CD0" ~?= "mov ax,ss"
     , "8c mod=11 4" ~: disasm' "8CD8" ~?= "mov ax,ds"
+    , "b8 1" ~: disasm [0xb8, 0, 0]       ~?= (3, "mov ax,0x0")
+    , "b8 2" ~: disasm [0xb8, 0x34, 0x12] ~?= (3, "mov ax,0x1234")
     ]
 
 main = do
