@@ -6,13 +6,13 @@ import Hex
 
 regs  = [reg8, reg16]
 
-disasms' hex
-    | hex        == []        = [hex]
-    | take 7 asm == "length?" = disasm' (take (digitToInt(last asm) * 2) hex) : disasms' (drop (digitToInt(last asm) * 2) hex)
-    | otherwise = [disasm' hex]
+disasms [] = []
+disasms xs = asm : disasms (drop len xs)
     where
-        asm = disasm' hex
+        asm = disasm xs
+        len = fst asm
 
+disasms' hex = [snd asm | asm <- disasms $ hexStrToList hex]
 -- disasm' hex = disasm $ hexStrToList hex
 disasm' hex
     | length bin == len = snd asm
