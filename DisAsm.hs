@@ -34,9 +34,9 @@ disasmB (1,0,1,1,w,r,e,g) xs =
 
 -- Immediate to Register/Memory [1100011w][mod000r/m][data][data if w=1]
 disasmB (1,1,0,0,0,1,1,w) xs =
-    (0, "mov " ++ rm ++ "," ++ imm)
+    (len + w + 2, "mov " ++ rm ++ "," ++ imm)
     where
-        (len, rm, _) = modrm True w xs
+        (len, rm, r) = modrm True w xs
         imm = "0x" ++ hex (fromLE (w + 1) (drop len xs))
 
 -- Memory to Accumulator [1010000w][addr-low][addr-high]
