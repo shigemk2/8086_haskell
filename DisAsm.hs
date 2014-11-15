@@ -44,13 +44,13 @@ disasmB (1,0,0,0,1,1,1,0) xs =
     "mov " ++ rmseg ++ "," ++ rm
     where
         (_, rm, r) = modrm False 1 xs
-        rmseg = regseg !! r
+        rmseg = sreg !! r
 
 disasmB (1,0,0,0,1,1,0,0) xs =
     "mov " ++ rm ++ "," ++ rmseg
     where
         (_, rm, r) = modrm False 1 xs
-        rmseg = regseg !! r
+        rmseg = sreg !! r
 
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
@@ -75,7 +75,7 @@ modrm prefix w (x:xs) = (len, s, reg)
 
 reg16 = ["ax", "cx", "dx", "bx", "sp", "bp", "si", "di"]
 reg8  = ["al", "cl", "dl", "bl", "ah", "ch", "dh", "bh"]
-regseg = ["es", "cs", "ss", "ds"]
+sreg = ["es", "cs", "ss", "ds"]
 
 
 getBits :: Int -> (Int,Int,Int,Int,Int,Int,Int,Int)
