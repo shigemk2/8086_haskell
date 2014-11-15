@@ -14,7 +14,12 @@ disasm' hex
         asm = disasm bin
         len = fst asm
 
-disasm (x:xs) = disasmB (getBits x) xs
+disasm (x:xs) =
+    -- (length $ x:xs, disasmB (getBits x) xs)
+    (len, asm)
+    where
+        len = length $ x:xs
+        asm = disasmB (getBits x) xs
 
 disasmB (1,0,0,0,1,0,d,w) xs
     | d == 0    = "mov " ++ rm  ++ "," ++ reg

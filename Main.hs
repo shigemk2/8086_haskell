@@ -51,9 +51,10 @@ testHex = TestList
         ]
 
 testDisAsm = TestList
-    [ "b8 1" ~: disasm [0xb8, 0, 0]       ~?= "mov ax,0x0"
-    , "b8 2" ~: disasm [0xb8, 0x34, 0x12] ~?= "mov ax,0x1234"
-    , "b8 2" ~: disasm [0xb8, 0x78, 0x56] ~?= "mov ax,0x5678"
+    [ "b8 1" ~: disasm [0xb8, 0, 0]       ~?= (3, "mov ax,0x0")
+    , "b8 2" ~: disasm [0xb8, 0x34, 0x12] ~?= (3, "mov ax,0x1234")
+    , "b8 3" ~: disasm [0xb8, 0x78, 0x56] ~?= (3, "mov ax,0x5678")
+    , "b0 1" ~: disasm [0xb0, 0x00] ~?= (2, "mov al,0x0")
     , "b8 3" ~: disasm' "b80000" ~?= "mov ax,0x0"
     , "b8 4" ~: disasm' "b83412" ~?= "mov ax,0x1234"
     , "b8-bf 0" ~: disasm' "b80100" ~?= "mov ax,0x1"
