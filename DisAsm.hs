@@ -18,23 +18,22 @@ disasm (x:xs) = disasmB (getBits x) xs
 
 -- Immediate to Register/Memory [100010dw][modregr/m]
 disasmB (1,0,0,0,1,0,d,w) xs
-    | d == 0    = (len + 1, "mov " ++ rm  ++ "," ++ reg)
-    | otherwise = (len + 1, "mov " ++ reg ++ "," ++ rm)
+    | d == 0    = (1 + len, "mov " ++ rm  ++ "," ++ reg)
+    | otherwise = (1 + len, "mov " ++ reg ++ "," ++ rm)
     where
         (len, rm, r) = modrm False w xs
         reg = regs !! w !! r
 
 -- Immediate to Register [1011wreg][data][data if w=1]
 disasmB (1,0,1,1,w,r,e,g) xs =
-    (length xs + 1, "mov " ++ reg ++ "," ++ imm)
-    -- "mov " ++ reg ++ "," ++ imm
+    (2 + w, "mov " ++ reg ++ "," ++ imm)
     where
         reg = regs !! w !! getReg r e g
         imm = "0x" ++ hex (fromLE (w + 1) xs)
 
 -- Immediate to Register/Memory [1100011w][mod000r/m][data][data if w=1]
 disasmB (1,1,0,0,0,1,1,w) xs =
-    (len + w + 2, "mov " ++ rm ++ "," ++ imm)
+    (1 + len + w + 1, "mov " ++ rm ++ "," ++ imm)
     where
         (len, rm, r) = modrm True w xs
         imm = "0x" ++ hex (fromLE (w + 1) (drop len xs))
@@ -57,14 +56,14 @@ disasmB (1,0,1,0,0,0,1,w) xs
 
 -- Register/Memory to Segment Register [10001110][mod0reg r/m]
 disasmB (1,0,0,0,1,1,1,0) xs =
-    (len + 1, "mov " ++ rmseg ++ "," ++ rm)
+    (1 + len, "mov " ++ rmseg ++ "," ++ rm)
     where
         (len, rm, r) = modrm False 1 xs
         rmseg = sreg !! r
 
 -- Segment Register to Register/Memory [10001100][mod0reg r/m]
 disasmB (1,0,0,0,1,1,0,0) xs =
-    (len + 1, "mov " ++ rm ++ "," ++ rmseg)
+    (1 + len, "mov " ++ rm ++ "," ++ rmseg)
     where
         (len, rm, r) = modrm False 1 xs
         rmseg = sreg !! r
