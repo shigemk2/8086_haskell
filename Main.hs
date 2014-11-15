@@ -197,8 +197,11 @@ testDisAsm = TestList
     --     ~?= [(4, "mov byte [bx+0x1],0x1"), (2, "mov al,0x1")]
     -- , "disasms'" ~: disasms' "C6470101B001"
     --     ~?= ["mov byte [bx+0x1],0x1", "mov al,0x1"]
-    , "disasms" ~: disasms' "C6470101B001" ~?= "length? 4"
-    , "disasms" ~: disasms' "B001" ~?= "hoge"
+    -- , "disasms" ~: disasms' "C6470101B001" ~?= "length? 4"
+    -- , "disasms" ~: disasms' "B001" ~?= "hoge"
+    , "disasms 1" ~: disasms' "C6470101B001" ~?= ["C6470101", "B001"]
+    , "disasms 2" ~: disasms' "B001" ~?= ["B001"]
+    , "disasms 3" ~: disasms' "C6470101B0018CD8" ~?= ["C6470101", "B001", "8CD8"]
     , "wrong disasm' 1" ~: disasm' "C6470101B001" ~?= "length? 4"
     , "wrong disasm' 2" ~: disasm' "8CD88C801234C6470101B001" ~?= "length? 2"
     ]
