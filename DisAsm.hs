@@ -1,9 +1,16 @@
 module DisAsm where
 
 import Data.Bits
+import Data.Char
 import Hex
 
 regs  = [reg8, reg16]
+
+disasms' hex
+    | take 7 asm == "length?" = asm
+    | otherwise               = "hoge" --disasm' $ take digitToInt(last asm) xs
+    where
+        asm = disasm' hex
 
 -- disasm' hex = disasm $ hexStrToList hex
 disasm' hex
