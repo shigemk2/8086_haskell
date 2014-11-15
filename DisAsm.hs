@@ -57,9 +57,9 @@ disasmB (1,0,1,0,0,0,1,w) xs
 
 -- Register/Memory to Segment Register [10001110][mod0reg r/m]
 disasmB (1,0,0,0,1,1,1,0) xs =
-    (0, "mov " ++ rmseg ++ "," ++ rm)
+    (len + 1, "mov " ++ rmseg ++ "," ++ rm)
     where
-        (_, rm, r) = modrm False 1 xs
+        (len, rm, r) = modrm False 1 xs
         rmseg = sreg !! r
 
 -- Segment Register to Register/Memory [10001100][mod0reg r/m]
