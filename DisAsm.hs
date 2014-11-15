@@ -14,12 +14,7 @@ disasm' hex
         asm = disasm bin
         len = fst asm
 
-disasm (x:xs) =
-    -- (length $ x:xs, disasmB (getBits x) xs)
-    (len, asm)
-    where
-        len = length $ x:xs
-        asm = disasmB (getBits x) xs
+disasm (x:xs) = disasmB (getBits x) xs
 
 -- Immediate to Register/Memory [100010dw][modregr/m]
 disasmB (1,0,0,0,1,0,d,w) xs
