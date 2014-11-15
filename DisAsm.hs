@@ -22,30 +22,35 @@ disasmB (1,0,1,1,w,r,e,g) xs =
         reg = regs !! w !! getReg r e g
         imm = "0x" ++ hex (fromLE (w + 1) xs)
 
+-- Immediate to Register/Memory [1100011w][mod000r/m][data][data if w=1]
 disasmB (1,1,0,0,0,1,1,w) xs =
     "mov " ++ rm ++ "," ++ imm
     where
         (len, rm, _) = modrm True w xs
         imm = "0x" ++ hex (fromLE (w + 1) (drop len xs))
 
+-- Memory to Accumulator [1010000w][addr-low][addr-high]
 disasmB (1,0,1,0,0,0,0,w) xs
     | w == 0    = "mov al,[" ++ imm ++ "]"
     | otherwise = "mov ax,[" ++ imm ++ "]"
     where
         imm = "0x" ++ hex (fromLE 2 xs)
 
+-- Accumulator to Memory [1010001w][addr-low][addr-high]
 disasmB (1,0,1,0,0,0,1,w) xs
     | w == 0    = "mov [" ++ imm ++ "],al"
     | otherwise = "mov [" ++ imm ++ "],ax"
     where
         imm = "0x" ++ hex (fromLE 2 xs)
 
+-- Register/Memory to Segment Register [10001110][mod0reg r/m]
 disasmB (1,0,0,0,1,1,1,0) xs =
     "mov " ++ rmseg ++ "," ++ rm
     where
         (_, rm, r) = modrm False 1 xs
         rmseg = sreg !! r
 
+-- Segment Register to Register/Memory [10001100][mod0reg r/m]
 disasmB (1,0,0,0,1,1,0,0) xs =
     "mov " ++ rm ++ "," ++ rmseg
     where
