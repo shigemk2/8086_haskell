@@ -81,6 +81,10 @@ testDisAsm = TestList
     , "getReg 0" ~: getReg 1 0 1 ~?= 5
     , "getReg 1" ~: getReg 1 1 1 ~?= 7
     , "getReg 2" ~: getReg 0 0 1 ~?= 1
+    , "disp8 1" ~: disp8 0    ~?= "+0x0"
+    , "disp8 2" ~: disp8 0x7f ~?= "+0x7f"
+    , "disp8 3" ~: disp8 0x80 ~?= "-0x80"
+    , "disp8 4" ~: disp8 0xff ~?= "-0x1"
     -- , "disAsmB 0" ~: disasmB (1,0,1,1,1,0,0,0) [0, 0] ~?= (3, "mov ax,0x0")
     -- , "disAsmB 1" ~: disasmB (1,0,0,0,1,0,1,1) [0, 0] ~?= (1, "mov ax,[bx+si]")
     -- , "disAsmB 2" ~: disasmB (1,0,0,0,1,0,0,1) [0, 0] ~?= (1, "mov [bx+si],ax")
@@ -93,10 +97,6 @@ testDisAsm = TestList
     -- , "88-8b mod=00 5" ~: disasm' "8924" ~?= "mov [si],sp"
     -- , "88-8b mod=00 6" ~: disasm' "892d" ~?= "mov [di],bp"
     -- , "88-8b mod=00 7" ~: disasm' "893f" ~?= "mov [bx],di"
-    , "disp8 1" ~: disp8 0    ~?= "+0x0"
-    , "disp8 2" ~: disp8 0x7f ~?= "+0x7f"
-    , "disp8 3" ~: disp8 0x80 ~?= "-0x80"
-    , "disp8 4" ~: disp8 0xff ~?= "-0x1"
     -- , "88-8b mod=00,r/m=000 1" ~: disasm' "8800" ~?= "mov [bx+si],al"
     -- , "88-8b mod=00,r/m=000 2" ~: disasm' "8900" ~?= "mov [bx+si],ax"
     -- , "88-8b mod=00,r/m=000 3" ~: disasm' "8A00" ~?= "mov al,[bx+si]"
