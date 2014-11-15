@@ -21,6 +21,7 @@ disasm (x:xs) =
         len = length $ x:xs
         asm = disasmB (getBits x) xs
 
+-- Immediate to Register/Memory [100010dw][modregr/m]
 disasmB (1,0,0,0,1,0,d,w) xs
     | d == 0    = "mov " ++ rm  ++ "," ++ reg
     | otherwise = "mov " ++ reg ++ "," ++ rm
@@ -28,6 +29,7 @@ disasmB (1,0,0,0,1,0,d,w) xs
         (len, rm, r) = modrm False w xs
         reg = regs !! w !! r
 
+-- Immediate to Register [1011wreg][data][data if w=1]
 disasmB (1,0,1,1,w,r,e,g) xs =
     "mov " ++ reg ++ "," ++ imm
     where
