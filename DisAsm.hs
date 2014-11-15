@@ -7,11 +7,9 @@ import Hex
 regs  = [reg8, reg16]
 
 disasms' hex
-    -- | take 7 asm == "length?" = disasms' (take (digitToInt(last asm)) hex)
     | hex        == []        = [hex]
-    | take 7 asm == "length?" = take (digitToInt(last asm) * 2) hex : disasms' (drop (digitToInt(last asm) * 2) hex)
-    | otherwise = [hex]
-    -- | otherwise               = asm
+    | take 7 asm == "length?" = disasm' (take (digitToInt(last asm) * 2) hex) : disasms' (drop (digitToInt(last asm) * 2) hex)
+    | otherwise = [disasm' hex]
     where
         asm = disasm' hex
 
