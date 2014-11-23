@@ -7,9 +7,13 @@ import Hex
 regs  = [reg8, reg16]
 
 ndisasm adr xs =
-        hexn 8 adr ++ "  " ++ asm ++ "          " ++ disasm' asm
+        (length, result)
     where
-        asm = (map toUpper $ listToHexStr xs)
+        result  = address ++ "  " ++ machine ++ "          " ++ asm
+        address = hexn 8 adr
+        machine = (map toUpper $ listToHexStr xs)
+        length  = fst $ disasm xs
+        asm     = snd $ disasm xs
 
 disasms [] = []
 disasms xs = asm : disasms (drop len xs)
