@@ -2,6 +2,7 @@ module DisAsm where
 
 import Data.Bits
 import Data.Char
+import Data.List
 import Hex
 
 regs  = [reg8, reg16]
@@ -9,11 +10,12 @@ regs  = [reg8, reg16]
 ndisasm adr xs =
         (length, result)
     where
-        result  = address ++ "  " ++ machine ++ "          " ++ asm
+        result  = address ++ "  " ++ machine ++ space ++ asm
         address = hexn 8 adr
-        machine = (map toUpper $ listToHexStr xs)
-        length  = fst $ disasm xs
-        asm     = snd $ disasm xs
+        machine = (map toUpper $ listToHexStr $ take length xs)
+        space   = intercalate "" $ replicate (18 - length * 2) " "
+        length  = fst $ head $ disasms xs
+        asm     = snd $ head $ disasms xs
 
 ndisasms _ [] = []
 ndisasms adr xs = snd result : ndisasms len (drop len xs)
