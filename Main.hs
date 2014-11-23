@@ -202,12 +202,14 @@ testDisAsm = TestList
     , "disasms' 3" ~: disasms' "C6470101B0018CD8" ~?= ["mov byte [bx+0x1],0x1", "mov al,0x1", "mov ax,ds"]
     , "wrong disasm' 1" ~: disasm' "C6470101B001" ~?= "length? 4"
     , "wrong disasm' 2" ~: disasm' "8CD88C801234C6470101B001" ~?= "length? 2"
+    -- , "ndisasm" ~: ndisasm 0 [0xc6, 0x47, 1, 1]
+    --     ~?= (4, "00000000  C6470101          mov byte [bx+0x1],0x1")
     , "ndisasm" ~: ndisasm 0 [0xc6, 0x47, 1, 1]
-        ~?= (4, "00000000  C6470101          mov byte [bx+0x1],0x1")
-    , "ndisasms" ~: ndisasms 0 [0xc6, 0x47, 1, 1, 0xb0, 1]
-        ~?= [ "00000000  C6470101          mov byte [bx+0x1],0x1"
-            , "00000004  B001              mov al,0x1"
-            ]
+        ~?= "00000000  C6470101"
+    -- , "ndisasms" ~: ndisasms 0 [0xc6, 0x47, 1, 1, 0xb0, 1]
+    --     ~?= [ "00000000  C6470101          mov byte [bx+0x1],0x1"
+    --         , "00000004  B001              mov al,0x1"
+    --         ]
     ]
 
 main = do
