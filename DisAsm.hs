@@ -15,6 +15,12 @@ ndisasm adr xs =
         length  = fst $ disasm xs
         asm     = snd $ disasm xs
 
+ndisasms _ [] = []
+ndisasms adr xs = snd result : ndisasms len (drop len xs)
+    where
+        result = ndisasm adr xs
+        len    = fst result
+
 disasms [] = []
 disasms xs = asm : disasms (drop len xs)
     where
