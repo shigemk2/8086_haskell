@@ -206,10 +206,10 @@ testDisAsm = TestList
         ~?= (4, "00000000  C6470101          mov byte [bx+0x1],0x1")
     , "ndisasm 2" ~: ndisasm 0 [0xb8, 0x34, 0x12]
         ~?= (3, "00000000  B83412          mov ax,0x1234")
-    -- , "ndisasms" ~: ndisasms 0 [0xc6, 0x47, 1, 1, 0xb0, 1]
-    --     ~?= [ "00000000  C6470101          mov byte [bx+0x1],0x1"
-    --         , "00000004  B001              mov al,0x1"
-    --         ]
+    , "ndisasms" ~: ndisasms 0 [0xc6, 0x47, 1, 1, 0xb0, 1]
+        ~?= [ "00000000  C6470101          mov byte [bx+0x1],0x1"
+            , "00000004  B001              mov al,0x1"
+            ]
     ]
 
 main = do
