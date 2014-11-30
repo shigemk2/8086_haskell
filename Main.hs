@@ -235,6 +235,11 @@ testDisAsm = TestList
     , "ff mod=11 2" ~: disasm' "fff1" ~?= "push cx"
     , "ff mod=11 3" ~: disasm' "fff2" ~?= "push dx"
     , "ff mod=11 4" ~: disasm' "fff3" ~?= "push bx"
+    -- push Register
+    , "5 1" ~: disasm' "50" ~?= "push ax"
+    , "5 2" ~: disasm' "51" ~?= "push cx"
+    , "5 3" ~: disasm' "52" ~?= "push dx"
+    , "5 4" ~: disasm' "53" ~?= "push bx"
     ]
 
 main = do
