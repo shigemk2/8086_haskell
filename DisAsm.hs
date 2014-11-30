@@ -42,6 +42,7 @@ disasm' hex
 
 disasm (x:xs) = disasmB (getBits x) xs
 
+-- mov
 -- Immediate to Register/Memory [100010dw][modregr/m]
 disasmB (1,0,0,0,1,0,d,w) xs
     | d == 0    = (1 + len, "mov " ++ rm  ++ "," ++ reg)
