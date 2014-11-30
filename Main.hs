@@ -218,6 +218,11 @@ testDisAsm = TestList
             , "00000004  B001              mov al,0x1"
             , "00000006  C6470101          mov byte [bx+0x1],0x1"
             ]
+    -- push Register/Memory
+    , "ff mod=00 1" ~: disasm' "ff30" ~?= "push word [bx+si]"
+    , "ff mod=00 2" ~: disasm' "ff31" ~?= "push word [bx+di]"
+    , "ff mod=00 3" ~: disasm' "ff32" ~?= "push word [bp+si]"
+    , "ff mod=00 4" ~: disasm' "ff33" ~?= "push word [bp+di]"
     ]
 
 main = do
