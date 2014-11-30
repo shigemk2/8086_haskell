@@ -223,6 +223,10 @@ testDisAsm = TestList
     , "ff mod=00 2" ~: disasm' "ff31" ~?= "push word [bx+di]"
     , "ff mod=00 3" ~: disasm' "ff32" ~?= "push word [bp+si]"
     , "ff mod=00 4" ~: disasm' "ff33" ~?= "push word [bp+di]"
+    , "ff mod=11 1" ~: disasm' "fff0" ~?= "push ax"
+    , "ff mod=11 2" ~: disasm' "fff1" ~?= "push cx"
+    , "ff mod=11 3" ~: disasm' "fff2" ~?= "push dx"
+    , "ff mod=11 4" ~: disasm' "fff3" ~?= "push bx"
     ]
 
 main = do

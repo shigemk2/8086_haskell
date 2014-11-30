@@ -95,6 +95,13 @@ disasmB (1,0,0,0,1,1,0,0) xs =
         (len, rm, r) = modrm False 1 xs
         rmseg = sreg !! r
 
+-- push
+-- Register/Memory
+disasmB (1,1,1,1,1,1,1,1) xs =
+    (1 + len, "push " ++ rm)
+    where
+        (len, rm, r) = modrm True 1 xs
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
