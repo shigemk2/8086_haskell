@@ -102,6 +102,12 @@ disasmB (1,1,1,1,1,1,1,1) xs =
     where
         (len, rm, r) = modrm True 1 xs
 
+-- Register
+disasmB (0,1,0,1,0,r,e,g) xs =
+    (1, "push " ++ reg)
+    where
+        reg = regs !! 1 !! getReg r e g
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
