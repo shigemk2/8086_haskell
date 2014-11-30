@@ -7,6 +7,9 @@ import Data.Bits
 import Hex
 import DisAsm
 
+import System.Environment
+import qualified Data.ByteString
+
 testHex = TestList
         [ "reverse"       ~: reverse     "11001"  ~?= "10011"
         , "binStrToInt 5" ~: binStrToInt "101"    ~?= 5
@@ -218,4 +221,13 @@ testDisAsm = TestList
     ]
 
 main = do
-    runTestText (putTextToHandle stderr False) (TestList [testHex, testDisAsm])
+    args <- getArgs
+    if args == []
+        then do
+            runTestText (putTextToHandle stderr False)
+                (TestList [testHex, testDisAsm])
+            return ()
+        else do
+            bytes <- Data.ByteString.readFile $ args !! 0
+            putStr $ unlines $ ndisasms 0
+                [fromIntegral b | b <- Data.ByteString.unpack bytes]
