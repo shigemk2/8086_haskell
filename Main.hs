@@ -240,6 +240,11 @@ testDisAsm = TestList
     , "5 2" ~: disasm' "51" ~?= "push cx"
     , "5 3" ~: disasm' "52" ~?= "push dx"
     , "5 4" ~: disasm' "53" ~?= "push bx"
+    -- push Segment Register
+    , "06-1e 1" ~: disasm' "06" ~?= "push es"
+    , "06-1e 2" ~: disasm' "0e" ~?= "push cs"
+    , "06-1e 3" ~: disasm' "16" ~?= "push ss"
+    , "06-1e 4" ~: disasm' "1e" ~?= "push ds"
     ]
 
 main = do
