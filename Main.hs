@@ -262,6 +262,11 @@ testDisAsm = TestList
     , "8f mod=11 2" ~: disasm' "8fc1" ~?= "pop cx"
     , "8f mod=11 3" ~: disasm' "8fc2" ~?= "pop dx"
     , "8f mod=11 4" ~: disasm' "8fc3" ~?= "pop bx"
+    -- pop Register
+    , "5 1" ~: disasm' "58" ~?= "pop ax"
+    , "5 2" ~: disasm' "59" ~?= "pop cx"
+    , "5 3" ~: disasm' "5a" ~?= "pop dx"
+    , "5 4" ~: disasm' "5b" ~?= "pop bx"
     ]
 
 main = do
