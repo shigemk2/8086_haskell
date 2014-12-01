@@ -245,6 +245,23 @@ testDisAsm = TestList
     , "06-1e 2" ~: disasm' "0e" ~?= "push cs"
     , "06-1e 3" ~: disasm' "16" ~?= "push ss"
     , "06-1e 4" ~: disasm' "1e" ~?= "push ds"
+    -- pop Register/Memory
+    , "8f mod=00 1" ~: disasm' "8f00" ~?= "pop word [bx+si]"
+    , "8f mod=00 2" ~: disasm' "8f01" ~?= "pop word [bx+di]"
+    , "8f mod=00 3" ~: disasm' "8f02" ~?= "pop word [bp+si]"
+    , "8f mod=00 4" ~: disasm' "8f061234" ~?= "pop word [0x3412]"
+    , "8f mod=01 1" ~: disasm' "8f4012" ~?= "pop word [bx+si+0x12]"
+    , "8f mod=01 2" ~: disasm' "8f40ff" ~?= "pop word [bx+si-0x1]"
+    , "8f mod=01 3" ~: disasm' "8f4712" ~?= "pop word [bx+0x12]"
+    , "8f mod=01 4" ~: disasm' "8f47ff" ~?= "pop word [bx-0x1]"
+    , "8f mod=10 1" ~: disasm' "8f801234" ~?= "pop word [bx+si+0x3412]"
+    , "8f mod=10 2" ~: disasm' "8f80ffff" ~?= "pop word [bx+si-0x1]"
+    , "8f mod=10 3" ~: disasm' "8f871234" ~?= "pop word [bx+0x3412]"
+    , "8f mod=10 4" ~: disasm' "8f87ffff" ~?= "pop word [bx-0x1]"
+    , "8f mod=11 1" ~: disasm' "8fc0" ~?= "pop ax"
+    , "8f mod=11 2" ~: disasm' "8fc1" ~?= "pop cx"
+    , "8f mod=11 3" ~: disasm' "8fc2" ~?= "pop dx"
+    , "8f mod=11 4" ~: disasm' "8fc3" ~?= "pop bx"
     ]
 
 main = do
