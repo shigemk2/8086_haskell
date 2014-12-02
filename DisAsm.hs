@@ -127,6 +127,12 @@ disasmB (0,1,0,1,1,r,e,g) xs =
     where
         reg = regs !! 1 !! getReg r e g
 
+-- Segment Register
+disasmB (0,0,0,s,r,1,1,1) xs =
+    (1, "pop " ++ rmseg)
+    where
+        rmseg = sreg !! getReg 0 s r
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
