@@ -267,6 +267,11 @@ testDisAsm = TestList
     , "5 2" ~: disasm' "59" ~?= "pop cx"
     , "5 3" ~: disasm' "5a" ~?= "pop dx"
     , "5 4" ~: disasm' "5b" ~?= "pop bx"
+    -- pop Segment Register
+    , "0-1 1" ~: disasm' "07" ~?= "pop es"
+    , "0-1 2" ~: disasm' "0F" ~?= "pop cs"
+    , "0-1 3" ~: disasm' "17" ~?= "pop ss"
+    , "0-1 4" ~: disasm' "1F" ~?= "pop ds"
     ]
 
 main = do
