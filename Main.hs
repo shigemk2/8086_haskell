@@ -219,7 +219,7 @@ testDisAsm = TestList
             , "00000006  C6470101          mov byte [bx+0x1],0x1"
             ]
     -- push Register/Memory
-    , "ff mod=00 1" ~: disasm' "ff30" ~?= "push word [bx+si]"
+    , "ff mod=00 1," ~: disasm' "ff30" ~?= "push word [bx+si]"
     , "ff mod=00 2" ~: disasm' "ff31" ~?= "push word [bx+di]"
     , "ff mod=00 3" ~: disasm' "ff32" ~?= "push word [bp+si]"
     , "ff mod=00 4" ~: disasm' "ff33" ~?= "push word [bp+di]"
@@ -272,6 +272,23 @@ testDisAsm = TestList
     , "0-1 2" ~: disasm' "0F" ~?= "pop cs"
     , "0-1 3" ~: disasm' "17" ~?= "pop ss"
     , "0-1 4" ~: disasm' "1F" ~?= "pop ds"
+    -- xchg Register/Memory with Register
+    , "86-87 mod=00,w=0 1" ~: disasm' "8600" ~?= "xchg al,[bx+si]"
+    , "86-87 mod=00,w=0 2" ~: disasm' "863F" ~?= "xchg bh,[bx]"
+    , "86-87 mod=01,w=0 1" ~: disasm' "864012" ~?= "xchg al,[bx+si+0x12]"
+    , "86-87 mod=01,w=0 2" ~: disasm' "867F12" ~?= "xchg bh,[bx+0x12]"
+    , "86-87 mod=10,w=0 1" ~: disasm' "86801234" ~?= "xchg al,[bx+si+0x3412]"
+    , "86-87 mod=10,w=0 2" ~: disasm' "868FFFFF" ~?= "xchg cl,[bx-0x1]"
+    , "86-87 mod=11,w=0 1" ~: disasm' "86C0" ~?= "xchg al,al"
+    , "86-87 mod=11,w=0 2" ~: disasm' "86FF" ~?= "xchg bh,bh"
+    , "86-87 mod=00,w=1 1" ~: disasm' "8700" ~?= "xchg ax,[bx+si]"
+    , "86-87 mod=00,w=1 2" ~: disasm' "873F" ~?= "xchg di,[bx]"
+    , "86-87 mod=01,w=1 1" ~: disasm' "874012" ~?= "xchg ax,[bx+si+0x12]"
+    , "86-87 mod=01,w=1 2" ~: disasm' "877F12" ~?= "xchg di,[bx+0x12]"
+    , "86-87 mod=10,w=1 1" ~: disasm' "87801234" ~?= "xchg ax,[bx+si+0x3412]"
+    , "86-87 mod=10,w=1 2" ~: disasm' "87BFFFFF" ~?= "xchg di,[bx-0x1]"
+    , "86-87 mod=11,w=0 1" ~: disasm' "87C0" ~?= "xchg ax,ax"
+    , "86-87 mod=11,w=1 1" ~: disasm' "87FF" ~?= "xchg di,di"
     ]
 
 main = do
