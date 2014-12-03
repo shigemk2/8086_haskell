@@ -289,6 +289,15 @@ testDisAsm = TestList
     , "86-87 mod=10,w=1 2" ~: disasm' "87BFFFFF" ~?= "xchg di,[bx-0x1]"
     , "86-87 mod=11,w=0 1" ~: disasm' "87C0" ~?= "xchg ax,ax"
     , "86-87 mod=11,w=1 1" ~: disasm' "87FF" ~?= "xchg di,di"
+    -- xchg Register with Accumulator
+    , "9 1" ~: disasm' "90" ~?= "nop"
+    , "9 2" ~: disasm' "91" ~?= "xchg ax,cx"
+    , "9 3" ~: disasm' "92" ~?= "xchg ax,dx"
+    , "9 4" ~: disasm' "93" ~?= "xchg ax,bx"
+    , "9 5" ~: disasm' "94" ~?= "xchg ax,ax"
+    , "9 6" ~: disasm' "95" ~?= "xchg ax,cx"
+    , "9 7" ~: disasm' "96" ~?= "xchg ax,dx"
+    , "9 8" ~: disasm' "97" ~?= "xchg ax,bx"
     ]
 
 main = do
