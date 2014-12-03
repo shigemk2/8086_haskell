@@ -294,10 +294,10 @@ testDisAsm = TestList
     , "9 2" ~: disasm' "91" ~?= "xchg ax,cx"
     , "9 3" ~: disasm' "92" ~?= "xchg ax,dx"
     , "9 4" ~: disasm' "93" ~?= "xchg ax,bx"
-    , "9 5" ~: disasm' "94" ~?= "xchg ax,ax"
-    , "9 6" ~: disasm' "95" ~?= "xchg ax,cx"
-    , "9 7" ~: disasm' "96" ~?= "xchg ax,dx"
-    , "9 8" ~: disasm' "97" ~?= "xchg ax,bx"
+    , "9 5" ~: disasm' "94" ~?= "xchg ax,sp"
+    , "9 6" ~: disasm' "95" ~?= "xchg ax,bp"
+    , "9 7" ~: disasm' "96" ~?= "xchg ax,si"
+    , "9 8" ~: disasm' "97" ~?= "xchg ax,di"
     ]
 
 main = do
