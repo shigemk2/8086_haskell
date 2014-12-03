@@ -143,6 +143,7 @@ disasmB (1,0,0,0,0,1,1,w) xs =
 
 -- Register with Accumulator
 disasmB (1,0,0,1,0,r,e,g) xs
+    -- xchg ax,axはなにもしていないのでnop
     | reg == "ax"    = (1, "nop")
     | otherwise      = (1, "xchg ax," ++ reg)
     where
