@@ -141,6 +141,13 @@ disasmB (1,0,0,0,0,1,1,w) xs =
         (len, rm, r) = modrm False w xs
         reg = regs !! w !! r
 
+-- Register with Accumulator
+disasmB (1,0,0,1,0,r,e,g) xs
+    | reg == "ax"    = (1, "nop")
+    | otherwise      = (1, "xchg ax," ++ reg)
+    where
+        reg = regs !! 1 !! getReg r e g
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
