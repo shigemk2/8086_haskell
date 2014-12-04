@@ -306,6 +306,11 @@ testDisAsm = TestList
     -- in Variable Port
     , "ec-ed 1" ~: disasm' "EC" ~?= "in al,dx"
     , "ec-ed 2" ~: disasm' "ED" ~?= "in ax,dx"
+    -- out Fixed Port
+    , "e6-e7 w=0 1" ~: disasm' "E612" ~?= "out 0x12,al"
+    , "e6-e7 w=0 2" ~: disasm' "E6FF" ~?= "out 0xff,al"
+    , "e6-e7 w=1 3" ~: disasm' "E712" ~?= "out 0x12,ax"
+    , "e6-e7 w=1 4" ~: disasm' "E7FF" ~?= "out 0xff,ax"
     ]
 
 main = do
