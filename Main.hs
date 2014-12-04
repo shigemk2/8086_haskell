@@ -303,6 +303,9 @@ testDisAsm = TestList
     , "e4-e5 2" ~: disasm' "E4FF" ~?= "in al,0xff"
     , "e4-e5 3" ~: disasm' "E500" ~?= "in ax,0x0"
     , "e4-e5 4" ~: disasm' "E5FF" ~?= "in ax,0xff"
+    -- in Variable Port
+    , "ec-ed 1" ~: disasm' "EC" ~?= "in al,dx"
+    , "ec-ed 2" ~: disasm' "ED" ~?= "in ax,dx"
     ]
 
 main = do
