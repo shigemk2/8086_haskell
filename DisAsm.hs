@@ -149,6 +149,14 @@ disasmB (1,0,0,1,0,r,e,g) xs
     where
         reg = regs !! 1 !! getReg r e g
 
+-- in
+-- Fixed Port
+disasmB (1,1,1,0,0,1,0,w) xs
+    | w == 0    = (2, "in al," ++ imm)
+    | otherwise = (2, "in ax," ++ imm)
+    where
+        imm = "0x" ++ hex (fromLE 1 xs)
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
