@@ -298,6 +298,11 @@ testDisAsm = TestList
     , "9 6" ~: disasm' "95" ~?= "xchg ax,bp"
     , "9 7" ~: disasm' "96" ~?= "xchg ax,si"
     , "9 8" ~: disasm' "97" ~?= "xchg ax,di"
+    -- in Fixed Port
+    , "e4-e5 1" ~: disasm' "E400" ~?= "in al,0x0"
+    , "e4-e5 2" ~: disasm' "E4FF" ~?= "in al,0xff"
+    , "e4-e5 3" ~: disasm' "E500" ~?= "in ax,0x0"
+    , "e4-e5 4" ~: disasm' "E5FF" ~?= "in ax,0xff"
     ]
 
 main = do
