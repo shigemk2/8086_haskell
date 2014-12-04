@@ -163,6 +163,14 @@ disasmB (1,1,1,0,1,1,0,w) xs
     | w == 0    = (1, "in al,dx")
     | otherwise = (1, "in ax,dx")
 
+-- out
+-- Fixed Port
+disasmB (1,1,1,0,0,1,1,w) xs
+    | w == 0    = (2, "out " ++ imm ++ ",al")
+    | otherwise = (2, "out " ++ imm ++ ",ax")
+    where
+        imm = "0x" ++ hex (fromLE 1 xs)
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
