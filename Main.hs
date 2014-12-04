@@ -299,10 +299,10 @@ testDisAsm = TestList
     , "9 7" ~: disasm' "96" ~?= "xchg ax,si"
     , "9 8" ~: disasm' "97" ~?= "xchg ax,di"
     -- in Fixed Port
-    , "e4-e5 1" ~: disasm' "E400" ~?= "in al,0x0"
-    , "e4-e5 2" ~: disasm' "E4FF" ~?= "in al,0xff"
-    , "e4-e5 3" ~: disasm' "E500" ~?= "in ax,0x0"
-    , "e4-e5 4" ~: disasm' "E5FF" ~?= "in ax,0xff"
+    , "e4-e5 w=0 1" ~: disasm' "E412" ~?= "in al,0x12"
+    , "e4-e5 w=0 2" ~: disasm' "E4FF" ~?= "in al,0xff"
+    , "e4-e5 w=1 3" ~: disasm' "E512" ~?= "in ax,0x12"
+    , "e4-e5 w=1 4" ~: disasm' "E5FF" ~?= "in ax,0xff"
     -- in Variable Port
     , "ec-ed 1" ~: disasm' "EC" ~?= "in al,dx"
     , "ec-ed 2" ~: disasm' "ED" ~?= "in ax,dx"
