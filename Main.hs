@@ -313,6 +313,11 @@ testDisAsm = TestList
     , "e6-e7 w=1 4" ~: disasm' "E7FF" ~?= "out 0xff,ax"
     -- xlat
     , "d7 1" ~: disasm' "D7" ~?= "xlatb"
+    -- lea
+    , "8d 1" ~: disasm' "8D00" ~?= "lea ax,[bx+si]"
+    , "8d 2" ~: disasm' "8D4012" ~?= "lea ax,[bx+si+0x12]"
+    , "8d 3" ~: disasm' "8D801234" ~?= "lea ax,[bx+si+0x1234]"
+    , "8d 4" ~: disasm' "8DC0" ~?= "lea ax,ax"
     ]
 
 main = do
