@@ -171,6 +171,10 @@ disasmB (1,1,1,0,0,1,1,w) xs
     where
         imm = "0x" ++ hex (fromLE 1 xs)
 
+-- xlat
+disasmB (1,1,0,1,0,1,1,1) xs =
+    (1, "xlatb")
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
