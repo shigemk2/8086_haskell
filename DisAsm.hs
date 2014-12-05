@@ -175,6 +175,13 @@ disasmB (1,1,1,0,0,1,1,w) xs
 disasmB (1,1,0,1,0,1,1,1) xs =
     (1, "xlatb")
 
+-- lea
+disasmB (1,0,0,0,1,1,0,1) xs =
+    (1 + len, "lea " ++ reg ++ "," ++ rm)
+    where
+        (len, rm, r) = modrm False 1 xs
+        reg = regs !! 1 !! r
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
