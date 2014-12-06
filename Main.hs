@@ -370,6 +370,8 @@ testDisAsm = TestList
     , "40" ~: disasm' "40"   ~?= "inc ax"
     -- aaa
     , "37" ~: disasm' "37"   ~?= "aaa"
+    -- daa
+    , "27" ~: disasm' "27"   ~?= "daa"
     ]
 
 main = do
