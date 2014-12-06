@@ -271,6 +271,10 @@ disasmB (0,1,0,0,0,r,e,g) xs =
     where
         reg = regs !! 1 !! getReg r e g
 
+-- aaa
+disasmB (0,0,1,1,0,1,1,1) xs =
+    (1, "aaa")
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 -- opecode when Immediate to Register/Memory
 opirm = ["add", "", "adc"]
