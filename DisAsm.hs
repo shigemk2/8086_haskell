@@ -96,9 +96,11 @@ disasmB (1,0,0,0,1,1,0,0) xs =
         rmseg = sreg !! r
 
 -- push
+-- inc
 -- Register/Memory
-disasmB (1,1,1,1,1,1,1,1) xs =
-    (1 + len, "push " ++ rm)
+disasmB (1,1,1,1,1,1,1,1) xs
+    | r == 0 = (1 + len, "inc " ++ rm)
+    | r == 6 = (1 + len, "push " ++ rm)
     where
         (len, rm, r) = modrm True 1 xs
 
@@ -255,6 +257,13 @@ disasmB (1,0,0,0,0,0,s,w) xs
         (len, rm, r) = modrm True w xs
         imms = "0x" ++ hex (fromLE 1 (drop len xs))
         imm  = "0x" ++ hex (fromLE (w + 1) (drop len xs))
+-- inc
+-- Register/Memory
+-- w == 1はpushのと被るのでpushで場合分けしています
+disasmB (1,1,1,1,1,1,1,w) xs
+    | w == 0    = (1 + len, "inc " ++ rm)
+    where
+        (len, rm, r) = modrm True w xs
 
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 -- opecode when Immediate to Register/Memory
