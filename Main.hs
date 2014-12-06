@@ -329,7 +329,7 @@ testDisAsm = TestList
     , "c4 3" ~: disasm' "C4801234" ~?= "les ax,[bx+si+0x3412]"
     , "c4 4" ~: disasm' "C4C0" ~?= "les ax,ax"
     -- xahf
-    , "9f 1" ~: disasm' "9f" ~?= "xahf"
+    , "9f 1" ~: disasm' "9f" ~?= "lahf"
     ]
 
 main = do
