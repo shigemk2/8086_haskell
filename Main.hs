@@ -368,6 +368,8 @@ testDisAsm = TestList
     , "fe-ff w=1" ~: disasm' "ff00"   ~?= "inc word [bx+si]"
     -- inc Register
     , "40" ~: disasm' "40"   ~?= "inc ax"
+    -- aaa
+    , "37" ~: disasm' "37"   ~?= "aaa"
     ]
 
 main = do
