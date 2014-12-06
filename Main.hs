@@ -363,6 +363,9 @@ testDisAsm = TestList
     -- adc Immediate to Accumulator
     , "14-15 w=0" ~: disasm' "1412"   ~?= "adc al,0x12"
     , "14-15 w=1" ~: disasm' "151234" ~?= "adc ax,0x3412"
+    -- inc Register/Memory
+    , "fe-ff w=0" ~: disasm' "fe00"   ~?= "inc byte [bx+si]"
+    , "fe-ff w=1" ~: disasm' "ff00"   ~?= "inc word [bx+si]"
     ]
 
 main = do
