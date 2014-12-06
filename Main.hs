@@ -332,6 +332,8 @@ testDisAsm = TestList
     , "9f 1" ~: disasm' "9f" ~?= "lahf"
     -- sahf
     , "9e 1" ~: disasm' "9e" ~?= "sahf"
+    -- pushf
+    , "9c 1" ~: disasm' "9c" ~?= "pushfw"
     ]
 
 main = do
