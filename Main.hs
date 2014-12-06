@@ -355,6 +355,11 @@ testDisAsm = TestList
     , "10-13 d=0,w=1" ~: disasm' "1100" ~?= "adc [bx+si],ax"
     , "10-13 d=1,w=0" ~: disasm' "1200" ~?= "adc al,[bx+si]"
     , "10-13 d=1,w=1" ~: disasm' "1300" ~?= "adc ax,[bx+si]"
+    -- adc Immediate to Register/Memory
+    , "8010-83D7 s=0,w=0" ~: disasm' "801012"   ~?= "adc byte [bx+si],0x12"
+    , "8010-83D7 s=0,w=1" ~: disasm' "81101234" ~?= "adc word [bx+si],0x3412"
+    , "8010-83D7 s=1,w=0" ~: disasm' "82"   ~?= "db 0x82"
+    , "8010-83D7 s=1,w=1" ~: disasm' "831012"   ~?= "adc word [bx+si],byte +0x12"
     ]
 
 main = do
