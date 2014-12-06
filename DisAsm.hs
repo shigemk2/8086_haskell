@@ -237,6 +237,13 @@ disasmB (0,0,0,1,0,0,d,w) xs
         (len, rm, r) = modrm False w xs
         reg = regs !! w !! r
 
+-- Immediate to Accumulator
+disasmB (0,0,0,1,0,1,0,w) xs
+    | w == 0    = (2, "adc al," ++ imm)
+    | otherwise = (3, "adc ax," ++ imm)
+    where
+        imm = "0x" ++ hex (fromLE (1 + w) xs)
+
 -- add adc Immediate to Register/Memory
 disasmB (1,0,0,0,0,0,s,w) xs
     | getReg 0 s w == 2    = (1, "db 0x82")
