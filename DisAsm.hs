@@ -265,6 +265,12 @@ disasmB (1,1,1,1,1,1,1,w) xs
     where
         (len, rm, r) = modrm True w xs
 
+-- Register
+disasmB (0,1,0,0,0,r,e,g) xs =
+    (1, "inc " ++ reg)
+    where
+        reg = regs !! 1 !! getReg r e g
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 -- opecode when Immediate to Register/Memory
 opirm = ["add", "", "adc"]
