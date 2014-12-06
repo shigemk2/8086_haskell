@@ -41,6 +41,7 @@ testHex = TestList
         , "toLE 1" ~: toLE 2 1          ~?= [1, 0]
                 , "toLE 2" ~: toLE 2 0x10000    ~?= [0, 0]
         , "toLE 3" ~: toLE 4 0x12345678 ~?= [0x78, 0x56, 0x34, 0x12]
+        , "fromLE 0" ~: fromLE 1 [0x12]                   ~?= 0x12
         , "fromLE 1" ~: fromLE 2 [0, 1]                   ~?= 0x100
         , "fromLE 2" ~: fromLE 2 [0x78, 0x56, 0x34, 0x12] ~?= 0x5678
         , "fromLE 3" ~: fromLE 4 [0x78, 0x56, 0x34, 0x12] ~?= 0x12345678
@@ -344,6 +345,7 @@ testDisAsm = TestList
     -- add Immediate to Register/Memory
     , "80-83 s=0,w=0" ~: disasm' "800012" ~?= "add byte [bx+si],0x12"
     , "80-83 s=0,w=1" ~: disasm' "81001234" ~?= "add word [bx+si],0x3412"
+    , "80-83 s=1,w=0" ~: disasm' "820012" ~?= "add byte [bx+si],byte +0x12"
     , "80-83 s=1,w=1" ~: disasm' "830012" ~?= "add word [bx+si],byte +0x12"
     ]
 

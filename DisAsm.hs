@@ -221,6 +221,16 @@ disasmB (0,0,0,0,0,0,d,w) xs
         (len, rm, r) = modrm False w xs
         reg = regs !! w !! r
 
+-- add
+-- Reg./Memory with Register to Either
+disasmB (1,0,0,0,0,0,s,w) xs
+    | s == 1    = (1 + len + 1, "add " ++ rm ++ ",byte +" ++ imms)
+    | otherwise = (1 + len + w + 1, "add " ++ rm ++ "," ++ imm)
+    where
+        (len, rm, r) = modrm True w xs
+        imms = "0x" ++ hex (fromLE 1 (drop len xs))
+        imm  = "0x" ++ hex (fromLE (w + 1) (drop len xs))
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
