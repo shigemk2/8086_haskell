@@ -350,6 +350,11 @@ testDisAsm = TestList
     -- add Immediate to Accumulator
     , "04-05 w=0" ~: disasm' "0412"   ~?= "add al,0x12"
     , "04-05 w=1" ~: disasm' "051234" ~?= "add ax,0x3412"
+    -- adc Reg./Memory with Register to Either
+    , "10-13 d=0,w=0" ~: disasm' "1000" ~?= "adc [bx+si],al"
+    , "10-13 d=0,w=1" ~: disasm' "1100" ~?= "adc [bx+si],ax"
+    , "10-13 d=1,w=0" ~: disasm' "1200" ~?= "adc al,[bx+si]"
+    , "10-13 d=1,w=1" ~: disasm' "1300" ~?= "adc ax,[bx+si]"
     ]
 
 main = do
