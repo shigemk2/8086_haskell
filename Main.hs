@@ -345,7 +345,7 @@ testDisAsm = TestList
     -- add Immediate to Register/Memory
     , "80-83 s=0,w=0" ~: disasm' "800012"   ~?= "add byte [bx+si],0x12"
     , "80-83 s=0,w=1" ~: disasm' "81001234" ~?= "add word [bx+si],0x3412"
-    , "80-83 s=1,w=0" ~: disasm' "820012"   ~?= "add byte [bx+si],byte +0x12"
+    , "80-83 s=1,w=0" ~: disasm' "82"   ~?= "db 0x82"
     , "80-83 s=1,w=1" ~: disasm' "830012"   ~?= "add word [bx+si],byte +0x12"
     -- add Immediate to Accumulator
     , "04-05 w=0" ~: disasm' "0412"   ~?= "add al,0x12"

@@ -221,9 +221,11 @@ disasmB (0,0,0,0,0,0,d,w) xs
         (len, rm, r) = modrm False w xs
         reg = regs !! w !! r
 
--- Reg./Memory with Register to Either
+-- Immediate to Register/Memory
 disasmB (1,0,0,0,0,0,s,w) xs
-    | s == 1    = (1 + len + 1, "add " ++ rm ++ ",byte +" ++ imms)
+    | getReg 0 s w == 3    = (1 + len + 1, "add " ++ rm ++ ",byte +" ++ imms)
+    -- s w = 10 のときは欠番
+    | getReg 0 s w == 2    = (1, "db 0x82")
     | otherwise = (1 + len + w + 1, "add " ++ rm ++ "," ++ imm)
     where
         (len, rm, r) = modrm True w xs
