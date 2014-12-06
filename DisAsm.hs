@@ -221,7 +221,6 @@ disasmB (0,0,0,0,0,0,d,w) xs
         (len, rm, r) = modrm False w xs
         reg = regs !! w !! r
 
--- add
 -- Reg./Memory with Register to Either
 disasmB (1,0,0,0,0,0,s,w) xs
     | s == 1    = (1 + len + 1, "add " ++ rm ++ ",byte +" ++ imms)
@@ -230,6 +229,13 @@ disasmB (1,0,0,0,0,0,s,w) xs
         (len, rm, r) = modrm True w xs
         imms = "0x" ++ hex (fromLE 1 (drop len xs))
         imm  = "0x" ++ hex (fromLE (w + 1) (drop len xs))
+
+-- Immediate to Accumulator
+disasmB (0,0,0,0,0,1,0,w) xs
+    | w == 0    = (2, "add al," ++ imm)
+    | otherwise = (3, "add ax," ++ imm)
+    where
+        imm = "0x" ++ hex (fromLE (1 + w) xs)
 
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
