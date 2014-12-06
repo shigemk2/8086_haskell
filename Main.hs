@@ -366,6 +366,8 @@ testDisAsm = TestList
     -- inc Register/Memory
     , "fe-ff w=0" ~: disasm' "fe00"   ~?= "inc byte [bx+si]"
     , "fe-ff w=1" ~: disasm' "ff00"   ~?= "inc word [bx+si]"
+    -- inc Register
+    , "40" ~: disasm' "40"   ~?= "inc ax"
     ]
 
 main = do
