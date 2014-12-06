@@ -360,6 +360,9 @@ testDisAsm = TestList
     , "8010-83D7 s=0,w=1" ~: disasm' "81101234" ~?= "adc word [bx+si],0x3412"
     , "8010-83D7 s=1,w=0" ~: disasm' "82"   ~?= "db 0x82"
     , "8010-83D7 s=1,w=1" ~: disasm' "831012"   ~?= "adc word [bx+si],byte +0x12"
+    -- adc Immediate to Accumulator
+    , "14-15 w=0" ~: disasm' "1412"   ~?= "adc al,0x12"
+    , "14-15 w=1" ~: disasm' "151234" ~?= "adc ax,0x3412"
     ]
 
 main = do
