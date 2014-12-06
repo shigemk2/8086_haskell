@@ -212,6 +212,15 @@ disasmB (1,0,0,1,1,1,0,0) xs =
 disasmB (1,0,0,1,1,1,0,1) xs =
     (1, "popfw")
 
+-- add
+-- Reg./Memory with Register to Either
+disasmB (0,0,0,0,0,0,d,w) xs
+    | d == 0    = (1 + len, "add " ++ rm  ++ "," ++ reg)
+    | otherwise = (1 + len, "add " ++ reg ++ "," ++ rm)
+    where
+        (len, rm, r) = modrm False w xs
+        reg = regs !! w !! r
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
