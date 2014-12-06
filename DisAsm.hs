@@ -275,6 +275,10 @@ disasmB (0,1,0,0,0,r,e,g) xs =
 disasmB (0,0,1,1,0,1,1,1) xs =
     (1, "aaa")
 
+-- daa
+disasmB (0,0,1,0,0,1,1,1) xs =
+    (1, "daa")
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 -- opecode when Immediate to Register/Memory
 opirm = ["add", "", "adc"]
