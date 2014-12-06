@@ -336,6 +336,12 @@ testDisAsm = TestList
     , "9c 1" ~: disasm' "9c" ~?= "pushfw"
     -- popf
     , "9d 1" ~: disasm' "9d" ~?= "popfw"
+    -- add Reg./Memory with Register to Either
+    , "00-03 d=0,w=0" ~: disasm' "0000" ~?= "add [bx+si],al"
+    , "00-03 d=0,w=1" ~: disasm' "0100" ~?= "add [bx+si],ax"
+    , "00-03 d=1,w=0" ~: disasm' "0200" ~?= "add al,[bx+si]"
+    , "00-03 d=1,w=1" ~: disasm' "0300" ~?= "add ax,[bx+si]"
+
     ]
 
 main = do
