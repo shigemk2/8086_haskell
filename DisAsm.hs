@@ -281,6 +281,13 @@ disasmB (0,0,1,0,1,0,d,w) xs
         (len, rm, r) = modrm False w xs
         reg = regs !! w !! r
 
+-- Immediate from Accumulator
+disasmB (0,0,1,0,1,1,0,w) xs
+    | w == 0    = (2, "sub al," ++ imm)
+    | otherwise = (3, "sub ax," ++ imm)
+    where
+        imm = "0x" ++ hex (fromLE (1 + w) xs)
+
 -- aaa
 disasmB (0,0,1,1,0,1,1,1) xs =
     (1, "aaa")
