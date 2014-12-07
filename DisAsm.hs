@@ -221,7 +221,16 @@ disasmB (0,0,0,0,0,0,d,w) xs
         (len, rm, r) = modrm False w xs
         reg = regs !! w !! r
 
--- Immediate to Register/MemoryはdisasmB (0,0,0,1,0,1,0,w)で実装
+-- Immediate to Register/Memory
+disasmB (1,0,0,0,0,0,s,w) xs
+    -- s w = 10 のときは欠番
+    | getReg 0 s w == 2           = (1, "db 0x82")
+    | getReg 0 s w == 3 && r == 0 = (1 + len + 1, "add " ++ rm ++ ",byte +" ++ imms)
+    |                      r == 0 = (1 + len + w + 1, "add " ++ rm ++ "," ++ imm)
+    where
+        (len, rm, r) = modrm True w xs
+        imms = "0x" ++ hex (fromLE 1 (drop len xs))
+        imm  = "0x" ++ hex (fromLE (w + 1) (drop len xs))
 
 -- Immediate to Accumulator
 disasmB (0,0,0,0,0,1,0,w) xs
@@ -239,7 +248,16 @@ disasmB (0,0,0,1,0,0,d,w) xs
         (len, rm, r) = modrm False w xs
         reg = regs !! w !! r
 
--- Immediate to Register/MemoryはdisasmB (0,0,0,1,0,1,0,w)で実装
+-- Immediate to Register/Memory
+disasmB (1,0,0,0,0,0,s,w) xs
+    -- s w = 10 のときは欠番
+    | getReg 0 s w == 2           = (1, "db 0x82")
+    | getReg 0 s w == 3 && r == 2 = (1 + len + 1, "adc " ++ rm ++ ",byte +" ++ imms)
+    |                      r == 2 = (1 + len + w + 1, "adc " ++ rm ++ "," ++ imm)
+    where
+        (len, rm, r) = modrm True w xs
+        imms = "0x" ++ hex (fromLE 1 (drop len xs))
+        imm  = "0x" ++ hex (fromLE (w + 1) (drop len xs))
 
 -- Immediate to Accumulator
 disasmB (0,0,0,1,0,1,0,w) xs
@@ -247,20 +265,6 @@ disasmB (0,0,0,1,0,1,0,w) xs
     | otherwise = (3, "adc ax," ++ imm)
     where
         imm = "0x" ++ hex (fromLE (1 + w) xs)
-
--- add adc Immediate to Register/Memory
--- sub sbb Immediate from Register/Memory
--- cmp Immediate with Register/Memory
-disasmB (1,0,0,0,0,0,s,w) xs
-    | getReg 0 s w == 2    = (1, "db 0x82")
-    | getReg 0 s w == 3    = (1 + len + 1, op ++ " " ++ rm ++ ",byte +" ++ imms)
-    -- s w = 10 のときは欠番
-    | otherwise = (1 + len + w + 1, op ++ " " ++ rm ++ "," ++ imm)
-    where
-        op = opirm !! r
-        (len, rm, r) = modrm True w xs
-        imms = "0x" ++ hex (fromLE 1 (drop len xs))
-        imm  = "0x" ++ hex (fromLE (w + 1) (drop len xs))
 
 -- inc
 -- Register/Memory
@@ -293,7 +297,16 @@ disasmB (0,0,1,0,1,0,d,w) xs
         (len, rm, r) = modrm False w xs
         reg = regs !! w !! r
 
--- Immediate from Register/MemoryはdisasmB (0,0,0,1,0,1,0,w)で実装
+-- Immediate to Register/Memory
+disasmB (1,0,0,0,0,0,s,w) xs
+    -- s w = 10 のときは欠番
+    | getReg 0 s w == 2           = (1, "db 0x82")
+    | getReg 0 s w == 3 && r == 5 = (1 + len + 1, "sub " ++ rm ++ ",byte +" ++ imms)
+    |                      r == 5 = (1 + len + w + 1, "sub " ++ rm ++ "," ++ imm)
+    where
+        (len, rm, r) = modrm True w xs
+        imms = "0x" ++ hex (fromLE 1 (drop len xs))
+        imm  = "0x" ++ hex (fromLE (w + 1) (drop len xs))
 
 -- Immediate from Accumulator
 disasmB (0,0,1,0,1,1,0,w) xs
@@ -311,7 +324,16 @@ disasmB (0,0,0,1,1,0,d,w) xs
         (len, rm, r) = modrm False w xs
         reg = regs !! w !! r
 
--- Immediate from Register/MemoryはdisasmB (0,0,0,1,0,1,0,w)で実装
+-- Immediate to Register/Memory
+disasmB (1,0,0,0,0,0,s,w) xs
+    -- s w = 10 のときは欠番
+    | getReg 0 s w == 2           = (1, "db 0x82")
+    | getReg 0 s w == 3 && r == 3 = (1 + len + 1, "sbb " ++ rm ++ ",byte +" ++ imms)
+    |                      r == 3 = (1 + len + w + 1, "sbb " ++ rm ++ "," ++ imm)
+    where
+        (len, rm, r) = modrm True w xs
+        imms = "0x" ++ hex (fromLE 1 (drop len xs))
+        imm  = "0x" ++ hex (fromLE (w + 1) (drop len xs))
 
 -- Immediate to Accumulator
 disasmB (0,0,0,1,1,1,0,w) xs
@@ -349,7 +371,16 @@ disasmB (0,0,1,1,1,0,d,w) xs
         (len, rm, r) = modrm False w xs
         reg = regs !! w !! r
 
--- Immediate from Register/MemoryはdisasmB (0,0,0,1,0,1,0,w)で実装
+-- Immediate to Register/Memory
+disasmB (1,0,0,0,0,0,s,w) xs
+    -- s w = 10 のときは欠番
+    | getReg 0 s w == 2           = (1, "db 0x82")
+    | getReg 0 s w == 3 && r == 7 = (1 + len + 1, "cmp " ++ rm ++ ",byte +" ++ imms)
+    |                      r == 7 = (1 + len + w + 1, "cmp " ++ rm ++ "," ++ imm)
+    where
+        (len, rm, r) = modrm True w xs
+        imms = "0x" ++ hex (fromLE 1 (drop len xs))
+        imm  = "0x" ++ hex (fromLE (w + 1) (drop len xs))
 
 -- Immediate with Accumulator
 disasmB (0,0,1,1,1,1,0,w) xs
@@ -373,9 +404,6 @@ disasmB (1,1,1,1,0,1,1,w) xs
         (len, rm, r) = modrm True w xs
 
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
--- opecode when [Immediate to Register/Memory|Immediate from Register/Memory]
-opirm = ["add", "", "adc", "sbb", "", "sub", "", "cmp"]
--- opecode when Register/Memory
 
 modrm prefix w (x:xs) = (len, s, reg)
     where
