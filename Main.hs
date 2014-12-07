@@ -372,6 +372,11 @@ testDisAsm = TestList
     , "37" ~: disasm' "37"   ~?= "aaa"
     -- daa
     , "27" ~: disasm' "27"   ~?= "daa"
+    -- sub Reg./Memory with Register to Either
+    , "28-2b d=0,w=0" ~: disasm' "2800" ~?= "sub [bx+si],al"
+    , "28-2b d=0,w=1" ~: disasm' "2900" ~?= "sub [bx+si],ax"
+    , "28-2b d=1,w=0" ~: disasm' "2a00" ~?= "sub al,[bx+si]"
+    , "28-2b d=1,w=1" ~: disasm' "2b00" ~?= "sub ax,[bx+si]"
     ]
 
 main = do
