@@ -430,6 +430,10 @@ disasmB (1,1,1,1,0,1,1,w) xs
 disasmB (1,1,0,1,0,1,0,1) xs
     | getBits (head xs) == (0,0,0,0,1,0,1,0) = (2, "aad")
 
+-- cbw
+disasmB (1,0,0,1,1,0,0,0) xs =
+    (1, "cbw")
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
