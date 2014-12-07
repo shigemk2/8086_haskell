@@ -272,8 +272,16 @@ disasmB (0,1,0,0,0,r,e,g) xs =
     where
         reg = regs !! 1 !! getReg r e g
 
+-- aaa
+disasmB (0,0,1,1,0,1,1,1) xs =
+    (1, "aaa")
+
+-- daa
+disasmB (0,0,1,0,0,1,1,1) xs =
+    (1, "daa")
+
 -- sub
--- Reg./Memory with Register to Either
+-- Reg./Memory and Register to Either
 disasmB (0,0,1,0,1,0,d,w) xs
     | d == 0    = (1 + len, "sub " ++ rm  ++ "," ++ reg)
     | otherwise = (1 + len, "sub " ++ reg ++ "," ++ rm)
@@ -287,14 +295,6 @@ disasmB (0,0,1,0,1,1,0,w) xs
     | otherwise = (3, "sub ax," ++ imm)
     where
         imm = "0x" ++ hex (fromLE (1 + w) xs)
-
--- aaa
-disasmB (0,0,1,1,0,1,1,1) xs =
-    (1, "aaa")
-
--- daa
-disasmB (0,0,1,0,0,1,1,1) xs =
-    (1, "daa")
 
 -- sbb
 -- Reg./Memory and Register to Either
