@@ -96,13 +96,10 @@ disasmB (1,0,0,0,1,1,0,0) xs =
         rmseg = sreg !! r
 
 -- push
--- inc
--- dec
 -- Register/Memory
-disasmB (1,1,1,1,1,1,1,1) xs =
-    (1 + len, op ++ " " ++ rm)
+disasmB (1,1,1,1,1,1,1,1) xs
+    | r == 6 = (1 + len, "push " ++ rm)
     where
-        op = oprm !! r
         (len, rm, r) = modrm True 1 xs
 
 -- Register
@@ -266,14 +263,11 @@ disasmB (1,0,0,0,0,0,s,w) xs
         imm  = "0x" ++ hex (fromLE (w + 1) (drop len xs))
 
 -- inc
--- dec
 -- Register/Memory
--- w == 1はpushのと被るのでpushで場合分けしています
 disasmB (1,1,1,1,1,1,1,w) xs
-    | w == 0    = (1 + len, op ++ " " ++ rm)
-    | otherwise = (1 + len, op ++ " " ++ rm)
+    | w == 0 && r == 0 = (1 + len, "inc " ++ rm)
+    | w == 1 && r == 0 = (1 + len, "inc " ++ rm)
     where
-        op = oprm !! r
         (len, rm, r) = modrm True w xs
 
 -- Register
@@ -328,7 +322,11 @@ disasmB (0,0,0,1,1,1,0,w) xs
 
 -- dec
 -- Register/Memory
--- inc命令のdisasmB (1,1,1,1,1,1,1,w) xsと統合
+disasmB (1,1,1,1,1,1,1,w) xs
+    | w == 0 && r == 1 = (1 + len, "dec " ++ rm)
+    | w == 1 && r == 1 = (1 + len, "dec " ++ rm)
+    where
+        (len, rm, r) = modrm True w xs
 
 -- Register
 disasmB (0,1,0,0,1,r,e,g) xs =
@@ -378,7 +376,6 @@ regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 -- opecode when [Immediate to Register/Memory|Immediate from Register/Memory]
 opirm = ["add", "", "adc", "sbb", "", "sub", "", "cmp"]
 -- opecode when Register/Memory
-oprm = ["inc", "dec", "", "", "", "", "push"]
 
 modrm prefix w (x:xs) = (len, s, reg)
     where
