@@ -385,6 +385,11 @@ testDisAsm = TestList
     -- sub Immediate from Accumulator
     , "2c-2d w=0" ~: disasm' "2c12"   ~?= "sub al,0x12"
     , "2c-2d w=1" ~: disasm' "2d1234" ~?= "sub ax,0x3412"
+    -- sbb Reg./Memory and Register to Either
+    , "18-1b d=0,w=0" ~: disasm' "1800" ~?= "sbb [bx+si],al"
+    , "18-1b d=0,w=1" ~: disasm' "1900" ~?= "sbb [bx+si],ax"
+    , "18-1b d=1,w=0" ~: disasm' "1a00" ~?= "sbb al,[bx+si]"
+    , "18-1b d=1,w=1" ~: disasm' "1b00" ~?= "sbb ax,[bx+si]"
     ]
 
 main = do
