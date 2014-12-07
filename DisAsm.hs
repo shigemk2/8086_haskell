@@ -253,6 +253,7 @@ disasmB (0,0,0,1,0,1,0,w) xs
 
 -- add adc Immediate to Register/Memory
 -- sub sbb Immediate from Register/Memory
+-- cmp Immediate with Register/Memory
 disasmB (1,0,0,0,0,0,s,w) xs
     | getReg 0 s w == 2    = (1, "db 0x82")
     | getReg 0 s w == 3    = (1 + len + 1, op ++ " " ++ rm ++ ",byte +" ++ imms)
@@ -350,9 +351,11 @@ disasmB (0,0,1,1,1,0,d,w) xs
         (len, rm, r) = modrm False w xs
         reg = regs !! w !! r
 
+-- Immediate from Register/MemoryはdisasmB (0,0,0,1,0,1,0,w)で実装
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 -- opecode when [Immediate to Register/Memory|Immediate from Register/Memory]
-opirm = ["add", "", "adc", "sbb", "", "sub"]
+opirm = ["add", "", "adc", "sbb", "", "sub", "", "cmp"]
 -- opecode when Register/Memory
 oprm = ["inc", "dec", "", "", "", "", "push"]
 
