@@ -271,6 +271,15 @@ disasmB (0,1,0,0,0,r,e,g) xs =
     where
         reg = regs !! 1 !! getReg r e g
 
+-- sub
+-- Reg./Memory with Register to Either
+disasmB (0,0,1,0,1,0,d,w) xs
+    | d == 0    = (1 + len, "sub " ++ rm  ++ "," ++ reg)
+    | otherwise = (1 + len, "sub " ++ reg ++ "," ++ rm)
+    where
+        (len, rm, r) = modrm False w xs
+        reg = regs !! w !! r
+
 -- aaa
 disasmB (0,0,1,1,0,1,1,1) xs =
     (1, "aaa")
