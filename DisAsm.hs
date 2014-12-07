@@ -99,11 +99,10 @@ disasmB (1,0,0,0,1,1,0,0) xs =
 -- inc
 -- dec
 -- Register/Memory
-disasmB (1,1,1,1,1,1,1,1) xs
-    | r == 0 = (1 + len, "inc " ++ rm)
-    | r == 1 = (1 + len, "dec " ++ rm)
-    | r == 6 = (1 + len, "push " ++ rm)
+disasmB (1,1,1,1,1,1,1,1) xs =
+    (1 + len, op ++ " " ++ rm)
     where
+        op = oprm !! r
         (len, rm, r) = modrm True 1 xs
 
 -- Register
@@ -270,9 +269,10 @@ disasmB (1,0,0,0,0,0,s,w) xs
 -- Register/Memory
 -- w == 1はpushのと被るのでpushで場合分けしています
 disasmB (1,1,1,1,1,1,1,w) xs
-    | w == 0 && r == 0 = (1 + len, "inc " ++ rm)
-    | w == 0 && r == 1 = (1 + len, "dec " ++ rm)
+    | w == 0    = (1 + len, op ++ " " ++ rm)
+    | otherwise = (1 + len, op ++ " " ++ rm)
     where
+        op = oprm !! r
         (len, rm, r) = modrm True w xs
 
 -- Register
@@ -332,6 +332,8 @@ disasmB (0,0,0,1,1,1,0,w) xs
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 -- opecode when [Immediate to Register/Memory|Immediate from Register/Memory]
 opirm = ["add", "", "adc", "sbb", "", "sub"]
+-- opecode when Register/Memory
+oprm = ["inc", "dec", "", "", "", "", "push"]
 
 modrm prefix w (x:xs) = (len, s, reg)
     where
