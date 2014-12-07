@@ -401,6 +401,8 @@ testDisAsm = TestList
     -- dec Register/Memory
     , "fe-ff w=0" ~: disasm' "fe08"   ~?= "dec byte [bx+si]"
     , "fe-ff w=1" ~: disasm' "ff08"   ~?= "dec word [bx+si]"
+    -- dec Register
+    , "48" ~: disasm' "48"   ~?= "dec ax"
     ]
 
 main = do
