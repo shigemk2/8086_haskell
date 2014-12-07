@@ -382,6 +382,9 @@ testDisAsm = TestList
     , "80-83 s=0,w=1" ~: disasm' "81281234" ~?= "sub word [bx+si],0x3412"
     , "80-83 s=1,w=0" ~: disasm' "82"   ~?= "db 0x82"
     , "80-83 s=1,w=1" ~: disasm' "832812"   ~?= "sub word [bx+si],byte +0x12"
+    -- sub Immediate from Accumulator
+    , "2c-2d w=0" ~: disasm' "2c12"   ~?= "sub al,0x12"
+    , "2c-2d w=1" ~: disasm' "2d1234" ~?= "sub ax,0x3412"
     ]
 
 main = do
