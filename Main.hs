@@ -441,6 +441,8 @@ testDisAsm = TestList
     , "d50a" ~: disasm' "d50a"   ~?= "aad"
     -- cbw
     , "98" ~: disasm' "98"   ~?= "cbw"
+    -- cwd
+    , "99" ~: disasm' "99"   ~?= "cwd"
     ]
 
 main = do
