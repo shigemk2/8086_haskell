@@ -434,6 +434,9 @@ testDisAsm = TestList
     -- div
     , "f6-f7 w=0" ~: disasm' "f630"   ~?= "div byte [bx+si]"
     , "f6-f7 w=1" ~: disasm' "f730"   ~?= "div word [bx+si]"
+    -- idiv
+    , "f6-f7 w=0" ~: disasm' "f638"   ~?= "idiv byte [bx+si]"
+    , "f6-f7 w=1" ~: disasm' "f738"   ~?= "idiv word [bx+si]"
     ]
 
 main = do
