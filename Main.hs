@@ -398,6 +398,9 @@ testDisAsm = TestList
     -- sbb Immediate from Accumulator
     , "1c-1d w=0" ~: disasm' "1c12"   ~?= "sbb al,0x12"
     , "1c-1d w=1" ~: disasm' "1d1234" ~?= "sbb ax,0x3412"
+    -- dec Register/Memory
+    , "fe-ff w=0" ~: disasm' "fe08"   ~?= "dec byte [bx+si]"
+    , "fe-ff w=1" ~: disasm' "ff08"   ~?= "dec word [bx+si]"
     ]
 
 main = do
