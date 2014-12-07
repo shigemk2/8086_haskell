@@ -426,6 +426,9 @@ testDisAsm = TestList
     -- mul
     , "f6-f7 w=0" ~: disasm' "f620"   ~?= "mul byte [bx+si]"
     , "f6-f7 w=1" ~: disasm' "f720"   ~?= "mul word [bx+si]"
+    -- imul
+    , "f6-f7 w=0" ~: disasm' "f628"   ~?= "imul byte [bx+si]"
+    , "f6-f7 w=1" ~: disasm' "f728"   ~?= "imul word [bx+si]"
     ]
 
 main = do
