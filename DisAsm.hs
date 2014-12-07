@@ -420,6 +420,12 @@ disasmB (1,1,1,1,0,1,1,w) xs
     where
         (len, rm, r) = modrm True w xs
 
+-- idiv
+disasmB (1,1,1,1,0,1,1,w) xs
+    | r == 7 = (1 + len, "idiv " ++ rm)
+    where
+        (len, rm, r) = modrm True w xs
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
