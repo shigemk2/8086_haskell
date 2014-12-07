@@ -329,6 +329,12 @@ disasmB (0,0,0,1,1,1,0,w) xs
 -- Register/Memory
 -- inc命令のdisasmB (1,1,1,1,1,1,1,w) xsと統合
 
+-- Register
+disasmB (0,1,0,0,1,r,e,g) xs =
+    (1, "dec " ++ reg)
+    where
+        reg = regs !! 1 !! getReg r e g
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 -- opecode when [Immediate to Register/Memory|Immediate from Register/Memory]
 opirm = ["add", "", "adc", "sbb", "", "sub"]
