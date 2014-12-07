@@ -305,6 +305,13 @@ disasmB (0,0,0,1,1,0,d,w) xs
         (len, rm, r) = modrm False w xs
         reg = regs !! w !! r
 
+-- Immediate to Accumulator
+disasmB (0,0,0,1,1,1,0,w) xs
+    | w == 0    = (2, "sbb al," ++ imm)
+    | otherwise = (3, "sbb ax," ++ imm)
+    where
+        imm = "0x" ++ hex (fromLE (1 + w) xs)
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 -- opecode when [Immediate to Register/Memory|Immediate from Register/Memory]
 opirm = ["add", "", "adc", "sbb", "", "sub"]
