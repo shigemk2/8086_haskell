@@ -296,6 +296,15 @@ disasmB (0,0,1,1,0,1,1,1) xs =
 disasmB (0,0,1,0,0,1,1,1) xs =
     (1, "daa")
 
+-- sbb
+-- Reg./Memory and Register to Either
+disasmB (0,0,0,1,1,0,d,w) xs
+    | d == 0    = (1 + len, "sbb " ++ rm  ++ "," ++ reg)
+    | otherwise = (1 + len, "sbb " ++ reg ++ "," ++ rm)
+    where
+        (len, rm, r) = modrm False w xs
+        reg = regs !! w !! r
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 -- opecode when [Immediate to Register/Memory|Immediate from Register/Memory]
 opirm = ["add", "", "adc", "", "", "sub"]
