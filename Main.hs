@@ -423,6 +423,9 @@ testDisAsm = TestList
     , "3f" ~: disasm' "3f"   ~?= "aas"
     -- das
     , "2f" ~: disasm' "2f"   ~?= "das"
+    -- mul
+    , "f6-f7 w=0" ~: disasm' "f620"   ~?= "mul byte [bx+si]"
+    , "f6-f7 w=1" ~: disasm' "f720"   ~?= "mul word [bx+si]"
     ]
 
 main = do
