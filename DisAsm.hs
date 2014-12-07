@@ -353,6 +353,13 @@ disasmB (0,0,1,1,1,0,d,w) xs
 
 -- Immediate from Register/MemoryはdisasmB (0,0,0,1,0,1,0,w)で実装
 
+-- Immediate with Accumulator
+disasmB (0,0,1,1,1,1,0,w) xs
+    | w == 0    = (2, "cmp al," ++ imm)
+    | otherwise = (3, "cmp ax," ++ imm)
+    where
+        imm = "0x" ++ hex (fromLE (1 + w) xs)
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 -- opecode when [Immediate to Register/Memory|Immediate from Register/Memory]
 opirm = ["add", "", "adc", "sbb", "", "sub", "", "cmp"]
