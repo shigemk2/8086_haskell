@@ -403,6 +403,9 @@ testDisAsm = TestList
     , "fe-ff w=1" ~: disasm' "ff08"   ~?= "dec word [bx+si]"
     -- dec Register
     , "48" ~: disasm' "48"   ~?= "dec ax"
+    -- neg
+    , "f6-f7 w=0" ~: disasm' "f618"   ~?= "neg byte [bx+si]"
+    , "f6-f7 w=1" ~: disasm' "f718"   ~?= "neg word [bx+si]"
     ]
 
 main = do
