@@ -411,6 +411,11 @@ testDisAsm = TestList
     , "38-3b d=0,w=1" ~: disasm' "3900" ~?= "cmp [bx+si],ax"
     , "38-3b d=1,w=0" ~: disasm' "3a00" ~?= "cmp al,[bx+si]"
     , "38-3b d=1,w=1" ~: disasm' "3b00" ~?= "cmp ax,[bx+si]"
+    -- cmp Immediate with Register/Memory
+    , "80-83 s=0,w=0" ~: disasm' "803812"   ~?= "cmp byte [bx+si],0x12"
+    , "80-83 s=0,w=1" ~: disasm' "81381234" ~?= "cmp word [bx+si],0x3412"
+    , "80-83 s=1,w=0" ~: disasm' "82"   ~?= "db 0x82"
+    , "80-83 s=1,w=1" ~: disasm' "833812"   ~?= "cmp word [bx+si],byte +0x12"
     ]
 
 main = do
