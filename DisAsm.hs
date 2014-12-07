@@ -409,7 +409,7 @@ disasmB (1,1,1,1,0,1,1,w) xs
     where
         (len, rm, r) = modrm True w xs
 
--- das
+-- aam
 disasmB (1,1,0,1,0,1,0,0) xs
     | getBits (head xs) == (0,0,0,0,1,0,1,0) = (2, "aam")
     -- | xs == [0x0a] = (2, "aam")
