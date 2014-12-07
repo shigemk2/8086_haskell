@@ -403,6 +403,12 @@ disasmB (1,1,1,1,0,1,1,w) xs
     where
         (len, rm, r) = modrm True w xs
 
+-- imul
+disasmB (1,1,1,1,0,1,1,w) xs
+    | r == 5 = (1 + len, "imul " ++ rm)
+    where
+        (len, rm, r) = modrm True w xs
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
