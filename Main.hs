@@ -419,6 +419,8 @@ testDisAsm = TestList
     -- cmp Immediate with Accumulator
     , "3c-3d w=0" ~: disasm' "3c12"   ~?= "cmp al,0x12"
     , "3c-3d w=1" ~: disasm' "3d1234" ~?= "cmp ax,0x3412"
+    -- aas
+    , "3f" ~: disasm' "3f"   ~?= "aas"
     ]
 
 main = do
