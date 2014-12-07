@@ -414,6 +414,12 @@ disasmB (1,1,0,1,0,1,0,0) xs
     | getBits (head xs) == (0,0,0,0,1,0,1,0) = (2, "aam")
     -- | xs == [0x0a] = (2, "aam")
 
+-- div
+disasmB (1,1,1,1,0,1,1,w) xs
+    | r == 6 = (1 + len, "div " ++ rm)
+    where
+        (len, rm, r) = modrm True w xs
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
