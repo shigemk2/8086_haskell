@@ -434,6 +434,10 @@ disasmB (1,1,0,1,0,1,0,1) xs
 disasmB (1,0,0,1,1,0,0,0) xs =
     (1, "cbw")
 
+-- cwd
+disasmB (1,0,0,1,1,0,0,1) xs =
+    (1, "cwd")
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
