@@ -337,8 +337,8 @@ disasmB (0,1,0,0,1,r,e,g) xs =
         reg = regs !! 1 !! getReg r e g
 
 -- neg
-disasmB (1,1,1,1,0,1,1,w) xs =
-    (1 + len, "neg " ++ rm)
+disasmB (1,1,1,1,0,1,1,w) xs
+    | r == 3 = (1 + len, "neg " ++ rm)
     where
         (len, rm, r) = modrm True w xs
 
@@ -367,6 +367,12 @@ disasmB (0,0,1,1,1,1,1,1) xs =
 -- das
 disasmB (0,0,1,0,1,1,1,1) xs =
     (1, "das")
+
+-- mul
+disasmB (1,1,1,1,0,1,1,w) xs
+    | r == 4 = (1 + len, "mul " ++ rm)
+    where
+        (len, rm, r) = modrm True w xs
 
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 -- opecode when [Immediate to Register/Memory|Immediate from Register/Memory]
