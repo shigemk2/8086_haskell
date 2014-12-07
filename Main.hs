@@ -416,6 +416,9 @@ testDisAsm = TestList
     , "80-83 s=0,w=1" ~: disasm' "81381234" ~?= "cmp word [bx+si],0x3412"
     , "80-83 s=1,w=0" ~: disasm' "82"   ~?= "db 0x82"
     , "80-83 s=1,w=1" ~: disasm' "833812"   ~?= "cmp word [bx+si],byte +0x12"
+    -- cmp Immediate with Accumulator
+    , "3c-3d w=0" ~: disasm' "3c12"   ~?= "cmp al,0x12"
+    , "3c-3d w=1" ~: disasm' "3d1234" ~?= "cmp ax,0x3412"
     ]
 
 main = do
