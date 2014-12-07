@@ -406,6 +406,11 @@ testDisAsm = TestList
     -- neg
     , "f6-f7 w=0" ~: disasm' "f618"   ~?= "neg byte [bx+si]"
     , "f6-f7 w=1" ~: disasm' "f718"   ~?= "neg word [bx+si]"
+    -- cmp Register/Memory and Register
+    , "38-3b d=0,w=0" ~: disasm' "3800" ~?= "cmp [bx+si],al"
+    , "38-3b d=0,w=1" ~: disasm' "3900" ~?= "cmp [bx+si],ax"
+    , "38-3b d=1,w=0" ~: disasm' "3a00" ~?= "cmp al,[bx+si]"
+    , "38-3b d=1,w=1" ~: disasm' "3b00" ~?= "cmp ax,[bx+si]"
     ]
 
 main = do
