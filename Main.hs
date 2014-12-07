@@ -390,6 +390,11 @@ testDisAsm = TestList
     , "18-1b d=0,w=1" ~: disasm' "1900" ~?= "sbb [bx+si],ax"
     , "18-1b d=1,w=0" ~: disasm' "1a00" ~?= "sbb al,[bx+si]"
     , "18-1b d=1,w=1" ~: disasm' "1b00" ~?= "sbb ax,[bx+si]"
+    -- sbb Immediate from Register/Memory
+    , "80-83 s=0,w=0" ~: disasm' "801812"   ~?= "sbb byte [bx+si],0x12"
+    , "80-83 s=0,w=1" ~: disasm' "81181234" ~?= "sbb word [bx+si],0x3412"
+    , "80-83 s=1,w=0" ~: disasm' "82"   ~?= "db 0x82"
+    , "80-83 s=1,w=1" ~: disasm' "831812"   ~?= "sbb word [bx+si],byte +0x12"
     ]
 
 main = do
