@@ -429,6 +429,8 @@ testDisAsm = TestList
     -- imul
     , "f6-f7 w=0" ~: disasm' "f628"   ~?= "imul byte [bx+si]"
     , "f6-f7 w=1" ~: disasm' "f728"   ~?= "imul word [bx+si]"
+    -- aam
+    , "d40a" ~: disasm' "d40a"   ~?= "aam"
     ]
 
 main = do
