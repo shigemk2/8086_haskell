@@ -223,6 +223,8 @@ disasmB (0,0,0,0,0,0,d,w) xs
         (len, rm, r) = modrm False w xs
         reg = regs !! w !! r
 
+-- Immediate to Register/MemoryはdisasmB (0,0,0,1,0,1,0,w)で実装
+
 -- Immediate to Accumulator
 disasmB (0,0,0,0,0,1,0,w) xs
     | w == 0    = (2, "add al," ++ imm)
@@ -238,6 +240,8 @@ disasmB (0,0,0,1,0,0,d,w) xs
     where
         (len, rm, r) = modrm False w xs
         reg = regs !! w !! r
+
+-- Immediate to Register/MemoryはdisasmB (0,0,0,1,0,1,0,w)で実装
 
 -- Immediate to Accumulator
 disasmB (0,0,0,1,0,1,0,w) xs
@@ -289,6 +293,8 @@ disasmB (0,0,1,0,1,0,d,w) xs
         (len, rm, r) = modrm False w xs
         reg = regs !! w !! r
 
+-- Immediate from Register/MemoryはdisasmB (0,0,0,1,0,1,0,w)で実装
+
 -- Immediate from Accumulator
 disasmB (0,0,1,0,1,1,0,w) xs
     | w == 0    = (2, "sub al," ++ imm)
@@ -304,6 +310,8 @@ disasmB (0,0,0,1,1,0,d,w) xs
     where
         (len, rm, r) = modrm False w xs
         reg = regs !! w !! r
+
+-- Immediate from Register/MemoryはdisasmB (0,0,0,1,0,1,0,w)で実装
 
 -- Immediate to Accumulator
 disasmB (0,0,0,1,1,1,0,w) xs
