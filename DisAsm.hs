@@ -364,6 +364,10 @@ disasmB (0,0,1,1,1,1,0,w) xs
 disasmB (0,0,1,1,1,1,1,1) xs =
     (1, "aas")
 
+-- das
+disasmB (0,0,1,0,1,1,1,1) xs =
+    (1, "das")
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 -- opecode when [Immediate to Register/Memory|Immediate from Register/Memory]
 opirm = ["add", "", "adc", "sbb", "", "sub", "", "cmp"]
