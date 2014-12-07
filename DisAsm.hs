@@ -97,9 +97,11 @@ disasmB (1,0,0,0,1,1,0,0) xs =
 
 -- push
 -- inc
+-- dec
 -- Register/Memory
 disasmB (1,1,1,1,1,1,1,1) xs
     | r == 0 = (1 + len, "inc " ++ rm)
+    | r == 1 = (1 + len, "dec " ++ rm)
     | r == 6 = (1 + len, "push " ++ rm)
     where
         (len, rm, r) = modrm True 1 xs
@@ -262,11 +264,14 @@ disasmB (1,0,0,0,0,0,s,w) xs
         (len, rm, r) = modrm True w xs
         imms = "0x" ++ hex (fromLE 1 (drop len xs))
         imm  = "0x" ++ hex (fromLE (w + 1) (drop len xs))
+
 -- inc
+-- dec
 -- Register/Memory
 -- w == 1はpushのと被るのでpushで場合分けしています
 disasmB (1,1,1,1,1,1,1,w) xs
-    | w == 0    = (1 + len, "inc " ++ rm)
+    | w == 0 && r == 0 = (1 + len, "inc " ++ rm)
+    | w == 0 && r == 1 = (1 + len, "dec " ++ rm)
     where
         (len, rm, r) = modrm True w xs
 
@@ -319,6 +324,10 @@ disasmB (0,0,0,1,1,1,0,w) xs
     | otherwise = (3, "sbb ax," ++ imm)
     where
         imm = "0x" ++ hex (fromLE (1 + w) xs)
+
+-- dec
+-- Register/Memory
+-- inc命令のdisasmB (1,1,1,1,1,1,1,w) xsと統合
 
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 -- opecode when [Immediate to Register/Memory|Immediate from Register/Memory]
