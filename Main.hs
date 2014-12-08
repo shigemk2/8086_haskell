@@ -446,6 +446,11 @@ testDisAsm = TestList
     -- not
     , "f6-f7 w=0" ~: disasm' "f610"   ~?= "not byte [bx+si]"
     , "f6-f7 w=1" ~: disasm' "f710"   ~?= "not word [bx+si]"
+    -- shl/sal
+    , "d0-d3 v=0,w=0" ~: disasm' "d020" ~?= "shl byte [bx+si],1"
+    , "d0-d3 v=0,w=1" ~: disasm' "d120" ~?= "shl word [bx+si],1"
+    , "d0-d3 v=1,w=0" ~: disasm' "d220" ~?= "shl byte [bx+si],cl"
+    , "d0-d3 v=1,w=1" ~: disasm' "d320" ~?= "shl word [bx+si],cl"
     ]
 
 main = do
