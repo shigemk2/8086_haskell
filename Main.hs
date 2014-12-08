@@ -456,6 +456,11 @@ testDisAsm = TestList
     , "d0-d3 v=0,w=1" ~: disasm' "d128" ~?= "shr word [bx+si],1"
     , "d0-d3 v=1,w=0" ~: disasm' "d228" ~?= "shr byte [bx+si],cl"
     , "d0-d3 v=1,w=1" ~: disasm' "d328" ~?= "shr word [bx+si],cl"
+    -- sar
+    , "d0-d3 v=0,w=0" ~: disasm' "d038" ~?= "sar byte [bx+si],1"
+    , "d0-d3 v=0,w=1" ~: disasm' "d138" ~?= "sar word [bx+si],1"
+    , "d0-d3 v=1,w=0" ~: disasm' "d238" ~?= "sar byte [bx+si],cl"
+    , "d0-d3 v=1,w=1" ~: disasm' "d338" ~?= "sar word [bx+si],cl"
     ]
 
 main = do
