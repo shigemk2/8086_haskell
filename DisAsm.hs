@@ -446,8 +446,15 @@ disasmB (1,1,1,1,0,1,1,w) xs
 
 -- shl/sal
 disasmB (1,1,0,1,0,0,v,w) xs
-    | v == 0 = (len + 1, "shl " ++ rm ++ ",1")
-    | v == 1 = (len + 1, "shl " ++ rm ++ ",cl")
+    | r == 4 && v == 0 = (len + 1, "shl " ++ rm ++ ",1")
+    | r == 4 && v == 1 = (len + 1, "shl " ++ rm ++ ",cl")
+    where
+        (len, rm, r) = modrm True w xs
+
+-- shr
+disasmB (1,1,0,1,0,0,v,w) xs
+    | r == 5 && v == 0 = (len + 1, "shr " ++ rm ++ ",1")
+    | r == 5 && v == 1 = (len + 1, "shr " ++ rm ++ ",cl")
     where
         (len, rm, r) = modrm True w xs
 
