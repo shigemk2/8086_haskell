@@ -465,6 +465,13 @@ disasmB (1,1,0,1,0,0,v,w) xs
     where
         (len, rm, r) = modrm True w xs
 
+-- rol
+disasmB (1,1,0,1,0,0,v,w) xs
+    | r == 0 && v == 0 = (len + 1, "rol " ++ rm ++ ",1")
+    | r == 0 && v == 1 = (len + 1, "rol " ++ rm ++ ",cl")
+    where
+        (len, rm, r) = modrm True w xs
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
