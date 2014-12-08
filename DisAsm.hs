@@ -438,6 +438,12 @@ disasmB (1,0,0,1,1,0,0,0) xs =
 disasmB (1,0,0,1,1,0,0,1) xs =
     (1, "cwd")
 
+-- not
+disasmB (1,1,1,1,0,1,1,w) xs
+    | r == 2 = (1 + len, "not " ++ rm)
+    where
+        (len, rm, r) = modrm True w xs
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
