@@ -443,6 +443,9 @@ testDisAsm = TestList
     , "98" ~: disasm' "98"   ~?= "cbw"
     -- cwd
     , "99" ~: disasm' "99"   ~?= "cwd"
+    -- not
+    , "f6-f7 w=0" ~: disasm' "f610"   ~?= "not byte [bx+si]"
+    , "f6-f7 w=1" ~: disasm' "f710"   ~?= "not word [bx+si]"
     ]
 
 main = do
