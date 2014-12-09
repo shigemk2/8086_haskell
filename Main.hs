@@ -495,6 +495,9 @@ testDisAsm = TestList
     -- test Register/Memory and Register
     , "84-85 w=0" ~: disasm' "8400" ~?= "test [bx+si],al"
     , "84-85 w=1" ~: disasm' "8500" ~?= "test [bx+si],ax"
+    -- test Immediate Data and Register/Memory
+    , "f6-f7 w=0" ~: disasm' "f60012"   ~?= "test byte [bx+si],0x12"
+    , "f6-f7 w=1" ~: disasm' "f7001234" ~?= "test word [bx+si],0x3412"
     ]
 
 main = do
