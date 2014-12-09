@@ -486,6 +486,9 @@ testDisAsm = TestList
     , "20-23 d=0,w=1" ~: disasm' "2100" ~?= "and [bx+si],ax"
     , "20-23 d=1,w=0" ~: disasm' "2200" ~?= "and al,[bx+si]"
     , "20-23 d=1,w=1" ~: disasm' "2300" ~?= "and ax,[bx+si]"
+    -- and Immediate to Register/Memory
+    , "80-81 w=0" ~: disasm' "802012"   ~?= "and byte [bx+si],0x12"
+    , "80-81 w=1" ~: disasm' "81201234" ~?= "and word [bx+si],0x3412"
     ]
 
 main = do
