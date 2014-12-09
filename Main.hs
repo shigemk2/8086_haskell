@@ -476,6 +476,11 @@ testDisAsm = TestList
     , "d0-d3 v=0,w=1" ~: disasm' "d110" ~?= "rcl word [bx+si],1"
     , "d0-d3 v=1,w=0" ~: disasm' "d210" ~?= "rcl byte [bx+si],cl"
     , "d0-d3 v=1,w=1" ~: disasm' "d310" ~?= "rcl word [bx+si],cl"
+    -- rcr
+    , "d0-d3 v=0,w=0" ~: disasm' "d018" ~?= "rcr byte [bx+si],1"
+    , "d0-d3 v=0,w=1" ~: disasm' "d118" ~?= "rcr word [bx+si],1"
+    , "d0-d3 v=1,w=0" ~: disasm' "d218" ~?= "rcr byte [bx+si],cl"
+    , "d0-d3 v=1,w=1" ~: disasm' "d318" ~?= "rcr word [bx+si],cl"
     ]
 
 main = do
