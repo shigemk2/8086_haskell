@@ -481,6 +481,11 @@ testDisAsm = TestList
     , "d0-d3 v=0,w=1" ~: disasm' "d118" ~?= "rcr word [bx+si],1"
     , "d0-d3 v=1,w=0" ~: disasm' "d218" ~?= "rcr byte [bx+si],cl"
     , "d0-d3 v=1,w=1" ~: disasm' "d318" ~?= "rcr word [bx+si],cl"
+    -- and Reg./Memory and Register to Either
+    , "20-23 d=0,w=0" ~: disasm' "2000" ~?= "and [bx+si],al"
+    , "20-23 d=0,w=1" ~: disasm' "2100" ~?= "and [bx+si],ax"
+    , "20-23 d=1,w=0" ~: disasm' "2200" ~?= "and al,[bx+si]"
+    , "20-23 d=1,w=1" ~: disasm' "2300" ~?= "and ax,[bx+si]"
     ]
 
 main = do
