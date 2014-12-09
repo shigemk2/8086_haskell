@@ -517,6 +517,15 @@ disasmB (0,0,1,0,0,1,0,w) xs
     where
         imm = "0x" ++ hex (fromLE (1 + w) xs)
 
+-- test
+-- Register/Memory and Register
+disasmB (1,0,0,0,0,1,0,w) xs
+    | w == 0    = (1 + len, "test " ++ rm ++ "," ++ reg)
+    | otherwise = (1 + len, "test " ++ rm ++ "," ++ reg)
+    where
+        (len, rm, r) = modrm False w xs
+        reg = regs !! w !! r
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
