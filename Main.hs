@@ -492,6 +492,9 @@ testDisAsm = TestList
     -- and Immediate to Accumulator
     , "24-25 w=0" ~: disasm' "2412"   ~?= "and al,0x12"
     , "24-25 w=1" ~: disasm' "251234" ~?= "and ax,0x3412"
+    -- test Register/Memory and Register
+    , "84-85 w=0" ~: disasm' "8400" ~?= "test [bx+si],al"
+    , "84-85 w=1" ~: disasm' "8500" ~?= "test [bx+si],ax"
     ]
 
 main = do
