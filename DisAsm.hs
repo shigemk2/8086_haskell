@@ -533,6 +533,13 @@ disasmB (1,1,1,1,0,1,1,w) xs
         (len, rm, r) = modrm True w xs
         imm = "0x" ++ hex (fromLE (1 + w) (drop len xs))
 
+-- Immediate Data and Accumulator
+disasmB (1,0,1,0,1,0,0,w) xs
+    | w == 0    = (2 + w, "test " ++ "al," ++ imm)
+    | otherwise = (2 + w, "test " ++ "ax," ++ imm)
+    where
+        imm = "0x" ++ hex (fromLE (1 + w) xs)
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
