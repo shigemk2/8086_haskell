@@ -501,6 +501,11 @@ testDisAsm = TestList
     -- test Immediate Data and Accumulator
     , "a8-a9 w=0" ~: disasm' "a812"   ~?= "test al,0x12"
     , "a8-a9 w=1" ~: disasm' "a91234" ~?= "test ax,0x3412"
+    -- or Reg./Memory and Register to Either
+    , "08-0b d=0,w=0" ~: disasm' "0800" ~?= "or [bx+si],al"
+    , "08-0b d=0,w=1" ~: disasm' "0900" ~?= "or [bx+si],ax"
+    , "08-0b d=1,w=0" ~: disasm' "0a00" ~?= "or al,[bx+si]"
+    , "08-0b d=1,w=1" ~: disasm' "0b00" ~?= "or ax,[bx+si]"
     ]
 
 main = do
