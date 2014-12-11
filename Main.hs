@@ -512,6 +512,11 @@ testDisAsm = TestList
     -- or Immediate to Accumulator
     , "0c-0d w=0" ~: disasm' "0c12"   ~?= "or al,0x12"
     , "0c-0d w=1" ~: disasm' "0d1234" ~?= "or ax,0x3412"
+    -- xor Reg./Memory and Register to Either
+    , "30-33 d=0,w=0" ~: disasm' "3000" ~?= "xor [bx+si],al"
+    , "30-33 d=0,w=1" ~: disasm' "3100" ~?= "xor [bx+si],ax"
+    , "30-33 d=1,w=0" ~: disasm' "3200" ~?= "xor al,[bx+si]"
+    , "30-33 d=1,w=1" ~: disasm' "3300" ~?= "xor ax,[bx+si]"
     ]
 
 main = do
