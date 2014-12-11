@@ -529,6 +529,9 @@ testDisAsm = TestList
     -- movs
     , "a4-a5 w=0" ~: disasm' "a4" ~?= "movsb"
     , "a4-a5 w=1" ~: disasm' "a5" ~?= "movsw"
+    -- cmp
+    , "a6-a7 w=0" ~: disasm' "a6" ~?= "cmpsb"
+    , "a6-a7 w=1" ~: disasm' "a7" ~?= "cmpsw"
     ]
 
 main = do
