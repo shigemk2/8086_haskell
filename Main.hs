@@ -520,6 +520,9 @@ testDisAsm = TestList
     -- xor Immediate to Register/Memory
     , "80-81 w=0" ~: disasm' "803012"   ~?= "xor byte [bx+si],0x12"
     , "80-81 w=1" ~: disasm' "81301234" ~?= "xor word [bx+si],0x3412"
+    -- xor Immediate to Accumulator
+    , "34-35 w=0" ~: disasm' "3412"   ~?= "xor al,0x12"
+    , "34-35 w=1" ~: disasm' "351234" ~?= "xor ax,0x3412"
     ]
 
 main = do
