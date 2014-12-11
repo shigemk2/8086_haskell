@@ -523,6 +523,9 @@ testDisAsm = TestList
     -- xor Immediate to Accumulator
     , "34-35 w=0" ~: disasm' "3412"   ~?= "xor al,0x12"
     , "34-35 w=1" ~: disasm' "351234" ~?= "xor ax,0x3412"
+    -- rep
+    , "f2-f3 z=0" ~: disasm' "f2" ~?= "repne"
+    , "f2-f3 z=1" ~: disasm' "f3" ~?= "rep"
     ]
 
 main = do
