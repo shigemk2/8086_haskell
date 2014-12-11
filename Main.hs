@@ -526,6 +526,9 @@ testDisAsm = TestList
     -- rep
     , "f2-f3 z=0" ~: disasm' "f2" ~?= "repne"
     , "f2-f3 z=1" ~: disasm' "f3" ~?= "rep"
+    -- movs
+    , "a4-a5 w=0" ~: disasm' "a4" ~?= "movsb"
+    , "a4-a5 w=1" ~: disasm' "a5" ~?= "movsw"
     ]
 
 main = do
