@@ -588,6 +588,11 @@ disasmB (0,0,1,1,0,1,0,w) xs
     where
         imm = "0x" ++ hex (fromLE (1 + w) xs)
 
+-- rep
+disasmB (1,1,1,1,0,0,1,z) xs
+    | z == 0    = (1, "repne")
+    | otherwise = (1, "rep")
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
