@@ -509,6 +509,9 @@ testDisAsm = TestList
     -- or Immediate to Register/Memory
     , "80-81 w=0" ~: disasm' "800812"   ~?= "or byte [bx+si],0x12"
     , "80-81 w=1" ~: disasm' "81081234" ~?= "or word [bx+si],0x3412"
+    -- or Immediate to Accumulator
+    , "0c-0d w=0" ~: disasm' "0c12"   ~?= "or al,0x12"
+    , "0c-0d w=1" ~: disasm' "0d1234" ~?= "or ax,0x3412"
     ]
 
 main = do
