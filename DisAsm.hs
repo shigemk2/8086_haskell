@@ -504,8 +504,8 @@ disasmB (0,0,1,0,0,0,d,w) xs
 
 -- Immediate to Register/Memory
 disasmB (1,0,0,0,0,0,0,w) xs
-    | w == 0    = (2 + len, "and " ++ rm ++ "," ++ imm)
-    | otherwise = (2 + 1 + len, "and " ++ rm ++ "," ++ imm)
+    | w == 0 && r == 4 = (2 + len, "and " ++ rm ++ "," ++ imm)
+    | w == 1 && r == 4 = (2 + 1 + len, "and " ++ rm ++ "," ++ imm)
     where
         (len, rm, r) = modrm True w xs
         imm = "0x" ++ hex (fromLE (w + 1) (drop len xs))
@@ -548,6 +548,14 @@ disasmB (0,0,0,0,1,0,d,w) xs
     where
         (len, rm, r) = modrm False w xs
         reg = regs !! w !! r
+
+-- Immediate to Register/Memory
+disasmB (1,0,0,0,0,0,0,w) xs
+    | w == 0 && r == 1 = (2 + len, "or " ++ rm ++ "," ++ imm)
+    | w == 1 && r == 1 = (2 + 1 + len, "or " ++ rm ++ "," ++ imm)
+    where
+        (len, rm, r) = modrm True w xs
+        imm = "0x" ++ hex (fromLE (w + 1) (drop len xs))
 
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
