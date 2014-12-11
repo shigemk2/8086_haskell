@@ -517,6 +517,9 @@ testDisAsm = TestList
     , "30-33 d=0,w=1" ~: disasm' "3100" ~?= "xor [bx+si],ax"
     , "30-33 d=1,w=0" ~: disasm' "3200" ~?= "xor al,[bx+si]"
     , "30-33 d=1,w=1" ~: disasm' "3300" ~?= "xor ax,[bx+si]"
+    -- xor Immediate to Register/Memory
+    , "80-81 w=0" ~: disasm' "803012"   ~?= "xor byte [bx+si],0x12"
+    , "80-81 w=1" ~: disasm' "81301234" ~?= "xor word [bx+si],0x3412"
     ]
 
 main = do
