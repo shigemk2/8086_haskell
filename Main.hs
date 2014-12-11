@@ -532,6 +532,9 @@ testDisAsm = TestList
     -- cmp
     , "a6-a7 w=0" ~: disasm' "a6" ~?= "cmpsb"
     , "a6-a7 w=1" ~: disasm' "a7" ~?= "cmpsw"
+    -- scas
+    , "ae-af w=0" ~: disasm' "ae" ~?= "scasb"
+    , "ae-af w=1" ~: disasm' "af" ~?= "scasw"
     ]
 
 main = do
