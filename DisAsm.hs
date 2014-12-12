@@ -608,6 +608,11 @@ disasmB (1,0,1,0,1,1,1,w) xs
     | w == 0    = (1, "scasb")
     | otherwise = (1, "scasw")
 
+-- lods
+disasmB (1,0,1,0,1,1,0,w) xs
+    | w == 0    = (1, "lodsb")
+    | otherwise = (1, "lodsw")
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
