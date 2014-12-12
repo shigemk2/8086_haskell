@@ -538,6 +538,9 @@ testDisAsm = TestList
     -- lods
     , "ac-ad w=0" ~: disasm' "ac" ~?= "lodsb"
     , "ac-ad w=1" ~: disasm' "ad" ~?= "lodsw"
+    -- stos
+    , "aa-ab w=0" ~: disasm' "aa" ~?= "stosb"
+    , "aa-ab w=1" ~: disasm' "ab" ~?= "stosw"
     ]
 
 main = do
