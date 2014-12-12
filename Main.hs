@@ -535,6 +535,9 @@ testDisAsm = TestList
     -- scas
     , "ae-af w=0" ~: disasm' "ae" ~?= "scasb"
     , "ae-af w=1" ~: disasm' "af" ~?= "scasw"
+    -- lods
+    , "ac-ad w=0" ~: disasm' "ac" ~?= "lodsb"
+    , "ac-ad w=1" ~: disasm' "ad" ~?= "lodsw"
     ]
 
 main = do
