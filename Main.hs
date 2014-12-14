@@ -55,10 +55,10 @@ testHex = TestList
         ]
 
 testDisAsm = TestList
-    [ "b8 1" ~: disasm [0xb8, 0, 0]       ~?= (3, "mov ax,0x0")
-    , "b8 2" ~: disasm [0xb8, 0x34, 0x12] ~?= (3, "mov ax,0x1234")
-    , "b8 3" ~: disasm [0xb8, 0x78, 0x56] ~?= (3, "mov ax,0x5678")
-    , "b0 1" ~: disasm [0xb0, 0x00] ~?= (2, "mov al,0x0")
+    [ "b8 1" ~: disasm 0 [0xb8, 0, 0]       ~?= (3, "mov ax,0x0")
+    , "b8 2" ~: disasm 0 [0xb8, 0x34, 0x12] ~?= (3, "mov ax,0x1234")
+    , "b8 3" ~: disasm 0 [0xb8, 0x78, 0x56] ~?= (3, "mov ax,0x5678")
+    , "b0 1" ~: disasm 0 [0xb0, 0x00] ~?= (2, "mov al,0x0")
     , "b8 3" ~: disasm' "b80000" ~?= "mov ax,0x0"
     , "b8 4" ~: disasm' "b83412" ~?= "mov ax,0x1234"
     , "b8-bf 0" ~: disasm' "b80100" ~?= "mov ax,0x1"
@@ -91,11 +91,11 @@ testDisAsm = TestList
     , "disp16 2" ~: disp16 0x7fff ~?= "+0x7fff"
     , "disp16 3" ~: disp16 0x8000 ~?= "-0x8000"
     , "disp16 4" ~: disp16 0xffff ~?= "-0x1"
-    , "disAsmB 0" ~: disasmB (1,0,1,1,1,0,0,0) [0, 0] ~?= (3, "mov ax,0x0")
-    , "disAsmB 1" ~: disasmB (1,0,0,0,1,0,1,1) [0, 0] ~?= (2, "mov ax,[bx+si]")
-    , "disAsmB 2" ~: disasmB (1,0,0,0,1,0,0,1) [0, 0] ~?= (2, "mov [bx+si],ax")
-    , "disAsmB 3" ~: disasmB (1,0,0,0,1,0,0,0) [0, 0] ~?= (2, "mov [bx+si],al")
-    , "disAsmB 4" ~: disasmB (1,0,0,0,1,0,0,0) [2, 0] ~?= (2, "mov [bp+si],al")
+    , "disAsmB 0" ~: disasmB 0 (1,0,1,1,1,0,0,0) [0, 0] ~?= (3, "mov ax,0x0")
+    , "disAsmB 1" ~: disasmB 0 (1,0,0,0,1,0,1,1) [0, 0] ~?= (2, "mov ax,[bx+si]")
+    , "disAsmB 2" ~: disasmB 0 (1,0,0,0,1,0,0,1) [0, 0] ~?= (2, "mov [bx+si],ax")
+    , "disAsmB 3" ~: disasmB 0 (1,0,0,0,1,0,0,0) [0, 0] ~?= (2, "mov [bx+si],al")
+    , "disAsmB 4" ~: disasmB 0 (1,0,0,0,1,0,0,0) [2, 0] ~?= (2, "mov [bp+si],al")
     , "88-8b mod=00 1" ~: disasm' "8900" ~?= "mov [bx+si],ax"
     , "88-8b mod=00 2" ~: disasm' "8909" ~?= "mov [bx+di],cx"
     , "88-8b mod=00 3" ~: disasm' "8912" ~?= "mov [bp+si],dx"
@@ -195,9 +195,9 @@ testDisAsm = TestList
     , "8c mod=11 2" ~: disasm' "8CC1" ~?= "mov cx,es"
     , "8c mod=11 3" ~: disasm' "8CD0" ~?= "mov ax,ss"
     , "8c mod=11 4" ~: disasm' "8CD8" ~?= "mov ax,ds"
-    , "b8 1" ~: disasm [0xb8, 0, 0]       ~?= (3, "mov ax,0x0")
-    , "b8 2" ~: disasm [0xb8, 0x34, 0x12] ~?= (3, "mov ax,0x1234")
-    , "disasms" ~: disasms [0xc6, 0x47, 1, 1, 0xb0, 1]
+    , "b8 1" ~: disasm 0 [0xb8, 0, 0]       ~?= (3, "mov ax,0x0")
+    , "b8 2" ~: disasm 0 [0xb8, 0x34, 0x12] ~?= (3, "mov ax,0x1234")
+    , "disasms" ~: disasms 0 [0xc6, 0x47, 1, 1, 0xb0, 1]
         ~?= [(4, "mov byte [bx+0x1],0x1"), (2, "mov al,0x1")]
     , "disasms' 0" ~: disasms' "C6470101B001"
         ~?= ["mov byte [bx+0x1],0x1", "mov al,0x1"]
@@ -543,8 +543,7 @@ testDisAsm = TestList
     , "aa-ab w=1" ~: disasm' "ab" ~?= "stosw"
     -- call Direct within Segment
     , "e8 1" ~: disasm' "e80012" ~?= "call word 0x1203"
-    , "e8 2" ~: disasm' "e80012" ~?= "call word 0x1204"
-    , "e8 3" ~: disasm' "e80012" ~?= "call word 0x1205"
+    , "e8 2" ~: disasm 0 [0xe8, 0, 0x12] ~?= (3, "call word 0x1203")
     ]
 
 main = do
