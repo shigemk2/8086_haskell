@@ -566,6 +566,10 @@ testDisAsm = TestList
     -- jmp Direct Intersegment
     , "ea 1" ~: disasm' "ea12345678" ~?= "jmp word 0x7856:0x3412"
     , "ea 2" ~: disasm' "ea00120012" ~?= "jmp word 0x1200:0x1200"
+    -- jmp Indirect Intersegment
+    , "ff 1" ~: disasm' "ff28" ~?= "jmp word far [bx+si]"
+    -- jmp Indirect Intersegment mod=11は実行不可能
+    , "ff 2" ~: disasm' "ffe8" ~?= "jmp word far ax"
     ]
 
 main = do
