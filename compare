@@ -1,0 +1,2 @@
+#!/bin/bash
+diff <(runhaskell Main.hs $1) <(ndisasm $1)
