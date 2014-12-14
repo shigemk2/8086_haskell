@@ -557,6 +557,10 @@ testDisAsm = TestList
     , "e9 1" ~: disasm' "e90012" ~?= "jmp word 0x1203"
     , "e9 2" ~: disasm 0 [0xe9, 0, 0x12] ~?= (3, "jmp word 0x1203")
     , "e9 3" ~: disasm 3 [0xe9, 0, 0x12] ~?= (3, "jmp word 0x1206")
+    -- jmp Direct within Segment-Short
+    , "eb 1" ~: disasm' "eb00" ~?= "jmp short 0x2"
+    , "eb 2" ~: disasm 0 [0xeb, 0] ~?= (2, "jmp short 0x2")
+    , "eb 3" ~: disasm 3 [0xeb, 0] ~?= (2, "jmp short 0x5")
     ]
 
 main = do
