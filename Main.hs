@@ -578,6 +578,10 @@ testDisAsm = TestList
     , "cb" ~: disasm' "cb" ~?= "retf"
     -- ret Intersegment Adding Immediate to SP
     , "ca 1" ~: disasm' "ca1234" ~?= "retf 0x3412"
+    -- je/jz
+    , "74 1" ~: disasm' "7400" ~?= "jz 0x2"
+    , "74 2" ~: disasm 0 [0x74, 0] ~?= (2, "jz 0x2")
+    , "74 3" ~: disasm 3 [0x74, 0] ~?= (2, "jz 0x5")
     ]
 
 main = do
