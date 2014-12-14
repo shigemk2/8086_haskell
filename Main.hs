@@ -549,6 +549,10 @@ testDisAsm = TestList
     -- call Direct Intersegment
     , "9a 1" ~: disasm' "9a12345678" ~?= "call word 0x7856:0x3412"
     , "9a 2" ~: disasm' "9a00120012" ~?= "call word 0x1200:0x1200"
+    -- call Indirect Intersegment
+    , "ff 1" ~: disasm' "ff18" ~?= "call word far [bx+si]"
+    -- call Indirect Intersegment mod=11は実行不可能
+    , "ff 2" ~: disasm' "ffd8" ~?= "call word far ax"
     ]
 
 main = do
