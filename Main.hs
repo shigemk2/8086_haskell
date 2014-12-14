@@ -544,6 +544,8 @@ testDisAsm = TestList
     -- call Direct within Segment
     , "e8 1" ~: disasm' "e80012" ~?= "call word 0x1203"
     , "e8 2" ~: disasm 0 [0xe8, 0, 0x12] ~?= (3, "call word 0x1203")
+    -- call Indirect within Segment
+    , "ff" ~: disasm' "ff10" ~?= "call word [bx+si]"
     ]
 
 main = do
