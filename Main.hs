@@ -541,6 +541,10 @@ testDisAsm = TestList
     -- stos
     , "aa-ab w=0" ~: disasm' "aa" ~?= "stosb"
     , "aa-ab w=1" ~: disasm' "ab" ~?= "stosw"
+    -- call Direct within Segment
+    , "e8 1" ~: disasm' "e80012" ~?= "call word 0x1203"
+    , "e8 2" ~: disasm' "e80012" ~?= "call word 0x1204"
+    , "e8 3" ~: disasm' "e80012" ~?= "call word 0x1205"
     ]
 
 main = do
