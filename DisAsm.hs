@@ -618,12 +618,19 @@ disasmB _ (1,0,1,0,1,0,1,w) xs
     | w == 0    = (1, "stosb")
     | otherwise = (1, "stosw")
 
--- call Direct within Segment
+-- call
+-- Direct within Segment
 disasmB ip (1,1,1,0,1,0,0,0) xs =
     (len, "call word " ++ imm)
     where
         len = 3
         imm = "0x" ++ hex (fromLE 2 xs + ip + len)
+
+-- Indirect within Segment
+disasmB _ (1,1,1,1,1,1,1,1) xs
+    | r == 2 = (1 + len, "call " ++ rm)
+    where
+        (len, rm, r) = modrm True 1 xs
 
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
