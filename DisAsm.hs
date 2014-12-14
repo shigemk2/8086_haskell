@@ -639,6 +639,13 @@ disasmB ip (1,0,0,1,1,0,1,0) xs =
         immseg = "0x" ++ hex (fromLE 2 (drop 2 xs))
         immoff = "0x" ++ hex (fromLE 2 (take 2 xs))
 
+-- Indirect Intersegment
+-- mod=11は実行不可能
+disasmB _ (1,1,1,1,1,1,1,1) xs =
+    (1 + len, "call word far " ++ rm)
+    where
+        (len, rm, r) = modrm False 1 xs
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
