@@ -574,6 +574,8 @@ testDisAsm = TestList
     , "c3" ~: disasm' "c3" ~?= "ret"
     -- ret Within Seg Adding Immed to SP
     , "c2 1" ~: disasm' "c21234" ~?= "ret 0x3412"
+    -- ret Intersegment
+    , "cb" ~: disasm' "cb" ~?= "retf"
     ]
 
 main = do
