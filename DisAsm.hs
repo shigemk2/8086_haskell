@@ -646,6 +646,14 @@ disasmB _ (1,1,1,1,1,1,1,1) xs =
     where
         (len, rm, r) = modrm False 1 xs
 
+-- jmp
+-- Direct within Segment
+disasmB ip (1,1,1,0,1,0,0,1) xs =
+    (len, "jmp word " ++ imm)
+    where
+        len = 3
+        imm = "0x" ++ hex (fromLE 2 xs + ip + len)
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
