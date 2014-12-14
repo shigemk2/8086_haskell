@@ -570,6 +570,8 @@ testDisAsm = TestList
     , "ff 1" ~: disasm' "ff28" ~?= "jmp word far [bx+si]"
     -- jmp Indirect Intersegment mod=11は実行不可能
     , "ff 2" ~: disasm' "ffe8" ~?= "jmp word far ax"
+    -- ret Within Segment
+    , "c3" ~: disasm' "c3" ~?= "ret"
     ]
 
 main = do
