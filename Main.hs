@@ -553,6 +553,10 @@ testDisAsm = TestList
     , "ff 1" ~: disasm' "ff18" ~?= "call word far [bx+si]"
     -- call Indirect Intersegment mod=11は実行不可能
     , "ff 2" ~: disasm' "ffd8" ~?= "call word far ax"
+    -- jmp Direct within Segment
+    , "e9 1" ~: disasm' "e90012" ~?= "jmp word 0x1203"
+    , "e9 2" ~: disasm 0 [0xe9, 0, 0x12] ~?= (3, "jmp word 0x1203")
+    , "e9 3" ~: disasm 3 [0xe9, 0, 0x12] ~?= (3, "jmp word 0x1206")
     ]
 
 main = do
