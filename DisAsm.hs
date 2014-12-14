@@ -692,6 +692,10 @@ disasmB _ (1,1,0,0,0,0,1,0) xs =
     where
         imm = "0x" ++ hex (fromLE 2 xs)
 
+-- Intersegment
+disasmB _ (1,1,0,0,1,0,1,1) xs =
+    (1, "retf")
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
