@@ -546,6 +546,9 @@ testDisAsm = TestList
     , "e8 2" ~: disasm 0 [0xe8, 0, 0x12] ~?= (3, "call word 0x1203")
     -- call Indirect within Segment
     , "ff" ~: disasm' "ff10" ~?= "call word [bx+si]"
+    -- call Direct Intersegment
+    , "9a 1" ~: disasm' "9a12345678" ~?= "call word 0x7856:0x3412"
+    , "9a 2" ~: disasm' "9a00120012" ~?= "call word 0x1200:0x1200"
     ]
 
 main = do
