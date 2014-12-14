@@ -667,6 +667,13 @@ disasmB _ (1,1,1,1,1,1,1,1) xs
     where
         (len, rm, r) = modrm True 1 xs
 
+-- Direct Intersegment
+disasmB ip (1,1,1,0,1,0,1,0) xs =
+    (5, "jmp word " ++ immseg ++ ":" ++ immoff)
+    where
+        immseg = "0x" ++ hex (fromLE 2 (drop 2 xs))
+        immoff = "0x" ++ hex (fromLE 2 (take 2 xs))
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
