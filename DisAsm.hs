@@ -723,7 +723,7 @@ disasmB ip (0,1,1,1,1,1,1,0) xs =
         len = 2
         imm = "0x" ++ hex (fromLE 1 xs + ip + len)
 
--- jb/jnae
+-- jb/jnae(jcはエイリアス)
 disasmB ip (0,1,1,1,0,0,1,0) xs =
     (len, "jc " ++ imm)
     where
