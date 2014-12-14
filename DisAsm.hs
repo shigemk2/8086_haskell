@@ -641,8 +641,8 @@ disasmB ip (1,0,0,1,1,0,1,0) xs =
 
 -- Indirect Intersegment
 -- mod=11は実行不可能
-disasmB _ (1,1,1,1,1,1,1,1) xs =
-    (1 + len, "call word far " ++ rm)
+disasmB _ (1,1,1,1,1,1,1,1) xs
+    | r == 3 = (1 + len, "call word far " ++ rm)
     where
         (len, rm, r) = modrm False 1 xs
 
@@ -660,6 +660,12 @@ disasmB ip (1,1,1,0,1,0,1,1) xs =
     where
         len = 2
         imm = "0x" ++ hex (fromLE 1 xs + ip + len)
+
+-- Indirect within Segment
+disasmB _ (1,1,1,1,1,1,1,1) xs
+    | r == 4 = (1 + len, "jmp " ++ rm)
+    where
+        (len, rm, r) = modrm True 1 xs
 
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
