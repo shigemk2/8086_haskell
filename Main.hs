@@ -572,6 +572,8 @@ testDisAsm = TestList
     , "ff 2" ~: disasm' "ffe8" ~?= "jmp word far ax"
     -- ret Within Segment
     , "c3" ~: disasm' "c3" ~?= "ret"
+    -- ret Within Seg Adding Immed to SP
+    , "c2 1" ~: disasm' "c21234" ~?= "ret 0x3412"
     ]
 
 main = do
