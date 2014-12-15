@@ -626,6 +626,10 @@ testDisAsm = TestList
     , "73 1" ~: disasm' "7300" ~?= "jnc 0x2"
     , "73 2" ~: disasm 0 [0x73, 0] ~?= (2, "jnc 0x2")
     , "73 3" ~: disasm 3 [0x73, 0] ~?= (2, "jnc 0x5")
+    -- jnbe/ja(jnbe=ja)
+    , "77 1" ~: disasm' "7700" ~?= "ja 0x2"
+    , "77 2" ~: disasm 0 [0x77, 0] ~?= (2, "ja 0x2")
+    , "77 3" ~: disasm 3 [0x77, 0] ~?= (2, "ja 0x5")
     ]
 
 main = do
