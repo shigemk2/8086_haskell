@@ -618,6 +618,10 @@ testDisAsm = TestList
     , "7d 1" ~: disasm' "7d00" ~?= "jnl 0x2"
     , "7d 2" ~: disasm 0 [0x7d, 0] ~?= (2, "jnl 0x2")
     , "7d 3" ~: disasm 3 [0x7d, 0] ~?= (2, "jnl 0x5")
+    -- jnle/jg(jnleはjgのエイリアス)
+    , "7f 1" ~: disasm' "7f00" ~?= "jg 0x2"
+    , "7f 2" ~: disasm 0 [0x7f, 0] ~?= (2, "jg 0x2")
+    , "7f 3" ~: disasm 3 [0x7f, 0] ~?= (2, "jg 0x5")
     ]
 
 main = do
