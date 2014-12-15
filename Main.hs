@@ -578,27 +578,27 @@ testDisAsm = TestList
     , "cb" ~: disasm' "cb" ~?= "retf"
     -- ret Intersegment Adding Immediate to SP
     , "ca 1" ~: disasm' "ca1234" ~?= "retf 0x3412"
-    -- je/jz
+    -- je/jz(jz←je)
     , "74 1" ~: disasm' "7400" ~?= "jz 0x2"
     , "74 2" ~: disasm 0 [0x74, 0] ~?= (2, "jz 0x2")
     , "74 3" ~: disasm 3 [0x74, 0] ~?= (2, "jz 0x5")
-    -- jl/jnge
+    -- jl/jnge(jl←jnge)
     , "7c 1" ~: disasm' "7c00" ~?= "jl 0x2"
     , "7c 2" ~: disasm 0 [0x7c, 0] ~?= (2, "jl 0x2")
     , "7c 3" ~: disasm 3 [0x7c, 0] ~?= (2, "jl 0x5")
-    -- jle/jng
+    -- jle/jng(jng←jle)
     , "7e 1" ~: disasm' "7e00" ~?= "jng 0x2"
     , "7e 2" ~: disasm 0 [0x7e, 0] ~?= (2, "jng 0x2")
     , "7e 3" ~: disasm 3 [0x7e, 0] ~?= (2, "jng 0x5")
-    -- jb/jnae(jcはエイリアス)
+    -- jb/jnae(jc←jb/jnae)
     , "72 1" ~: disasm' "7200" ~?= "jc 0x2"
     , "72 2" ~: disasm 0 [0x72, 0] ~?= (2, "jc 0x2")
     , "72 3" ~: disasm 3 [0x72, 0] ~?= (2, "jc 0x5")
-    -- jbe/jna(jnaはjbeのエイリアス)
+    -- jbe/jna(jna←jbe)
     , "76 1" ~: disasm' "7600" ~?= "jna 0x2"
     , "76 2" ~: disasm 0 [0x76, 0] ~?= (2, "jna 0x2")
     , "76 3" ~: disasm 3 [0x76, 0] ~?= (2, "jna 0x5")
-    -- jp/jpe(jpeはjpのエイリアス)
+    -- jp/jpe(jpe←jp)
     , "7a 1" ~: disasm' "7a00" ~?= "jpe 0x2"
     , "7a 2" ~: disasm 0 [0x7a, 0] ~?= (2, "jpe 0x2")
     , "7a 3" ~: disasm 3 [0x7a, 0] ~?= (2, "jpe 0x5")
@@ -610,23 +610,23 @@ testDisAsm = TestList
     , "78 1" ~: disasm' "7800" ~?= "js 0x2"
     , "78 2" ~: disasm 0 [0x78, 0] ~?= (2, "js 0x2")
     , "78 3" ~: disasm 3 [0x78, 0] ~?= (2, "js 0x5")
-    -- jne/jnz(jnzはjneのエイリアス)
+    -- jne/jnz(jnz←jne)
     , "75 1" ~: disasm' "7500" ~?= "jnz 0x2"
     , "75 2" ~: disasm 0 [0x75, 0] ~?= (2, "jnz 0x2")
     , "75 3" ~: disasm 3 [0x75, 0] ~?= (2, "jnz 0x5")
-    -- jnl/jge(jnlはjgeのエイリアス)
+    -- jnl/jge(jnl←jge)
     , "7d 1" ~: disasm' "7d00" ~?= "jnl 0x2"
     , "7d 2" ~: disasm 0 [0x7d, 0] ~?= (2, "jnl 0x2")
     , "7d 3" ~: disasm 3 [0x7d, 0] ~?= (2, "jnl 0x5")
-    -- jnle/jg(jnleはjgのエイリアス)
+    -- jnle/jg(jg←jnle)
     , "7f 1" ~: disasm' "7f00" ~?= "jg 0x2"
     , "7f 2" ~: disasm 0 [0x7f, 0] ~?= (2, "jg 0x2")
     , "7f 3" ~: disasm 3 [0x7f, 0] ~?= (2, "jg 0x5")
-    -- jnb/jae(jnb/jaeはjncのエイリアス)
+    -- jnb/jae(jnc←jnb/jae)
     , "73 1" ~: disasm' "7300" ~?= "jnc 0x2"
     , "73 2" ~: disasm 0 [0x73, 0] ~?= (2, "jnc 0x2")
     , "73 3" ~: disasm 3 [0x73, 0] ~?= (2, "jnc 0x5")
-    -- jnbe/ja(jnbe=ja)
+    -- jnbe/ja(ja←jnbe)
     , "77 1" ~: disasm' "7700" ~?= "ja 0x2"
     , "77 2" ~: disasm 0 [0x77, 0] ~?= (2, "ja 0x2")
     , "77 3" ~: disasm 3 [0x77, 0] ~?= (2, "ja 0x5")
