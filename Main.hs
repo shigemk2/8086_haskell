@@ -598,6 +598,10 @@ testDisAsm = TestList
     , "76 1" ~: disasm' "7600" ~?= "jna 0x2"
     , "76 2" ~: disasm 0 [0x76, 0] ~?= (2, "jna 0x2")
     , "76 3" ~: disasm 3 [0x76, 0] ~?= (2, "jna 0x5")
+    -- jp/jpe(jpeはjpのエイリアス)
+    , "7a 1" ~: disasm' "7a00" ~?= "jpe 0x2"
+    , "7a 2" ~: disasm 0 [0x7a, 0] ~?= (2, "jpe 0x2")
+    , "7a 3" ~: disasm 3 [0x7a, 0] ~?= (2, "jpe 0x5")
     ]
 
 main = do
