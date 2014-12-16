@@ -634,6 +634,10 @@ testDisAsm = TestList
     , "7b 1" ~: disasm' "7b00" ~?= "jpo 0x2"
     , "7b 2" ~: disasm 0 [0x7b, 0] ~?= (2, "jpo 0x2")
     , "7b 3" ~: disasm 3 [0x7b, 0] ~?= (2, "jpo 0x5")
+    -- jno
+    , "71 1" ~: disasm' "7100" ~?= "jno 0x2"
+    , "71 2" ~: disasm 0 [0x71, 0] ~?= (2, "jno 0x2")
+    , "71 3" ~: disasm 3 [0x71, 0] ~?= (2, "jno 0x5")
     ]
 
 main = do
