@@ -646,6 +646,10 @@ testDisAsm = TestList
     , "e2 1" ~: disasm' "e200" ~?= "loop 0x2"
     , "e2 2" ~: disasm 0 [0xe2, 0] ~?= (2, "loop 0x2")
     , "e2 3" ~: disasm 3 [0xe2, 0] ~?= (2, "loop 0x5")
+    -- loopz/loope(loope←loopz)
+    , "e1 1" ~: disasm' "e100" ~?= "loope 0x2"
+    , "e1 2" ~: disasm 0 [0xe1, 0] ~?= (2, "loope 0x2")
+    , "e1 3" ~: disasm 3 [0xe1, 0] ~?= (2, "loope 0x5")
     ]
 
 main = do
