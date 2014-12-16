@@ -814,6 +814,13 @@ disasmB ip (0,1,1,1,1,0,0,1) xs =
         len = 2
         imm = "0x" ++ hex (fromLE 1 xs + ip + len)
 
+-- loop
+disasmB ip (1,1,1,0,0,0,1,0) xs =
+    (len, "loop " ++ imm)
+    where
+        len = 2
+        imm = "0x" ++ hex (fromLE 1 xs + ip + len)
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
