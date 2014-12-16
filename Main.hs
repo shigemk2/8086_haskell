@@ -642,6 +642,10 @@ testDisAsm = TestList
     , "79 1" ~: disasm' "7900" ~?= "jns 0x2"
     , "79 2" ~: disasm 0 [0x79, 0] ~?= (2, "jns 0x2")
     , "79 3" ~: disasm 3 [0x79, 0] ~?= (2, "jns 0x5")
+    -- loop
+    , "e2 1" ~: disasm' "e200" ~?= "loop 0x2"
+    , "e2 2" ~: disasm 0 [0xe2, 0] ~?= (2, "loop 0x2")
+    , "e2 3" ~: disasm 3 [0xe2, 0] ~?= (2, "loop 0x5")
     ]
 
 main = do
