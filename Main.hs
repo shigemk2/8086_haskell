@@ -660,6 +660,8 @@ testDisAsm = TestList
     , "e3 3" ~: disasm 3 [0xe3, 0] ~?= (2, "jcxz 0x5")
     -- int Type Specified
     , "cd" ~: disasm' "cd12" ~?= "int 0x12"
+    -- int Type 3
+    , "cc" ~: disasm' "cc" ~?= "int3"
     ]
 
 main = do
