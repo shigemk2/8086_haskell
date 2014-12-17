@@ -668,6 +668,8 @@ testDisAsm = TestList
     , "cf" ~: disasm' "cf" ~?= "iretw"
     -- clc
     , "f8" ~: disasm' "f8" ~?= "clc"
+    -- cmc
+    , "f5" ~: disasm' "f5" ~?= "cmc"
     ]
 
 main = do
