@@ -654,6 +654,10 @@ testDisAsm = TestList
     , "e0 1" ~: disasm' "e000" ~?= "loopne 0x2"
     , "e0 2" ~: disasm 0 [0xe0, 0] ~?= (2, "loopne 0x2")
     , "e0 3" ~: disasm 3 [0xe0, 0] ~?= (2, "loopne 0x5")
+    -- jcxz
+    , "e3 1" ~: disasm' "e300" ~?= "jcxz 0x2"
+    , "e3 2" ~: disasm 0 [0xe3, 0] ~?= (2, "jcxz 0x2")
+    , "e3 3" ~: disasm 3 [0xe3, 0] ~?= (2, "jcxz 0x5")
     ]
 
 main = do
