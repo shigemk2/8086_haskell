@@ -676,6 +676,8 @@ testDisAsm = TestList
     , "fc" ~: disasm' "fc" ~?= "cld"
     -- std
     , "fd" ~: disasm' "fd" ~?= "std"
+    -- cli
+    , "fa" ~: disasm' "fa" ~?= "cli"
     ]
 
 main = do
