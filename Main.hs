@@ -666,6 +666,8 @@ testDisAsm = TestList
     , "ce" ~: disasm' "ce" ~?= "into"
     -- iret(iretw←iret)
     , "cf" ~: disasm' "cf" ~?= "iretw"
+    -- clc
+    , "f8" ~: disasm' "f8" ~?= "clc"
     ]
 
 main = do
