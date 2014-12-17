@@ -662,6 +662,8 @@ testDisAsm = TestList
     , "cd" ~: disasm' "cd12" ~?= "int 0x12"
     -- int Type 3
     , "cc" ~: disasm' "cc" ~?= "int3"
+    -- into
+    , "ce" ~: disasm' "ce" ~?= "into"
     ]
 
 main = do
