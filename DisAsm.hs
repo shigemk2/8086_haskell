@@ -624,7 +624,7 @@ disasmB ip (1,1,1,0,1,0,0,0) xs =
     (len, "call word " ++ imm)
     where
         len = 3
-        imm = "0x" ++ hex (fromLE 2 xs + ip + len)
+        imm = dispimm (fromLE 2 xs + ip + len)
 
 -- Indirect within Segment
 disasmB _ (1,1,1,1,1,1,1,1) xs
@@ -944,3 +944,6 @@ disp16 x
     | x < 0x8000  = "+0x" ++ hex x
     | otherwise = "-0x" ++ hex (0x10000 - x)
 
+dispimm x
+    | x < 0x10000  = "0x" ++ hex x
+    | otherwise = "0x" ++ hex (x - 0x10000)
