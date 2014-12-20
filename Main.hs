@@ -563,6 +563,7 @@ testDisAsm = TestList
     , "eb 2" ~: disasm 0 [0xeb, 0] ~?= (2, "jmp short 0x2")
     , "eb 3" ~: disasm 3 [0xeb, 0] ~?= (2, "jmp short 0x5")
     , "eb 4" ~: disasm 507 [0xeb, 0xd4] ~?= (2, "jmp short 0x1d1")
+    , "eb 5" ~: disasm 7627 [0xeb, 0xaa] ~?= (2, "jmp short 0x1d77")
     -- jmp Indirect within Segment
     , "ff" ~: disasm' "ff20" ~?= "jmp word [bx+si]"
     -- jmp Direct Intersegment
