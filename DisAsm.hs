@@ -660,7 +660,6 @@ disasmB ip (1,1,1,0,1,0,1,1) xs =
     where
         len = 2
         imm = dispimm (fromLE 1 xs) (fromLE 1 xs + ip + len)
-        -- imm = "0x" ++ hex (fromLE 1 xs + ip + len)
 
 -- Indirect within Segment
 disasmB _ (1,1,1,1,1,1,1,1) xs
