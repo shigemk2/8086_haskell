@@ -589,9 +589,12 @@ disasmB _ (0,0,1,1,0,1,0,w) xs
         imm = "0x" ++ hex (fromLE (1 + w) xs)
 
 -- rep
-disasmB _ (1,1,1,1,0,0,1,z) xs
-    | z == 0    = (1, "repne")
-    | otherwise = (1, "rep")
+disasmB ip (1,1,1,1,0,0,1,z) (x:xs)
+    | z == 0    = (1 + len, "repne " ++ disasm')
+    | otherwise = (1 + len, "rep " ++ disasm')
+    where
+        len    = fst $ disasm ip (x:xs)
+        disasm' = snd $ disasm ip (x:xs)
 
 -- movs
 disasmB _ (1,0,1,0,0,1,0,w) xs
