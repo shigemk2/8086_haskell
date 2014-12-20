@@ -225,11 +225,11 @@ disasmB _ (0,0,0,0,0,0,d,w) xs
 disasmB _ (1,0,0,0,0,0,s,w) xs
     -- s w = 10 のときは欠番
     | getReg 0 s w == 2           = (1, "db 0x82")
-    | getReg 0 s w == 3 && r == 0 = (1 + len + 1, "add " ++ rm ++ ",byte +" ++ imms)
+    | getReg 0 s w == 3 && r == 0 = (1 + len + 1, "add " ++ rm ++ ",byte " ++ imms)
     |                      r == 0 = (1 + len + w + 1, "add " ++ rm ++ "," ++ imm)
     where
         (len, rm, r) = modrm True w xs
-        imms = "0x" ++ hex (fromLE 1 (drop len xs))
+        imms = disp8 (fromLE 1 (drop len xs))
         imm  = "0x" ++ hex (fromLE (w + 1) (drop len xs))
 
 -- Immediate to Accumulator
