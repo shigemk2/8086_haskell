@@ -819,7 +819,7 @@ disasmB ip (1,1,1,0,0,0,1,0) xs =
     (len, "loop " ++ imm)
     where
         len = 2
-        imm = "0x" ++ hex (fromLE 1 xs + ip + len)
+        imm = dispimm (fromLE 1 xs) (fromLE 1 xs + ip + len)
 
 -- loopz/loope
 disasmB ip (1,1,1,0,0,0,0,1) xs =
