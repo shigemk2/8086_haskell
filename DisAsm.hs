@@ -659,8 +659,8 @@ disasmB ip (1,1,1,0,1,0,1,1) xs =
     (len, "jmp short " ++ imm)
     where
         len = 2
-        -- imm = dispimm (fromLE 1 xs + ip + len)
-        imm = "0x" ++ hex (fromLE 1 xs + ip + len)
+        imm = dispimm (fromLE 1 xs) (fromLE 1 xs + ip + len)
+        -- imm = "0x" ++ hex (fromLE 1 xs + ip + len)
 
 -- Indirect within Segment
 disasmB _ (1,1,1,1,1,1,1,1) xs
@@ -945,7 +945,7 @@ disp16 x
     | x < 0x8000  = "+0x" ++ hex x
     | otherwise = "-0x" ++ hex (0x10000 - x)
 
-dispimm x
-    | x < 0x100  = "0x" ++ hex x
-    | x < 0x1000  = "0x" ++ hex ((x + 0xf00) .&. 0xfff)
-    | x < 0x10000 = "0x" ++ hex ((x + 0xff00) .&. 0xffff)
+dispimm xs x
+    | xs < 0x80 || x < 0x100   = "0x" ++ hex x
+    | xs > 0x80 && x < 0x1000  = "0x" ++ hex ((x + 0xf00) .&. 0xfff)
+    | xs > 0x80 && x < 0x10000 = "0x" ++ hex ((x + 0xff00) .&. 0xffff)
