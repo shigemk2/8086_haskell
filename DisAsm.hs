@@ -151,11 +151,11 @@ disasmB _ (1,0,0,1,0,r,e,g) xs
 
 -- in
 -- Fixed Port
-disasmB _ (1,1,1,0,0,1,0,w) xs
+disasmB _ (1,1,1,0,0,1,0,w) (x:_)
     | w == 0    = (2, "in al," ++ imm)
     | otherwise = (2, "in ax," ++ imm)
     where
-        imm = "0x" ++ hex (fromLE 1 xs)
+        imm = "0x" ++ hex x
 
 -- in
 -- Variable Port
@@ -165,11 +165,11 @@ disasmB _ (1,1,1,0,1,1,0,w) xs
 
 -- out
 -- Fixed Port
-disasmB _ (1,1,1,0,0,1,1,w) xs
+disasmB _ (1,1,1,0,0,1,1,w) (x:_)
     | w == 0    = (2, "out " ++ imm ++ ",al")
     | otherwise = (2, "out " ++ imm ++ ",ax")
     where
-        imm = "0x" ++ hex (fromLE 1 xs)
+        imm = "0x" ++ hex x
 
 -- xlat
 disasmB _ (1,1,0,1,0,1,1,1) xs =
@@ -763,10 +763,10 @@ disasmB ip (1,1,1,0,0,0,1,1) xs = rel8 "jcxz" ip xs
 
 -- int
 -- Type Specified
-disasmB ip (1,1,0,0,1,1,0,1) xs =
+disasmB ip (1,1,0,0,1,1,0,1) (x:_) =
     (2, "int " ++ imm)
     where
-        imm = "0x" ++ hex (fromLE 1 xs)
+        imm = "0x" ++ hex x
 
 -- Type 3
 disasmB _ (1,1,0,0,1,1,0,0) xs =
