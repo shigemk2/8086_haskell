@@ -658,11 +658,7 @@ disasmB ip (1,1,1,0,1,0,0,1) xs =
         imm = "0x" ++ hex ((fromLE 2 xs + ip + len) .&. 0xffff)
 
 -- Direct within Segment-Short
-disasmB ip (1,1,1,0,1,0,1,1) xs =
-    (len, "jmp short " ++ imm)
-    where
-        len = 2
-        imm = rel8 ip xs
+disasmB ip (1,1,1,0,1,0,1,1) xs = rel8 "jmp short" ip xs
 
 -- Indirect within Segment
 disasmB _ (1,1,1,1,1,1,1,1) xs
@@ -706,11 +702,7 @@ disasmB _ (1,1,0,0,1,0,1,0) xs =
         imm = "0x" ++ hex (fromLE 2 xs)
 
 -- je/jz
-disasmB ip (0,1,1,1,0,1,0,0) xs =
-    (len, "jz " ++ imm)
-    where
-        len = 2
-        imm = rel8 ip xs
+disasmB ip (0,1,1,1,0,1,0,0) xs = rel8 "jz" ip xs
 
 -- jl/jnge
 disasmB ip (0,1,1,1,1,1,0,0) xs =
@@ -762,11 +754,7 @@ disasmB ip (0,1,1,1,1,0,0,0) xs =
         imm = "0x" ++ hex (fromLE 1 xs + ip + len)
 
 -- jne/jnz
-disasmB ip (0,1,1,1,0,1,0,1) xs =
-    (len, "jnz " ++ imm)
-    where
-        len = 2
-        imm = rel8 ip xs
+disasmB ip (0,1,1,1,0,1,0,1) xs = rel8 "jnz" ip xs
 
 -- jnl/jge
 disasmB ip (0,1,1,1,1,1,0,1) xs =
@@ -818,11 +806,7 @@ disasmB ip (0,1,1,1,1,0,0,1) xs =
         imm = "0x" ++ hex (fromLE 1 xs + ip + len)
 
 -- loop
-disasmB ip (1,1,1,0,0,0,1,0) xs =
-    (len, "loop " ++ imm)
-    where
-        len = 2
-        imm = rel8 ip xs
+disasmB ip (1,1,1,0,0,0,1,0) xs = rel8 "loop" ip xs
 
 -- loopz/loope
 disasmB ip (1,1,1,0,0,0,0,1) xs =
@@ -947,6 +931,7 @@ disp16 x
     | x < 0x8000  = "+0x" ++ hex x
     | otherwise = "-0x" ++ hex (0x10000 - x)
 
-rel8 ip (x:_)
-    | x < 0x80  = "0x" ++ hex ((ip + 2 + x) .&. 0xffff)
-    | otherwise = "0x" ++ hex ((ip + 2 - (0x100 - x)) .&. 0xffff)
+rel8 mne ip (x:_) = (2, mne ++ " 0x" ++ hex (f .&. 0xffff))
+    where
+        f | x < 0x80  = ip + 2 + x
+          | otherwise = ip + 2 - (0x100 - x)
