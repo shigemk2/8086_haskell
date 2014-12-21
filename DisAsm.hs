@@ -705,129 +705,61 @@ disasmB _ (1,1,0,0,1,0,1,0) xs =
 disasmB ip (0,1,1,1,0,1,0,0) xs = rel8 "jz" ip xs
 
 -- jl/jnge
-disasmB ip (0,1,1,1,1,1,0,0) xs =
-    (len, "jl " ++ imm)
-    where
-        len = 2
-        imm = "0x" ++ hex (fromLE 1 xs + ip + len)
+disasmB ip (0,1,1,1,1,1,0,0) xs = rel8 "jl" ip xs
 
 -- jle/jng
-disasmB ip (0,1,1,1,1,1,1,0) xs =
-    (len, "jng " ++ imm)
-    where
-        len = 2
-        imm = "0x" ++ hex (fromLE 1 xs + ip + len)
+disasmB ip (0,1,1,1,1,1,1,0) xs = rel8 "jng" ip xs
 
 -- jb/jnae(jcはエイリアス)
-disasmB ip (0,1,1,1,0,0,1,0) xs =
-    (len, "jc " ++ imm)
-    where
-        len = 2
-        imm = "0x" ++ hex (fromLE 1 xs + ip + len)
+disasmB ip (0,1,1,1,0,0,1,0) xs = rel8 "jc" ip xs
 
 -- jbe/jna
-disasmB ip (0,1,1,1,0,1,1,0) xs =
-    (len, "jna " ++ imm)
-    where
-        len = 2
-        imm = "0x" ++ hex (fromLE 1 xs + ip + len)
+disasmB ip (0,1,1,1,0,1,1,0) xs = rel8 "jna" ip xs
 
 -- jp/jpe
-disasmB ip (0,1,1,1,1,0,1,0) xs =
-    (len, "jpe " ++ imm)
-    where
-        len = 2
-        imm = "0x" ++ hex (fromLE 1 xs + ip + len)
+disasmB ip (0,1,1,1,1,0,1,0) xs = rel8 "jpe" ip xs
 
 -- jo
-disasmB ip (0,1,1,1,0,0,0,0) xs =
-    (len, "jo " ++ imm)
-    where
-        len = 2
-        imm = "0x" ++ hex (fromLE 1 xs + ip + len)
+disasmB ip (0,1,1,1,0,0,0,0) xs = rel8 "jo" ip xs
 
 -- js
-disasmB ip (0,1,1,1,1,0,0,0) xs =
-    (len, "js " ++ imm)
-    where
-        len = 2
-        imm = "0x" ++ hex (fromLE 1 xs + ip + len)
+disasmB ip (0,1,1,1,1,0,0,0) xs = rel8 "js" ip xs
 
 -- jne/jnz
 disasmB ip (0,1,1,1,0,1,0,1) xs = rel8 "jnz" ip xs
 
 -- jnl/jge
-disasmB ip (0,1,1,1,1,1,0,1) xs =
-    (len, "jnl " ++ imm)
-    where
-        len = 2
-        imm = "0x" ++ hex (fromLE 1 xs + ip + len)
+disasmB ip (0,1,1,1,1,1,0,1) xs = rel8 "jnl" ip xs
 
 -- jnle/jg
-disasmB ip (0,1,1,1,1,1,1,1) xs =
-    (len, "jg " ++ imm)
-    where
-        len = 2
-        imm = "0x" ++ hex (fromLE 1 xs + ip + len)
+disasmB ip (0,1,1,1,1,1,1,1) xs = rel8 "jg" ip xs
 
 -- jnb/jae
-disasmB ip (0,1,1,1,0,0,1,1) xs =
-    (len, "jnc " ++ imm)
-    where
-        len = 2
-        imm = "0x" ++ hex (fromLE 1 xs + ip + len)
+disasmB ip (0,1,1,1,0,0,1,1) xs = rel8 "jnc" ip xs
 
 -- jnbe/ja
-disasmB ip (0,1,1,1,0,1,1,1) xs =
-    (len, "ja " ++ imm)
-    where
-        len = 2
-        imm = "0x" ++ hex (fromLE 1 xs + ip + len)
+disasmB ip (0,1,1,1,0,1,1,1) xs = rel8 "ja" ip xs
 
 -- jnp/jpo
-disasmB ip (0,1,1,1,1,0,1,1) xs =
-    (len, "jpo " ++ imm)
-    where
-        len = 2
-        imm = "0x" ++ hex (fromLE 1 xs + ip + len)
+disasmB ip (0,1,1,1,1,0,1,1) xs = rel8 "jpo" ip xs
 
 -- jno
-disasmB ip (0,1,1,1,0,0,0,1) xs =
-    (len, "jno " ++ imm)
-    where
-        len = 2
-        imm = "0x" ++ hex (fromLE 1 xs + ip + len)
+disasmB ip (0,1,1,1,0,0,0,1) xs = rel8 "jno" ip xs
 
 -- jns
-disasmB ip (0,1,1,1,1,0,0,1) xs =
-    (len, "jns " ++ imm)
-    where
-        len = 2
-        imm = "0x" ++ hex (fromLE 1 xs + ip + len)
+disasmB ip (0,1,1,1,1,0,0,1) xs = rel8 "jns" ip xs
 
 -- loop
 disasmB ip (1,1,1,0,0,0,1,0) xs = rel8 "loop" ip xs
 
 -- loopz/loope
-disasmB ip (1,1,1,0,0,0,0,1) xs =
-    (len, "loope " ++ imm)
-    where
-        len = 2
-        imm = "0x" ++ hex (fromLE 1 xs + ip + len)
+disasmB ip (1,1,1,0,0,0,0,1) xs = rel8 "loope" ip xs
 
 -- loopnz/loopne
-disasmB ip (1,1,1,0,0,0,0,0) xs =
-    (len, "loopne " ++ imm)
-    where
-        len = 2
-        imm = "0x" ++ hex (fromLE 1 xs + ip + len)
+disasmB ip (1,1,1,0,0,0,0,0) xs = rel8 "loopne" ip xs
 
 -- jcxz
-disasmB ip (1,1,1,0,0,0,1,1) xs =
-    (len, "jcxz " ++ imm)
-    where
-        len = 2
-        imm = "0x" ++ hex (fromLE 1 xs + ip + len)
+disasmB ip (1,1,1,0,0,0,1,1) xs = rel8 "jcxz" ip xs
 
 -- int
 -- Type Specified
