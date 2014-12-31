@@ -702,6 +702,8 @@ testDisAsm = TestList
     , "60" ~: disasm' "60" ~?= "pushaw"
     -- push word
     , "68" ~: disasm' "681234" ~?= "push word 0x3412"
+    -- popaw
+    , "61" ~: disasm' "61" ~?= "popaw"
     ]
 
 main = do
