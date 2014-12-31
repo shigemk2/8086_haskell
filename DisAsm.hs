@@ -114,6 +114,12 @@ disasmB _ (0,0,0,s,r,1,1,0) xs =
     where
         rmseg = sreg !! getReg 0 s r
 
+-- byte
+disasmB _ (0,1,1,0,1,0,1,0) xs =
+    (2, "push byte " ++ imm)
+    where
+        imm = disp8 (fromLE 1 xs)
+
 -- pop
 -- Register/Memory
 disasmB _ (1,0,0,0,1,1,1,1) xs =
