@@ -698,6 +698,8 @@ testDisAsm = TestList
     , "sop 1" ~: disasm' "268c061234" ~?= "mov [es:0x3412],es"
     , "sop 2" ~: disasm' "2ea21234" ~?= "mov [cs:0x3412],al"
     , "sop 3" ~: disasm' "2eff361234" ~?= "push word [cs:0x3412]"
+    -- pushaw
+    , "60" ~: disasm' "60" ~?= "pushaw"
     ]
 
 main = do
