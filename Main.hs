@@ -246,6 +246,9 @@ testDisAsm = TestList
     , "06-1e 2" ~: disasm' "0e" ~?= "push cs"
     , "06-1e 3" ~: disasm' "16" ~?= "push ss"
     , "06-1e 4" ~: disasm' "1e" ~?= "push ds"
+    -- push byte
+    , "6a 1" ~: disasm' "6a12" ~?= "push byte +0x12"
+    , "6a 2" ~: disasm' "6aff" ~?= "push byte -0x1"
     -- pop Register/Memory
     , "8f mod=00 1" ~: disasm' "8f00"     ~?= "pop word [bx+si]"
     , "8f mod=00 2" ~: disasm' "8f01"     ~?= "pop word [bx+di]"
