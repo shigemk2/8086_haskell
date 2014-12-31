@@ -827,14 +827,25 @@ disasmB _ (1,1,1,1,0,0,0,0) xs =
     (1, "lock")
 
 -- segment override prefix
-disasmB ip (0,0,1,s,r,1,1,0) xs =
-    (5, "mov [" ++ seg1 ++ ":" ++ immoff ++ "]," ++ seg2)
+disasmB ip (0,0,1,s,r,1,1,0) xs
+    | ope == "8c" = (5, "mov [" ++ reg1 ++ ":" ++ immoff ++ "]," ++ reg2)
+    | ope == "8d" = (5, "mov [" ++ reg1 ++ ":" ++ immoff ++ "]," ++ reg2)
+    | ope == "8e" = (5, "mov [" ++ reg1 ++ ":" ++ immoff ++ "]," ++ reg2)
     where
-        seg1   = sreg !! getReg 0 s r
+        ope    = hex (xs !! 0)
+        reg1   = sreg !! getReg 0 s r
         immoff = "0x" ++ hex (fromLE 2 (drop 2 xs))
         bit2   = xs !! 1
-        seg2   = sreg !! (bit2 `shiftR` 3 .&. 0xff)
-        -- seg2   = "0x" ++ hex (fromLE 1 (take 1 xs))
+        reg2   = sreg !! (bit2 `shiftR` 3 .&. 0xff)
+
+-- segment override prefix
+disasmB ip (0,0,1,s,r,1,1,0) xs
+    | ope == "a2" = (4, "mov [" ++ reg1 ++ ":" ++ immoff ++ "],al")
+    | ope == "a3" = (4, "mov [" ++ reg1 ++ ":" ++ immoff ++ "],al")
+    where
+        ope    = hex (xs !! 0)
+        reg1   = sreg !! getReg 0 s r
+        immoff = "0x" ++ hex (fromLE 2 (drop 1 xs))
 
 
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
