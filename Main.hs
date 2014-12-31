@@ -695,7 +695,8 @@ testDisAsm = TestList
     -- lock
     , "f0" ~: disasm' "f0" ~?= "lock"
     -- segment override prefix
-    , "sop" ~: disasm' "268c061234" ~?= "mov [es:0x3412],es"
+    , "sop 1" ~: disasm' "268c061234" ~?= "mov [es:0x3412],es"
+    , "sop 2" ~: disasm' "2ea21234" ~?= "mov [cs:0x3412],al"
     ]
 
 main = do
