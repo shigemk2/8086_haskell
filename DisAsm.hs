@@ -847,6 +847,13 @@ disasmB ip (0,0,1,s,r,1,1,0) xs
         reg1   = sreg !! getReg 0 s r
         immoff = "0x" ++ hex (fromLE 2 (drop 1 xs))
 
+-- segment override prefix
+disasmB ip (0,0,1,s,r,1,1,0) xs
+    | ope == "ff" = (5, "push word [" ++ reg1 ++ ":" ++ immoff ++ "]")
+    where
+        ope    = hex (xs !! 0)
+        reg1   = sreg !! getReg 0 s r
+        immoff = "0x" ++ hex (fromLE 2 (drop 2 xs))
 
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
