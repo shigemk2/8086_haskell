@@ -855,6 +855,10 @@ disasmB ip (0,0,1,s,r,1,1,0) xs
         reg1   = sreg !! getReg 0 s r
         immoff = "0x" ++ hex (fromLE 2 (drop 2 xs))
 
+-- pushaw
+disasmB _ (0,1,1,0,0,0,0,0) xs =
+    (1, "pushaw")
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
