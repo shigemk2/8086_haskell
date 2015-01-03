@@ -593,28 +593,28 @@ disasmB ip (1,1,1,1,0,0,1,z) (x:xs)
 
 -- movs
 disasmB _ (1,0,1,0,0,1,0,w) xs
-    | w == 0    = (1, "movsb")
-    | otherwise = (1, "movsw")
+    | w == 0    = mne1 "movsb"
+    | otherwise = mne1 "movsw"
 
 -- cmp
 disasmB _ (1,0,1,0,0,1,1,w) xs
-    | w == 0    = (1, "cmpsb")
-    | otherwise = (1, "cmpsw")
+    | w == 0    = mne1 "cmpsb"
+    | otherwise = mne1 "cmpsw"
 
 -- scas
 disasmB _ (1,0,1,0,1,1,1,w) xs
-    | w == 0    = (1, "scasb")
-    | otherwise = (1, "scasw")
+    | w == 0    = mne1 "scasb"
+    | otherwise = mne1 "scasw"
 
 -- lods
 disasmB _ (1,0,1,0,1,1,0,w) xs
-    | w == 0    = (1, "lodsb")
-    | otherwise = (1, "lodsw")
+    | w == 0    = mne1 "lodsb"
+    | otherwise = mne1 "lodsw"
 
 -- stos
 disasmB _ (1,0,1,0,1,0,1,w) xs
-    | w == 0    = (1, "stosb")
-    | otherwise = (1, "stosw")
+    | w == 0    = mne1 "stosb"
+    | otherwise = mne1 "stosw"
 
 -- call
 -- Direct within Segment
@@ -677,8 +677,7 @@ disasmB _ (1,1,1,1,1,1,1,1) xs
 
 -- ret
 -- Within Segment
-disasmB _ (1,1,0,0,0,0,1,1) xs =
-    (1, "ret")
+disasmB _ (1,1,0,0,0,0,1,1) xs = mne1 "ret"
 
 -- Within Seg Adding Immed to SP
 disasmB _ (1,1,0,0,0,0,1,0) xs =
@@ -790,7 +789,7 @@ disasmB _ (1,1,1,1,1,1,0,1) xs = mne1 "std"
 disasmB _ (1,1,1,1,1,0,1,0) xs = mne1 "cli"
 
 -- sti
-disasmB _ (1,1,1,1,1,0,1,1) xs = (1, "sti")
+disasmB _ (1,1,1,1,1,0,1,1) xs = mne1 "sti"
 
 -- hlt
 disasmB _ (1,1,1,1,0,1,0,0) xs = mne1 "hlt"
