@@ -178,8 +178,7 @@ disasmB _ (1,1,1,0,0,1,1,w) (x:_)
         imm = "0x" ++ hex x
 
 -- xlat
-disasmB _ (1,1,0,1,0,1,1,1) xs =
-    (1, "xlatb")
+disasmB _ (1,1,0,1,0,1,1,1) xs = mne1 "xlatb"
 
 -- lea
 disasmB _ (1,0,0,0,1,1,0,1) xs =
@@ -203,20 +202,16 @@ disasmB _ (1,1,0,0,0,1,0,0) xs =
         reg = regs !! 1 !! r
 
 -- lahf
-disasmB _ (1,0,0,1,1,1,1,1) xs =
-    (1, "lahf")
+disasmB _ (1,0,0,1,1,1,1,1) xs = mne1 "lahf"
 
 -- sahf
-disasmB _ (1,0,0,1,1,1,1,0) xs =
-    (1, "sahf")
+disasmB _ (1,0,0,1,1,1,1,0) xs = mne1 "sahf"
 
 -- pushf
-disasmB _ (1,0,0,1,1,1,0,0) xs =
-    (1, "pushfw")
+disasmB _ (1,0,0,1,1,1,0,0) xs = mne1 "pushfw"
 
 -- popf
-disasmB _ (1,0,0,1,1,1,0,1) xs =
-    (1, "popfw")
+disasmB _ (1,0,0,1,1,1,0,1) xs = mne1 "popfw"
 
 -- add
 -- Reg./Memory with Register to Either
@@ -287,12 +282,10 @@ disasmB _ (0,1,0,0,0,r,e,g) xs =
         reg = regs !! 1 !! getReg r e g
 
 -- aaa
-disasmB _ (0,0,1,1,0,1,1,1) xs =
-    (1, "aaa")
+disasmB _ (0,0,1,1,0,1,1,1) xs = mne1 "aaa"
 
 -- daa
-disasmB _ (0,0,1,0,0,1,1,1) xs =
-    (1, "daa")
+disasmB _ (0,0,1,0,0,1,1,1) xs = mne1 "daa"
 
 -- sub
 -- Reg./Memory and Register to Either
@@ -396,12 +389,10 @@ disasmB _ (0,0,1,1,1,1,0,w) xs
         imm = "0x" ++ hex (fromLE (1 + w) xs)
 
 -- aas
-disasmB _ (0,0,1,1,1,1,1,1) xs =
-    (1, "aas")
+disasmB _ (0,0,1,1,1,1,1,1) xs = mne1 "aas"
 
 -- das
-disasmB _ (0,0,1,0,1,1,1,1) xs =
-    (1, "das")
+disasmB _ (0,0,1,0,1,1,1,1) xs = mne1 "das"
 
 -- mul
 disasmB _ (1,1,1,1,0,1,1,w) xs
@@ -437,12 +428,10 @@ disasmB _ (1,1,0,1,0,1,0,1) xs
     | getBits (head xs) == (0,0,0,0,1,0,1,0) = (2, "aad")
 
 -- cbw
-disasmB _ (1,0,0,1,1,0,0,0) xs =
-    (1, "cbw")
+disasmB _ (1,0,0,1,1,0,0,0) xs = mne1 "cbw"
 
 -- cwd
-disasmB _ (1,0,0,1,1,0,0,1) xs =
-    (1, "cwd")
+disasmB _ (1,0,0,1,1,0,0,1) xs = mne1 "cwd"
 
 -- not
 disasmB _ (1,1,1,1,0,1,1,w) xs
@@ -698,8 +687,7 @@ disasmB _ (1,1,0,0,0,0,1,0) xs =
         imm = "0x" ++ hex (fromLE 2 xs)
 
 -- Intersegment
-disasmB _ (1,1,0,0,1,0,1,1) xs =
-    (1, "retf")
+disasmB _ (1,1,0,0,1,0,1,1) xs = mne1 "retf"
 
 -- Intersegment Adding Immediate to SP
 disasmB _ (1,1,0,0,1,0,1,0) xs =
@@ -775,56 +763,43 @@ disasmB ip (1,1,0,0,1,1,0,1) (x:_) =
         imm = "0x" ++ hex x
 
 -- Type 3
-disasmB _ (1,1,0,0,1,1,0,0) xs =
-    (1, "int3")
+disasmB _ (1,1,0,0,1,1,0,0) xs = mne1 "int3"
 
 -- into
-disasmB _ (1,1,0,0,1,1,1,0) xs =
-    (1, "into")
+disasmB _ (1,1,0,0,1,1,1,0) xs = mne1 "into"
 
 -- iretw
-disasmB _ (1,1,0,0,1,1,1,1) xs =
-    (1, "iretw")
+disasmB _ (1,1,0,0,1,1,1,1) xs = mne1 "iretw"
 
 -- clc
-disasmB _ (1,1,1,1,1,0,0,0) xs =
-    (1, "clc")
+disasmB _ (1,1,1,1,1,0,0,0) xs = mne1 "clc"
 
 -- cmc
-disasmB _ (1,1,1,1,0,1,0,1) xs =
-    (1, "cmc")
+disasmB _ (1,1,1,1,0,1,0,1) xs = mne1 "cmc"
 
 -- stc
-disasmB _ (1,1,1,1,1,0,0,1) xs =
-    (1, "stc")
+disasmB _ (1,1,1,1,1,0,0,1) xs = mne1 "stc"
 
 -- cld
-disasmB _ (1,1,1,1,1,1,0,0) xs =
-    (1, "cld")
+disasmB _ (1,1,1,1,1,1,0,0) xs = mne1 "cld"
 
 -- std
-disasmB _ (1,1,1,1,1,1,0,1) xs =
-    (1, "std")
+disasmB _ (1,1,1,1,1,1,0,1) xs = mne1 "std"
 
 -- cli
-disasmB _ (1,1,1,1,1,0,1,0) xs =
-    (1, "cli")
+disasmB _ (1,1,1,1,1,0,1,0) xs = mne1 "cli"
 
 -- sti
-disasmB _ (1,1,1,1,1,0,1,1) xs =
-    (1, "sti")
+disasmB _ (1,1,1,1,1,0,1,1) xs = (1, "sti")
 
 -- hlt
-disasmB _ (1,1,1,1,0,1,0,0) xs =
-    (1, "hlt")
+disasmB _ (1,1,1,1,0,1,0,0) xs = mne1 "hlt"
 
 -- wait
-disasmB _ (1,0,0,1,1,0,1,1) xs =
-    (1, "wait")
+disasmB _ (1,0,0,1,1,0,1,1) xs = mne1 "wait"
 
 -- lock
-disasmB _ (1,1,1,1,0,0,0,0) xs =
-    (1, "lock")
+disasmB _ (1,1,1,1,0,0,0,0) xs = mne1 "lock"
 
 -- segment override prefix
 disasmB ip (0,0,1,s,r,1,1,0) xs
@@ -856,8 +831,7 @@ disasmB ip (0,0,1,s,r,1,1,0) xs
         immoff = "0x" ++ hex (fromLE 2 (drop 2 xs))
 
 -- pushaw
-disasmB _ (0,1,1,0,0,0,0,0) xs =
-    (1, "pushaw")
+disasmB _ (0,1,1,0,0,0,0,0) xs = mne1 "pushaw"
 
 -- push word
 disasmB ip (0,1,1,0,1,0,0,0) xs =
@@ -866,8 +840,7 @@ disasmB ip (0,1,1,0,1,0,0,0) xs =
         imm = "0x" ++ hex (fromLE 2 xs)
 
 -- popaw
-disasmB _ (0,1,1,0,0,0,0,1) xs =
-    (1, "popaw")
+disasmB _ (0,1,1,0,0,0,0,1) xs = mne1 "popaw"
 
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
@@ -916,3 +889,5 @@ rel8 mne ip (x:_) = (2, mne ++ " 0x" ++ hex (f .&. 0xffff))
     where
         f | x < 0x80  = ip + 2 + x
           | otherwise = ip + 2 - (0x100 - x)
+
+mne1 mne = (1, mne)
