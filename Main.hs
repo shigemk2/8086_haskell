@@ -55,10 +55,10 @@ testHex = TestList
         ]
 
 testDisAsm = TestList
-    [ "b8 1" ~: disasm 0 [0xb8, 0, 0]       ~?= (3, "mov ax,0x0")
-    , "b8 2" ~: disasm 0 [0xb8, 0x34, 0x12] ~?= (3, "mov ax,0x1234")
-    , "b8 3" ~: disasm 0 [0xb8, 0x78, 0x56] ~?= (3, "mov ax,0x5678")
-    , "b0 1" ~: disasm 0 [0xb0, 0x00] ~?= (2, "mov al,0x0")
+    [ "b8 1" ~: disasm 0 [0xb8, 0, 0]       ~?= (3, "mov", "mov ax,0x0")
+    , "b8 2" ~: disasm 0 [0xb8, 0x34, 0x12] ~?= (3, "mov", "mov ax,0x1234")
+    , "b8 3" ~: disasm 0 [0xb8, 0x78, 0x56] ~?= (3, "mov", "mov ax,0x5678")
+    , "b0 1" ~: disasm 0 [0xb0, 0x00] ~?= (2, "mov", "mov al,0x0")
     , "b8 3" ~: disasm' "b80000" ~?= "mov ax,0x0"
     , "b8 4" ~: disasm' "b83412" ~?= "mov ax,0x1234"
     , "b8-bf 0" ~: disasm' "b80100" ~?= "mov ax,0x1"
@@ -91,11 +91,11 @@ testDisAsm = TestList
     , "disp16 2" ~: disp16 0x7fff ~?= "+0x7fff"
     , "disp16 3" ~: disp16 0x8000 ~?= "-0x8000"
     , "disp16 4" ~: disp16 0xffff ~?= "-0x1"
-    , "disAsmB 0" ~: disasmB 0 (1,0,1,1,1,0,0,0) [0, 0] ~?= (3, "mov ax,0x0")
-    , "disAsmB 1" ~: disasmB 0 (1,0,0,0,1,0,1,1) [0, 0] ~?= (2, "mov ax,[bx+si]")
-    , "disAsmB 2" ~: disasmB 0 (1,0,0,0,1,0,0,1) [0, 0] ~?= (2, "mov [bx+si],ax")
-    , "disAsmB 3" ~: disasmB 0 (1,0,0,0,1,0,0,0) [0, 0] ~?= (2, "mov [bx+si],al")
-    , "disAsmB 4" ~: disasmB 0 (1,0,0,0,1,0,0,0) [2, 0] ~?= (2, "mov [bp+si],al")
+    , "disAsmB 0" ~: disasmB 0 (1,0,1,1,1,0,0,0) [0, 0] ~?= (3, "mov", "mov ax,0x0")
+    , "disAsmB 1" ~: disasmB 0 (1,0,0,0,1,0,1,1) [0, 0] ~?= (2, "mov", "mov ax,[bx+si]")
+    , "disAsmB 2" ~: disasmB 0 (1,0,0,0,1,0,0,1) [0, 0] ~?= (2, "mov", "mov [bx+si],ax")
+    , "disAsmB 3" ~: disasmB 0 (1,0,0,0,1,0,0,0) [0, 0] ~?= (2, "mov", "mov [bx+si],al")
+    , "disAsmB 4" ~: disasmB 0 (1,0,0,0,1,0,0,0) [2, 0] ~?= (2, "mov", "mov [bp+si],al")
     , "88-8b mod=00 1" ~: disasm' "8900" ~?= "mov [bx+si],ax"
     , "88-8b mod=00 2" ~: disasm' "8909" ~?= "mov [bx+di],cx"
     , "88-8b mod=00 3" ~: disasm' "8912" ~?= "mov [bp+si],dx"
@@ -195,10 +195,10 @@ testDisAsm = TestList
     , "8c mod=11 2" ~: disasm' "8CC1" ~?= "mov cx,es"
     , "8c mod=11 3" ~: disasm' "8CD0" ~?= "mov ax,ss"
     , "8c mod=11 4" ~: disasm' "8CD8" ~?= "mov ax,ds"
-    , "b8 1" ~: disasm 0 [0xb8, 0, 0]       ~?= (3, "mov ax,0x0")
-    , "b8 2" ~: disasm 0 [0xb8, 0x34, 0x12] ~?= (3, "mov ax,0x1234")
+    , "b8 1" ~: disasm 0 [0xb8, 0, 0]       ~?= (3, "mov", "mov ax,0x0")
+    , "b8 2" ~: disasm 0 [0xb8, 0x34, 0x12] ~?= (3, "mov", "mov ax,0x1234")
     , "disasms" ~: disasms 0 [0xc6, 0x47, 1, 1, 0xb0, 1]
-        ~?= [(4, "mov byte [bx+0x1],0x1"), (2, "mov al,0x1")]
+        ~?= [(4, "mov", "mov byte [bx+0x1],0x1"), (2, "mov", "mov al,0x1")]
     , "disasms' 0" ~: disasms' "C6470101B001"
         ~?= ["mov byte [bx+0x1],0x1", "mov al,0x1"]
     , "disasms' 1" ~: disasms' "C6470101B001" ~?= ["mov byte [bx+0x1],0x1", "mov al,0x1"]
@@ -207,9 +207,9 @@ testDisAsm = TestList
     , "wrong disasm' 1" ~: disasm' "C6470101B001" ~?= "length? 4"
     , "wrong disasm' 2" ~: disasm' "8CD88C801234C6470101B001" ~?= "length? 2"
     , "ndisasm 1" ~: ndisasm 0 [0xc6, 0x47, 1, 1]
-        ~?= (4, "00000000  C6470101          mov byte [bx+0x1],0x1")
+        ~?= (4, "mov", "00000000  C6470101          mov byte [bx+0x1],0x1")
     , "ndisasm 2" ~: ndisasm 0 [0xb8, 0x34, 0x12]
-        ~?= (3, "00000000  B83412            mov ax,0x1234")
+        ~?= (3, "mov", "00000000  B83412            mov ax,0x1234")
     , "ndisasms 1" ~: ndisasms 0 [0xc6, 0x47, 1, 1, 0xb0, 1]
         ~?= [ "00000000  C6470101          mov byte [bx+0x1],0x1"
             , "00000004  B001              mov al,0x1"
@@ -546,8 +546,8 @@ testDisAsm = TestList
     , "aa-ab w=1" ~: disasm' "ab" ~?= "stosw"
     -- call Direct within Segment
     , "e8 1" ~: disasm' "e80012" ~?= "call word 0x1203"
-    , "e8 2" ~: disasm 0 [0xe8, 0, 0x12] ~?= (3, "call word 0x1203")
-    , "e8 3" ~: disasm 7072 [0xe8, 0xc8, 0xf9] ~?= (3, "call word 0x156b")
+    , "e8 2" ~: disasm 0 [0xe8, 0, 0x12] ~?= (3, "call word", "call word 0x1203")
+    , "e8 3" ~: disasm 7072 [0xe8, 0xc8, 0xf9] ~?= (3, "call word", "call word 0x156b")
     -- call Indirect within Segment
     , "ff" ~: disasm' "ff10" ~?= "call word [bx+si]"
     -- call Direct Intersegment
@@ -559,16 +559,16 @@ testDisAsm = TestList
     , "ff 2" ~: disasm' "ffd8" ~?= "call word far ax"
     -- jmp Direct within Segment
     , "e9 1" ~: disasm' "e90012" ~?= "jmp word 0x1203"
-    , "e9 2" ~: disasm 0 [0xe9, 0, 0x12] ~?= (3, "jmp word 0x1203")
-    , "e9 3" ~: disasm 3 [0xe9, 0, 0x12] ~?= (3, "jmp word 0x1206")
+    , "e9 2" ~: disasm 0 [0xe9, 0, 0x12] ~?= (3, "jmp word", "jmp word 0x1203")
+    , "e9 3" ~: disasm 3 [0xe9, 0, 0x12] ~?= (3, "jmp word", "jmp word 0x1206")
     -- jmp Direct within Segment-Short
     , "eb 1" ~: disasm' "eb00" ~?= "jmp short 0x2"
-    , "eb 2" ~: disasm 0 [0xeb, 0] ~?= (2, "jmp short 0x2")
-    , "eb 3" ~: disasm 3 [0xeb, 0] ~?= (2, "jmp short 0x5")
-    , "eb 4" ~: disasm 507 [0xeb, 0xd4] ~?= (2, "jmp short 0x1d1")
-    , "eb 5" ~: disasm 7627 [0xeb, 0xaa] ~?= (2, "jmp short 0x1d77")
-    , "eb 6" ~: disasm 5061 [0xeb, 0x7] ~?= (2, "jmp short 0x13ce")
-    , "eb 7" ~: disasm 5867 [0xeb, 0x5] ~?= (2, "jmp short 0x16f2")
+    , "eb 2" ~: disasm 0 [0xeb, 0] ~?= (2, "jmp short", "jmp short 0x2")
+    , "eb 3" ~: disasm 3 [0xeb, 0] ~?= (2, "jmp short", "jmp short 0x5")
+    , "eb 4" ~: disasm 507 [0xeb, 0xd4] ~?= (2, "jmp short", "jmp short 0x1d1")
+    , "eb 5" ~: disasm 7627 [0xeb, 0xaa] ~?= (2, "jmp short", "jmp short 0x1d77")
+    , "eb 6" ~: disasm 5061 [0xeb, 0x7] ~?= (2, "jmp short", "jmp short 0x13ce")
+    , "eb 7" ~: disasm 5867 [0xeb, 0x5] ~?= (2, "jmp short", "jmp short 0x16f2")
     -- jmp Indirect within Segment
     , "ff" ~: disasm' "ff20" ~?= "jmp word [bx+si]"
     -- jmp Direct Intersegment
@@ -588,84 +588,84 @@ testDisAsm = TestList
     , "ca 1" ~: disasm' "ca1234" ~?= "retf 0x3412"
     -- je/jz(jz←je)
     , "74 1" ~: disasm' "7400" ~?= "jz 0x2"
-    , "74 2" ~: disasm 0 [0x74, 0] ~?= (2, "jz 0x2")
-    , "74 3" ~: disasm 3 [0x74, 0] ~?= (2, "jz 0x5")
+    , "74 2" ~: disasm 0 [0x74, 0] ~?= (2, "jz", "jz 0x2")
+    , "74 3" ~: disasm 3 [0x74, 0] ~?= (2, "jz", "jz 0x5")
     -- jl/jnge(jl←jnge)
     , "7c 1" ~: disasm' "7c00" ~?= "jl 0x2"
-    , "7c 2" ~: disasm 0 [0x7c, 0] ~?= (2, "jl 0x2")
-    , "7c 3" ~: disasm 3 [0x7c, 0] ~?= (2, "jl 0x5")
+    , "7c 2" ~: disasm 0 [0x7c, 0] ~?= (2, "jl", "jl 0x2")
+    , "7c 3" ~: disasm 3 [0x7c, 0] ~?= (2, "jl", "jl 0x5")
     -- jle/jng(jng←jle)
     , "7e 1" ~: disasm' "7e00" ~?= "jng 0x2"
-    , "7e 2" ~: disasm 0 [0x7e, 0] ~?= (2, "jng 0x2")
-    , "7e 3" ~: disasm 3 [0x7e, 0] ~?= (2, "jng 0x5")
+    , "7e 2" ~: disasm 0 [0x7e, 0] ~?= (2, "jng", "jng 0x2")
+    , "7e 3" ~: disasm 3 [0x7e, 0] ~?= (2, "jng", "jng 0x5")
     -- jb/jnae(jc←jb/jnae)
     , "72 1" ~: disasm' "7200" ~?= "jc 0x2"
-    , "72 2" ~: disasm 0 [0x72, 0] ~?= (2, "jc 0x2")
-    , "72 3" ~: disasm 3 [0x72, 0] ~?= (2, "jc 0x5")
+    , "72 2" ~: disasm 0 [0x72, 0] ~?= (2, "jc", "jc 0x2")
+    , "72 3" ~: disasm 3 [0x72, 0] ~?= (2, "jc", "jc 0x5")
     -- jbe/jna(jna←jbe)
     , "76 1" ~: disasm' "7600" ~?= "jna 0x2"
-    , "76 2" ~: disasm 0 [0x76, 0] ~?= (2, "jna 0x2")
-    , "76 3" ~: disasm 3 [0x76, 0] ~?= (2, "jna 0x5")
+    , "76 2" ~: disasm 0 [0x76, 0] ~?= (2, "jna", "jna 0x2")
+    , "76 3" ~: disasm 3 [0x76, 0] ~?= (2, "jna", "jna 0x5")
     -- jp/jpe(jpe←jp)
     , "7a 1" ~: disasm' "7a00" ~?= "jpe 0x2"
-    , "7a 2" ~: disasm 0 [0x7a, 0] ~?= (2, "jpe 0x2")
-    , "7a 3" ~: disasm 3 [0x7a, 0] ~?= (2, "jpe 0x5")
+    , "7a 2" ~: disasm 0 [0x7a, 0] ~?= (2, "jpe", "jpe 0x2")
+    , "7a 3" ~: disasm 3 [0x7a, 0] ~?= (2, "jpe", "jpe 0x5")
     -- jo
     , "70 1" ~: disasm' "7000" ~?= "jo 0x2"
-    , "70 2" ~: disasm 0 [0x70, 0] ~?= (2, "jo 0x2")
-    , "70 3" ~: disasm 3 [0x70, 0] ~?= (2, "jo 0x5")
+    , "70 2" ~: disasm 0 [0x70, 0] ~?= (2, "jo", "jo 0x2")
+    , "70 3" ~: disasm 3 [0x70, 0] ~?= (2, "jo", "jo 0x5")
     -- js
     , "78 1" ~: disasm' "7800" ~?= "js 0x2"
-    , "78 2" ~: disasm 0 [0x78, 0] ~?= (2, "js 0x2")
-    , "78 3" ~: disasm 3 [0x78, 0] ~?= (2, "js 0x5")
+    , "78 2" ~: disasm 0 [0x78, 0] ~?= (2, "js", "js 0x2")
+    , "78 3" ~: disasm 3 [0x78, 0] ~?= (2, "js", "js 0x5")
     -- jne/jnz(jnz←jne)
     , "75 1" ~: disasm' "7500" ~?= "jnz 0x2"
-    , "75 2" ~: disasm 0 [0x75, 0] ~?= (2, "jnz 0x2")
-    , "75 3" ~: disasm 3 [0x75, 0] ~?= (2, "jnz 0x5")
+    , "75 2" ~: disasm 0 [0x75, 0] ~?= (2, "jnz", "jnz 0x2")
+    , "75 3" ~: disasm 3 [0x75, 0] ~?= (2, "jnz", "jnz 0x5")
     -- jnl/jge(jnl←jge)
     , "7d 1" ~: disasm' "7d00" ~?= "jnl 0x2"
-    , "7d 2" ~: disasm 0 [0x7d, 0] ~?= (2, "jnl 0x2")
-    , "7d 3" ~: disasm 3 [0x7d, 0] ~?= (2, "jnl 0x5")
+    , "7d 2" ~: disasm 0 [0x7d, 0] ~?= (2, "jnl", "jnl 0x2")
+    , "7d 3" ~: disasm 3 [0x7d, 0] ~?= (2, "jnl", "jnl 0x5")
     -- jnle/jg(jg←jnle)
     , "7f 1" ~: disasm' "7f00" ~?= "jg 0x2"
-    , "7f 2" ~: disasm 0 [0x7f, 0] ~?= (2, "jg 0x2")
-    , "7f 3" ~: disasm 3 [0x7f, 0] ~?= (2, "jg 0x5")
+    , "7f 2" ~: disasm 0 [0x7f, 0] ~?= (2, "jg", "jg 0x2")
+    , "7f 3" ~: disasm 3 [0x7f, 0] ~?= (2, "jg", "jg 0x5")
     -- jnb/jae(jnc←jnb/jae)
     , "73 1" ~: disasm' "7300" ~?= "jnc 0x2"
-    , "73 2" ~: disasm 0 [0x73, 0] ~?= (2, "jnc 0x2")
-    , "73 3" ~: disasm 3 [0x73, 0] ~?= (2, "jnc 0x5")
+    , "73 2" ~: disasm 0 [0x73, 0] ~?= (2, "jnc", "jnc 0x2")
+    , "73 3" ~: disasm 3 [0x73, 0] ~?= (2, "jnc", "jnc 0x5")
     -- jnbe/ja(ja←jnbe)
     , "77 1" ~: disasm' "7700" ~?= "ja 0x2"
-    , "77 2" ~: disasm 0 [0x77, 0] ~?= (2, "ja 0x2")
-    , "77 3" ~: disasm 3 [0x77, 0] ~?= (2, "ja 0x5")
+    , "77 2" ~: disasm 0 [0x77, 0] ~?= (2, "ja", "ja 0x2")
+    , "77 3" ~: disasm 3 [0x77, 0] ~?= (2, "ja", "ja 0x5")
     -- jnp/jpo(jpo←jnp)
     , "7b 1" ~: disasm' "7b00" ~?= "jpo 0x2"
-    , "7b 2" ~: disasm 0 [0x7b, 0] ~?= (2, "jpo 0x2")
-    , "7b 3" ~: disasm 3 [0x7b, 0] ~?= (2, "jpo 0x5")
+    , "7b 2" ~: disasm 0 [0x7b, 0] ~?= (2, "jpo", "jpo 0x2")
+    , "7b 3" ~: disasm 3 [0x7b, 0] ~?= (2, "jpo", "jpo 0x5")
     -- jno
     , "71 1" ~: disasm' "7100" ~?= "jno 0x2"
-    , "71 2" ~: disasm 0 [0x71, 0] ~?= (2, "jno 0x2")
-    , "71 3" ~: disasm 3 [0x71, 0] ~?= (2, "jno 0x5")
+    , "71 2" ~: disasm 0 [0x71, 0] ~?= (2, "jno", "jno 0x2")
+    , "71 3" ~: disasm 3 [0x71, 0] ~?= (2, "jno", "jno 0x5")
     -- jns
     , "79 1" ~: disasm' "7900" ~?= "jns 0x2"
-    , "79 2" ~: disasm 0 [0x79, 0] ~?= (2, "jns 0x2")
-    , "79 3" ~: disasm 3 [0x79, 0] ~?= (2, "jns 0x5")
+    , "79 2" ~: disasm 0 [0x79, 0] ~?= (2, "jns", "jns 0x2")
+    , "79 3" ~: disasm 3 [0x79, 0] ~?= (2, "jns", "jns 0x5")
     -- loop
     , "e2 1" ~: disasm' "e200" ~?= "loop 0x2"
-    , "e2 2" ~: disasm 0 [0xe2, 0] ~?= (2, "loop 0x2")
-    , "e2 3" ~: disasm 3 [0xe2, 0] ~?= (2, "loop 0x5")
+    , "e2 2" ~: disasm 0 [0xe2, 0] ~?= (2, "loop", "loop 0x2")
+    , "e2 3" ~: disasm 3 [0xe2, 0] ~?= (2, "loop", "loop 0x5")
     -- loopz/loope(loope←loopz)
     , "e1 1" ~: disasm' "e100" ~?= "loope 0x2"
-    , "e1 2" ~: disasm 0 [0xe1, 0] ~?= (2, "loope 0x2")
-    , "e1 3" ~: disasm 3 [0xe1, 0] ~?= (2, "loope 0x5")
+    , "e1 2" ~: disasm 0 [0xe1, 0] ~?= (2, "loope", "loope 0x2")
+    , "e1 3" ~: disasm 3 [0xe1, 0] ~?= (2, "loope", "loope 0x5")
     -- loopnz/loopne(loopne←loopnz)
     , "e0 1" ~: disasm' "e000" ~?= "loopne 0x2"
-    , "e0 2" ~: disasm 0 [0xe0, 0] ~?= (2, "loopne 0x2")
-    , "e0 3" ~: disasm 3 [0xe0, 0] ~?= (2, "loopne 0x5")
+    , "e0 2" ~: disasm 0 [0xe0, 0] ~?= (2, "loopne", "loopne 0x2")
+    , "e0 3" ~: disasm 3 [0xe0, 0] ~?= (2, "loopne", "loopne 0x5")
     -- jcxz
     , "e3 1" ~: disasm' "e300" ~?= "jcxz 0x2"
-    , "e3 2" ~: disasm 0 [0xe3, 0] ~?= (2, "jcxz 0x2")
-    , "e3 3" ~: disasm 3 [0xe3, 0] ~?= (2, "jcxz 0x5")
+    , "e3 2" ~: disasm 0 [0xe3, 0] ~?= (2, "jcxz", "jcxz 0x2")
+    , "e3 3" ~: disasm 3 [0xe3, 0] ~?= (2, "jcxz", "jcxz 0x5")
     -- int Type Specified
     , "cd" ~: disasm' "cd12" ~?= "int 0x12"
     -- int Type 3
