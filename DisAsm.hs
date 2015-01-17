@@ -177,6 +177,12 @@ disasmB _ _ (1,1,1,0,0,1,1,w) (x:_)
     where
         imm = "0x" ++ hex x
 
+-- out
+-- Variable Port
+disasmB _ _ (1,1,1,0,1,1,1,w) xs
+    | w == 0    = (1, "out al,dx")
+    | otherwise = (1, "out ax,dx")
+
 -- xlat
 disasmB _ _ (1,1,0,1,0,1,1,1) xs = mne1 "xlatb"
 
