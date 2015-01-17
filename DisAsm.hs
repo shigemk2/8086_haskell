@@ -804,7 +804,7 @@ disasmB _ (1,1,1,1,0,0,0,0) xs = mne1 "lock"
 disasmB ip (0,0,1,s,r,1,1,0) xs
     | ope == "8c" = (5, "mov [" ++ reg1 ++ ":" ++ immoff ++ "]," ++ reg2)
     | ope == "8d" = (5, "mov [" ++ reg1 ++ ":" ++ immoff ++ "]," ++ reg2)
-    | ope == "8e" = (5, "mov [" ++ reg1 ++ ":" ++ immoff ++ "]," ++ reg2)
+    | ope == "8e" = (5, "mov " ++ reg2 ++ ",[" ++ reg1 ++ ":" ++ immoff ++ "]")
     where
         ope    = hex (xs !! 0)
         reg1   = sreg !! getReg 0 s r
@@ -814,8 +814,9 @@ disasmB ip (0,0,1,s,r,1,1,0) xs
 
 -- segment override prefix
 disasmB ip (0,0,1,s,r,1,1,0) xs
+    | ope == "a1" = (4, "mov ax,[" ++ reg1 ++ ":" ++ immoff ++ "]")
     | ope == "a2" = (4, "mov [" ++ reg1 ++ ":" ++ immoff ++ "],al")
-    | ope == "a3" = (4, "mov [" ++ reg1 ++ ":" ++ immoff ++ "],al")
+    | ope == "a3" = (4, "mov [" ++ reg1 ++ ":" ++ immoff ++ "],ax")
     where
         ope    = hex (xs !! 0)
         reg1   = sreg !! getReg 0 s r
@@ -823,6 +824,7 @@ disasmB ip (0,0,1,s,r,1,1,0) xs
 
 -- segment override prefix
 disasmB ip (0,0,1,s,r,1,1,0) xs
+    | ope == "8f" = (5, "pop word [" ++ reg1 ++ ":" ++ immoff ++ "]")
     | ope == "ff" = (5, "push word [" ++ reg1 ++ ":" ++ immoff ++ "]")
     where
         ope    = hex (xs !! 0)
