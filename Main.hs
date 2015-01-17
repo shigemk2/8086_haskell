@@ -318,6 +318,9 @@ testDisAsm = TestList
     , "e6-e7 w=0 2" ~: disasm' "E6FF" ~?= "out 0xff,al"
     , "e6-e7 w=1 3" ~: disasm' "E712" ~?= "out 0x12,ax"
     , "e6-e7 w=1 4" ~: disasm' "E7FF" ~?= "out 0xff,ax"
+    -- out Variable Port
+    , "ee-ef 1" ~: disasm' "EE" ~?= "out al,dx"
+    , "ee-ef 2" ~: disasm' "EF" ~?= "out ax,dx"
     -- xlat
     , "d7 1" ~: disasm' "D7" ~?= "xlatb"
     -- lea
