@@ -40,115 +40,115 @@ disasm' hex
         asm = disasm 0 bin
         len = fst asm
 
-disasm ip (x:xs) = disasmB ip (getBits x) xs
+disasm ip (x:xs) = disasmB ip "" (getBits x) xs
 
 -- mov
 -- Immediate to Register/Memory [100010dw][modregr/m]
-disasmB _ (1,0,0,0,1,0,d,w) xs
+disasmB _ seg (1,0,0,0,1,0,d,w) xs
     | d == 0    = (1 + len, "mov " ++ rm  ++ "," ++ reg)
     | otherwise = (1 + len, "mov " ++ reg ++ "," ++ rm)
     where
-        (len, rm, r) = modrm False w xs
+        (len, rm, r) = modrm seg False w xs
         reg = regs !! w !! r
 
 -- Immediate to Register [1011wreg][data][data if w=1]
-disasmB _ (1,0,1,1,w,r,e,g) xs =
+disasmB _ _ (1,0,1,1,w,r,e,g) xs =
     (2 + w, "mov " ++ reg ++ "," ++ imm)
     where
         reg = regs !! w !! getReg r e g
         imm = "0x" ++ hex (fromLE (w + 1) xs)
 
 -- Immediate to Register/Memory [1100011w][mod000r/m][data][data if w=1]
-disasmB _ (1,1,0,0,0,1,1,w) xs =
+disasmB _ seg (1,1,0,0,0,1,1,w) xs =
     (1 + len + w + 1, "mov " ++ rm ++ "," ++ imm)
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
         imm = "0x" ++ hex (fromLE (w + 1) (drop len xs))
 
 -- Memory to Accumulator [1010000w][addr-low][addr-high]
-disasmB _ (1,0,1,0,0,0,0,w) xs
-    | w == 0    = (3, "mov " ++ rm ++ ",[" ++ imm ++ "]")
-    | otherwise = (3, "mov " ++ rm ++ ",[" ++ imm ++ "]")
+disasmB _ seg (1,0,1,0,0,0,0,w) xs
+    | w == 0    = (3, "mov " ++ rm ++ ",[" ++ seg ++ imm ++ "]")
+    | otherwise = (3, "mov " ++ rm ++ ",[" ++ seg ++ imm ++ "]")
     where
         rm  = regs !! w !! 0
         imm = "0x" ++ hex (fromLE 2 xs)
 
 -- Accumulator to Memory [1010001w][addr-low][addr-high]
-disasmB _ (1,0,1,0,0,0,1,w) xs
-    | w == 0    = (3, "mov [" ++ imm ++ "]," ++ rm)
-    | otherwise = (3, "mov [" ++ imm ++ "]," ++ rm)
+disasmB _ seg (1,0,1,0,0,0,1,w) xs
+    | w == 0    = (3, "mov [" ++ seg ++ imm ++ "]," ++ rm)
+    | otherwise = (3, "mov [" ++ seg ++ imm ++ "]," ++ rm)
     where
         rm  = regs !! w !! 0
         imm = "0x" ++ hex (fromLE 2 xs)
 
 -- Register/Memory to Segment Register [10001110][mod0reg r/m]
-disasmB _ (1,0,0,0,1,1,1,0) xs =
+disasmB _ seg (1,0,0,0,1,1,1,0) xs =
     (1 + len, "mov " ++ rmseg ++ "," ++ rm)
     where
-        (len, rm, r) = modrm False 1 xs
+        (len, rm, r) = modrm seg False 1 xs
         rmseg = sreg !! r
 
 -- Segment Register to Register/Memory [10001100][mod0reg r/m]
-disasmB _ (1,0,0,0,1,1,0,0) xs =
+disasmB _ seg (1,0,0,0,1,1,0,0) xs =
     (1 + len, "mov " ++ rm ++ "," ++ rmseg)
     where
-        (len, rm, r) = modrm False 1 xs
+        (len, rm, r) = modrm seg False 1 xs
         rmseg = sreg !! r
 
 -- push
 -- Register/Memory
-disasmB _ (1,1,1,1,1,1,1,1) xs
+disasmB _ seg (1,1,1,1,1,1,1,1) xs
     | r == 6 = (1 + len, "push " ++ rm)
     where
-        (len, rm, r) = modrm True 1 xs
+        (len, rm, r) = modrm seg True 1 xs
 
 -- Register
-disasmB _ (0,1,0,1,0,r,e,g) xs =
+disasmB _ _ (0,1,0,1,0,r,e,g) xs =
     (1, "push " ++ reg)
     where
         reg = regs !! 1 !! getReg r e g
 
 -- Segment Register
-disasmB _ (0,0,0,s,r,1,1,0) xs =
+disasmB _ _ (0,0,0,s,r,1,1,0) xs =
     (1, "push " ++ rmseg)
     where
         rmseg = sreg !! getReg 0 s r
 
 -- byte
-disasmB _ (0,1,1,0,1,0,1,0) xs =
+disasmB _ _ (0,1,1,0,1,0,1,0) xs =
     (2, "push byte " ++ imm)
     where
         imm = disp8 (fromLE 1 xs)
 
 -- pop
 -- Register/Memory
-disasmB _ (1,0,0,0,1,1,1,1) xs =
+disasmB _ seg (1,0,0,0,1,1,1,1) xs =
     (1 + len, "pop " ++ rm)
     where
-        (len, rm, r) = modrm True 1 xs
+        (len, rm, r) = modrm seg True 1 xs
 
 -- Register
-disasmB _ (0,1,0,1,1,r,e,g) xs =
+disasmB _ _ (0,1,0,1,1,r,e,g) xs =
     (1, "pop " ++ reg)
     where
         reg = regs !! 1 !! getReg r e g
 
 -- Segment Register
-disasmB _ (0,0,0,s,r,1,1,1) xs =
+disasmB _ _ (0,0,0,s,r,1,1,1) xs =
     (1, "pop " ++ rmseg)
     where
         rmseg = sreg !! getReg 0 s r
 
 -- xchg
 -- Register/Memory with Register
-disasmB _ (1,0,0,0,0,1,1,w) xs =
+disasmB _ seg (1,0,0,0,0,1,1,w) xs =
     (1 + len, "xchg " ++ reg ++ "," ++ rm)
     where
-        (len, rm, r) = modrm False w xs
+        (len, rm, r) = modrm seg False w xs
         reg = regs !! w !! r
 
 -- Register with Accumulator
-disasmB _ (1,0,0,1,0,r,e,g) xs
+disasmB _ _ (1,0,0,1,0,r,e,g) xs
     -- xchg ax,axはなにもしていないのでnop
     | reg == "ax"    = (1, "nop")
     | otherwise      = (1, "xchg ax," ++ reg)
@@ -157,7 +157,7 @@ disasmB _ (1,0,0,1,0,r,e,g) xs
 
 -- in
 -- Fixed Port
-disasmB _ (1,1,1,0,0,1,0,w) (x:_)
+disasmB _ _ (1,1,1,0,0,1,0,w) (x:_)
     | w == 0    = (2, "in al," ++ imm)
     | otherwise = (2, "in ax," ++ imm)
     where
@@ -165,76 +165,76 @@ disasmB _ (1,1,1,0,0,1,0,w) (x:_)
 
 -- in
 -- Variable Port
-disasmB _ (1,1,1,0,1,1,0,w) xs
+disasmB _ _ (1,1,1,0,1,1,0,w) xs
     | w == 0    = (1, "in al,dx")
     | otherwise = (1, "in ax,dx")
 
 -- out
 -- Fixed Port
-disasmB _ (1,1,1,0,0,1,1,w) (x:_)
+disasmB _ _ (1,1,1,0,0,1,1,w) (x:_)
     | w == 0    = (2, "out " ++ imm ++ ",al")
     | otherwise = (2, "out " ++ imm ++ ",ax")
     where
         imm = "0x" ++ hex x
 
 -- xlat
-disasmB _ (1,1,0,1,0,1,1,1) xs = mne1 "xlatb"
+disasmB _ _ (1,1,0,1,0,1,1,1) xs = mne1 "xlatb"
 
 -- lea
-disasmB _ (1,0,0,0,1,1,0,1) xs =
+disasmB _ seg (1,0,0,0,1,1,0,1) xs =
     (1 + len, "lea " ++ reg ++ "," ++ rm)
     where
-        (len, rm, r) = modrm False 1 xs
+        (len, rm, r) = modrm seg False 1 xs
         reg = regs !! 1 !! r
 
 -- lds
-disasmB _ (1,1,0,0,0,1,0,1) xs =
+disasmB _ seg (1,1,0,0,0,1,0,1) xs =
     (1 + len, "lds " ++ reg ++ "," ++ rm)
     where
-        (len, rm, r) = modrm False 1 xs
+        (len, rm, r) = modrm seg False 1 xs
         reg = regs !! 1 !! r
 
 -- les
-disasmB _ (1,1,0,0,0,1,0,0) xs =
+disasmB _ seg (1,1,0,0,0,1,0,0) xs =
     (1 + len, "les " ++ reg ++ "," ++ rm)
     where
-        (len, rm, r) = modrm False 1 xs
+        (len, rm, r) = modrm seg False 1 xs
         reg = regs !! 1 !! r
 
 -- lahf
-disasmB _ (1,0,0,1,1,1,1,1) xs = mne1 "lahf"
+disasmB _ _ (1,0,0,1,1,1,1,1) xs = mne1 "lahf"
 
 -- sahf
-disasmB _ (1,0,0,1,1,1,1,0) xs = mne1 "sahf"
+disasmB _ _ (1,0,0,1,1,1,1,0) xs = mne1 "sahf"
 
 -- pushf
-disasmB _ (1,0,0,1,1,1,0,0) xs = mne1 "pushfw"
+disasmB _ _ (1,0,0,1,1,1,0,0) xs = mne1 "pushfw"
 
 -- popf
-disasmB _ (1,0,0,1,1,1,0,1) xs = mne1 "popfw"
+disasmB _ _ (1,0,0,1,1,1,0,1) xs = mne1 "popfw"
 
 -- add
 -- Reg./Memory with Register to Either
-disasmB _ (0,0,0,0,0,0,d,w) xs
+disasmB _ seg (0,0,0,0,0,0,d,w) xs
     | d == 0    = (1 + len, "add " ++ rm  ++ "," ++ reg)
     | otherwise = (1 + len, "add " ++ reg ++ "," ++ rm)
     where
-        (len, rm, r) = modrm False w xs
+        (len, rm, r) = modrm seg False w xs
         reg = regs !! w !! r
 
 -- Immediate to Register/Memory
-disasmB _ (1,0,0,0,0,0,s,w) xs
+disasmB _ seg (1,0,0,0,0,0,s,w) xs
     -- s w = 10 のときは欠番
     | getReg 0 s w == 2           = (1, "db 0x82")
     | getReg 0 s w == 3 && r == 0 = (1 + len + 1, "add " ++ rm ++ ",byte " ++ imms)
     |                      r == 0 = (1 + len + w + 1, "add " ++ rm ++ "," ++ imm)
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
         imms = disp8 (fromLE 1 (drop len xs))
         imm  = "0x" ++ hex (fromLE (w + 1) (drop len xs))
 
 -- Immediate to Accumulator
-disasmB _ (0,0,0,0,0,1,0,w) xs
+disasmB _ _ (0,0,0,0,0,1,0,w) xs
     | w == 0    = (2, "add al," ++ imm)
     | otherwise = (3, "add ax," ++ imm)
     where
@@ -242,26 +242,26 @@ disasmB _ (0,0,0,0,0,1,0,w) xs
 
 -- adc
 -- Reg./Memory with Register to Either
-disasmB _ (0,0,0,1,0,0,d,w) xs
+disasmB _ seg (0,0,0,1,0,0,d,w) xs
     | d == 0    = (1 + len, "adc " ++ rm  ++ "," ++ reg)
     | otherwise = (1 + len, "adc " ++ reg ++ "," ++ rm)
     where
-        (len, rm, r) = modrm False w xs
+        (len, rm, r) = modrm seg False w xs
         reg = regs !! w !! r
 
 -- Immediate to Register/Memory
-disasmB _ (1,0,0,0,0,0,s,w) xs
+disasmB _ seg (1,0,0,0,0,0,s,w) xs
     -- s w = 10 のときは欠番
     | getReg 0 s w == 2           = (1, "db 0x82")
     | getReg 0 s w == 3 && r == 2 = (1 + len + 1, "adc " ++ rm ++ ",byte +" ++ imms)
     |                      r == 2 = (1 + len + w + 1, "adc " ++ rm ++ "," ++ imm)
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
         imms = "0x" ++ hex (fromLE 1 (drop len xs))
         imm  = "0x" ++ hex (fromLE (w + 1) (drop len xs))
 
 -- Immediate to Accumulator
-disasmB _ (0,0,0,1,0,1,0,w) xs
+disasmB _ _ (0,0,0,1,0,1,0,w) xs
     | w == 0    = (2, "adc al," ++ imm)
     | otherwise = (3, "adc ax," ++ imm)
     where
@@ -269,46 +269,46 @@ disasmB _ (0,0,0,1,0,1,0,w) xs
 
 -- inc
 -- Register/Memory
-disasmB _ (1,1,1,1,1,1,1,w) xs
+disasmB _ seg (1,1,1,1,1,1,1,w) xs
     | w == 0 && r == 0 = (1 + len, "inc " ++ rm)
     | w == 1 && r == 0 = (1 + len, "inc " ++ rm)
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
 
 -- Register
-disasmB _ (0,1,0,0,0,r,e,g) xs =
+disasmB _ _ (0,1,0,0,0,r,e,g) xs =
     (1, "inc " ++ reg)
     where
         reg = regs !! 1 !! getReg r e g
 
 -- aaa
-disasmB _ (0,0,1,1,0,1,1,1) xs = mne1 "aaa"
+disasmB _ _ (0,0,1,1,0,1,1,1) xs = mne1 "aaa"
 
 -- daa
-disasmB _ (0,0,1,0,0,1,1,1) xs = mne1 "daa"
+disasmB _ _ (0,0,1,0,0,1,1,1) xs = mne1 "daa"
 
 -- sub
 -- Reg./Memory and Register to Either
-disasmB _ (0,0,1,0,1,0,d,w) xs
+disasmB _ seg (0,0,1,0,1,0,d,w) xs
     | d == 0    = (1 + len, "sub " ++ rm  ++ "," ++ reg)
     | otherwise = (1 + len, "sub " ++ reg ++ "," ++ rm)
     where
-        (len, rm, r) = modrm False w xs
+        (len, rm, r) = modrm seg False w xs
         reg = regs !! w !! r
 
 -- Immediate to Register/Memory
-disasmB _ (1,0,0,0,0,0,s,w) xs
+disasmB _ seg (1,0,0,0,0,0,s,w) xs
     -- s w = 10 のときは欠番
     | getReg 0 s w == 2           = (1, "db 0x82")
     | getReg 0 s w == 3 && r == 5 = (1 + len + 1, "sub " ++ rm ++ ",byte +" ++ imms)
     |                      r == 5 = (1 + len + w + 1, "sub " ++ rm ++ "," ++ imm)
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
         imms = "0x" ++ hex (fromLE 1 (drop len xs))
         imm  = "0x" ++ hex (fromLE (w + 1) (drop len xs))
 
 -- Immediate from Accumulator
-disasmB _ (0,0,1,0,1,1,0,w) xs
+disasmB _ _ (0,0,1,0,1,1,0,w) xs
     | w == 0    = (2, "sub al," ++ imm)
     | otherwise = (3, "sub ax," ++ imm)
     where
@@ -316,26 +316,26 @@ disasmB _ (0,0,1,0,1,1,0,w) xs
 
 -- sbb
 -- Reg./Memory and Register to Either
-disasmB _ (0,0,0,1,1,0,d,w) xs
+disasmB _ seg (0,0,0,1,1,0,d,w) xs
     | d == 0    = (1 + len, "sbb " ++ rm  ++ "," ++ reg)
     | otherwise = (1 + len, "sbb " ++ reg ++ "," ++ rm)
     where
-        (len, rm, r) = modrm False w xs
+        (len, rm, r) = modrm seg False w xs
         reg = regs !! w !! r
 
 -- Immediate to Register/Memory
-disasmB _ (1,0,0,0,0,0,s,w) xs
+disasmB _ seg (1,0,0,0,0,0,s,w) xs
     -- s w = 10 のときは欠番
     | getReg 0 s w == 2           = (1, "db 0x82")
     | getReg 0 s w == 3 && r == 3 = (1 + len + 1, "sbb " ++ rm ++ ",byte +" ++ imms)
     |                      r == 3 = (1 + len + w + 1, "sbb " ++ rm ++ "," ++ imm)
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
         imms = "0x" ++ hex (fromLE 1 (drop len xs))
         imm  = "0x" ++ hex (fromLE (w + 1) (drop len xs))
 
 -- Immediate to Accumulator
-disasmB _ (0,0,0,1,1,1,0,w) xs
+disasmB _ _ (0,0,0,1,1,1,0,w) xs
     | w == 0    = (2, "sbb al," ++ imm)
     | otherwise = (3, "sbb ax," ++ imm)
     where
@@ -343,170 +343,170 @@ disasmB _ (0,0,0,1,1,1,0,w) xs
 
 -- dec
 -- Register/Memory
-disasmB _ (1,1,1,1,1,1,1,w) xs
+disasmB _ seg (1,1,1,1,1,1,1,w) xs
     | w == 0 && r == 1 = (1 + len, "dec " ++ rm)
     | w == 1 && r == 1 = (1 + len, "dec " ++ rm)
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
 
 -- Register
-disasmB _ (0,1,0,0,1,r,e,g) xs =
+disasmB _ _ (0,1,0,0,1,r,e,g) xs =
     (1, "dec " ++ reg)
     where
         reg = regs !! 1 !! getReg r e g
 
 -- neg
-disasmB _ (1,1,1,1,0,1,1,w) xs
+disasmB _ seg (1,1,1,1,0,1,1,w) xs
     | r == 3 = (1 + len, "neg " ++ rm)
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
 
 -- cmp
 -- Register/Memory and Register
-disasmB _ (0,0,1,1,1,0,d,w) xs
+disasmB _ seg (0,0,1,1,1,0,d,w) xs
     | d == 0    = (1 + len, "cmp " ++ rm  ++ "," ++ reg)
     | otherwise = (1 + len, "cmp " ++ reg ++ "," ++ rm)
     where
-        (len, rm, r) = modrm False w xs
+        (len, rm, r) = modrm seg False w xs
         reg = regs !! w !! r
 
 -- Immediate to Register/Memory
-disasmB _ (1,0,0,0,0,0,s,w) xs
+disasmB _ seg (1,0,0,0,0,0,s,w) xs
     -- s w = 10 のときは欠番
     | getReg 0 s w == 2           = (1, "db 0x82")
     | getReg 0 s w == 3 && r == 7 = (1 + len + 1, "cmp " ++ rm ++ ",byte " ++ imms)
     |                      r == 7 = (1 + len + w + 1, "cmp " ++ rm ++ "," ++ imm)
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
         imms = disp8 (fromLE 1 (drop len xs))
         imm  = "0x" ++ hex (fromLE (w + 1) (drop len xs))
 
 -- Immediate with Accumulator
-disasmB _ (0,0,1,1,1,1,0,w) xs
+disasmB _ _ (0,0,1,1,1,1,0,w) xs
     | w == 0    = (2, "cmp al," ++ imm)
     | otherwise = (3, "cmp ax," ++ imm)
     where
         imm = "0x" ++ hex (fromLE (1 + w) xs)
 
 -- aas
-disasmB _ (0,0,1,1,1,1,1,1) xs = mne1 "aas"
+disasmB _ _ (0,0,1,1,1,1,1,1) xs = mne1 "aas"
 
 -- das
-disasmB _ (0,0,1,0,1,1,1,1) xs = mne1 "das"
+disasmB _ _ (0,0,1,0,1,1,1,1) xs = mne1 "das"
 
 -- mul
-disasmB _ (1,1,1,1,0,1,1,w) xs
+disasmB _ seg (1,1,1,1,0,1,1,w) xs
     | r == 4 = (1 + len, "mul " ++ rm)
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
 
 -- imul
-disasmB _ (1,1,1,1,0,1,1,w) xs
+disasmB _ seg (1,1,1,1,0,1,1,w) xs
     | r == 5 = (1 + len, "imul " ++ rm)
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
 
 -- aam
-disasmB _ (1,1,0,1,0,1,0,0) xs
+disasmB _ _ (1,1,0,1,0,1,0,0) xs
     | getBits (head xs) == (0,0,0,0,1,0,1,0) = (2, "aam")
     -- | xs == [0x0a] = (2, "aam")
 
 -- div
-disasmB _ (1,1,1,1,0,1,1,w) xs
+disasmB _ seg (1,1,1,1,0,1,1,w) xs
     | r == 6 = (1 + len, "div " ++ rm)
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
 
 -- idiv
-disasmB _ (1,1,1,1,0,1,1,w) xs
+disasmB _ seg (1,1,1,1,0,1,1,w) xs
     | r == 7 = (1 + len, "idiv " ++ rm)
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
 
 -- aad
-disasmB _ (1,1,0,1,0,1,0,1) xs
+disasmB _ _ (1,1,0,1,0,1,0,1) xs
     | getBits (head xs) == (0,0,0,0,1,0,1,0) = (2, "aad")
 
 -- cbw
-disasmB _ (1,0,0,1,1,0,0,0) xs = mne1 "cbw"
+disasmB _ _ (1,0,0,1,1,0,0,0) xs = mne1 "cbw"
 
 -- cwd
-disasmB _ (1,0,0,1,1,0,0,1) xs = mne1 "cwd"
+disasmB _ _ (1,0,0,1,1,0,0,1) xs = mne1 "cwd"
 
 -- not
-disasmB _ (1,1,1,1,0,1,1,w) xs
+disasmB _ seg (1,1,1,1,0,1,1,w) xs
     | r == 2 = (1 + len, "not " ++ rm)
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
 
 -- shl/sal
-disasmB _ (1,1,0,1,0,0,v,w) xs
+disasmB _ seg (1,1,0,1,0,0,v,w) xs
     | r == 4 && v == 0 = (len + 1, "shl " ++ rm ++ ",1")
     | r == 4 && v == 1 = (len + 1, "shl " ++ rm ++ ",cl")
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
 
 -- shr
-disasmB _ (1,1,0,1,0,0,v,w) xs
+disasmB _ seg (1,1,0,1,0,0,v,w) xs
     | r == 5 && v == 0 = (len + 1, "shr " ++ rm ++ ",1")
     | r == 5 && v == 1 = (len + 1, "shr " ++ rm ++ ",cl")
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
 
 -- sar
-disasmB _ (1,1,0,1,0,0,v,w) xs
+disasmB _ seg (1,1,0,1,0,0,v,w) xs
     | r == 7 && v == 0 = (len + 1, "sar " ++ rm ++ ",1")
     | r == 7 && v == 1 = (len + 1, "sar " ++ rm ++ ",cl")
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
 
 -- rol
-disasmB _ (1,1,0,1,0,0,v,w) xs
+disasmB _ seg (1,1,0,1,0,0,v,w) xs
     | r == 0 && v == 0 = (len + 1, "rol " ++ rm ++ ",1")
     | r == 0 && v == 1 = (len + 1, "rol " ++ rm ++ ",cl")
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
 
 -- ror
-disasmB _ (1,1,0,1,0,0,v,w) xs
+disasmB _ seg (1,1,0,1,0,0,v,w) xs
     | r == 1 && v == 0 = (len + 1, "ror " ++ rm ++ ",1")
     | r == 1 && v == 1 = (len + 1, "ror " ++ rm ++ ",cl")
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
 
 -- rcl
-disasmB _ (1,1,0,1,0,0,v,w) xs
+disasmB _ seg (1,1,0,1,0,0,v,w) xs
     | r == 2 && v == 0 = (len + 1, "rcl " ++ rm ++ ",1")
     | r == 2 && v == 1 = (len + 1, "rcl " ++ rm ++ ",cl")
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
 
 -- rcr
-disasmB _ (1,1,0,1,0,0,v,w) xs
+disasmB _ seg (1,1,0,1,0,0,v,w) xs
     | r == 3 && v == 0 = (len + 1, "rcr " ++ rm ++ ",1")
     | r == 3 && v == 1 = (len + 1, "rcr " ++ rm ++ ",cl")
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
 
 -- and
 -- Reg./Memory and Register to Either
-disasmB _ (0,0,1,0,0,0,d,w) xs
+disasmB _ seg (0,0,1,0,0,0,d,w) xs
     | d == 0    = (1 + len, "and " ++ rm  ++ "," ++ reg)
     | otherwise = (1 + len, "and " ++ reg ++ "," ++ rm)
     where
-        (len, rm, r) = modrm False w xs
+        (len, rm, r) = modrm seg False w xs
         reg = regs !! w !! r
 
 -- Immediate to Register/Memory
-disasmB _ (1,0,0,0,0,0,0,w) xs
+disasmB _ seg (1,0,0,0,0,0,0,w) xs
     | w == 0 && r == 4 = (2 + len, "and " ++ rm ++ "," ++ imm)
     | w == 1 && r == 4 = (2 + 1 + len, "and " ++ rm ++ "," ++ imm)
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
         imm = "0x" ++ hex (fromLE (w + 1) (drop len xs))
 
 -- Immediate to Accumulator
-disasmB _ (0,0,1,0,0,1,0,w) xs
+disasmB _ _ (0,0,1,0,0,1,0,w) xs
     | w == 0    = (2, "and al," ++ imm)
     | otherwise = (3, "and ax," ++ imm)
     where
@@ -514,22 +514,22 @@ disasmB _ (0,0,1,0,0,1,0,w) xs
 
 -- test
 -- Register/Memory and Register
-disasmB _ (1,0,0,0,0,1,0,w) xs
+disasmB _ seg (1,0,0,0,0,1,0,w) xs
     | w == 0    = (1 + len, "test " ++ rm ++ "," ++ reg)
     | otherwise = (1 + len, "test " ++ rm ++ "," ++ reg)
     where
-        (len, rm, r) = modrm False w xs
+        (len, rm, r) = modrm seg False w xs
         reg = regs !! w !! r
 
 -- Immediate Data and Register/Memory
-disasmB _ (1,1,1,1,0,1,1,w) xs
+disasmB _ seg (1,1,1,1,0,1,1,w) xs
     | r == 0 = (2 + len + w, "test " ++ rm ++ "," ++ imm)
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
         imm = "0x" ++ hex (fromLE (1 + w) (drop len xs))
 
 -- Immediate Data and Accumulator
-disasmB _ (1,0,1,0,1,0,0,w) xs
+disasmB _ _ (1,0,1,0,1,0,0,w) xs
     | w == 0    = (2 + w, "test " ++ "al," ++ imm)
     | otherwise = (2 + w, "test " ++ "ax," ++ imm)
     where
@@ -537,23 +537,23 @@ disasmB _ (1,0,1,0,1,0,0,w) xs
 
 -- or
 -- Reg./Memory and Register to Either
-disasmB _ (0,0,0,0,1,0,d,w) xs
+disasmB _ seg (0,0,0,0,1,0,d,w) xs
     | d == 0    = (1 + len, "or " ++ rm  ++ "," ++ reg)
     | otherwise = (1 + len, "or " ++ reg ++ "," ++ rm)
     where
-        (len, rm, r) = modrm False w xs
+        (len, rm, r) = modrm seg False w xs
         reg = regs !! w !! r
 
 -- Immediate to Register/Memory
-disasmB _ (1,0,0,0,0,0,0,w) xs
+disasmB _ seg (1,0,0,0,0,0,0,w) xs
     | w == 0 && r == 1 = (2 + len, "or " ++ rm ++ "," ++ imm)
     | w == 1 && r == 1 = (2 + 1 + len, "or " ++ rm ++ "," ++ imm)
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
         imm = "0x" ++ hex (fromLE (w + 1) (drop len xs))
 
 -- Immediate to Accumulator
-disasmB _ (0,0,0,0,1,1,0,w) xs
+disasmB _ _ (0,0,0,0,1,1,0,w) xs
     | w == 0    = (2, "or al," ++ imm)
     | otherwise = (3, "or ax," ++ imm)
     where
@@ -561,30 +561,30 @@ disasmB _ (0,0,0,0,1,1,0,w) xs
 
 -- xor
 -- Reg./Memory and Register to Either
-disasmB _ (0,0,1,1,0,0,d,w) xs
+disasmB _ seg (0,0,1,1,0,0,d,w) xs
     | d == 0    = (1 + len, "xor " ++ rm  ++ "," ++ reg)
     | otherwise = (1 + len, "xor " ++ reg ++ "," ++ rm)
     where
-        (len, rm, r) = modrm False w xs
+        (len, rm, r) = modrm seg False w xs
         reg = regs !! w !! r
 
 -- Immediate to Register/Memory
-disasmB _ (1,0,0,0,0,0,0,w) xs
+disasmB _ seg (1,0,0,0,0,0,0,w) xs
     | w == 0 && r == 6 = (2 + len, "xor " ++ rm ++ "," ++ imm)
     | w == 1 && r == 6 = (2 + 1 + len, "xor " ++ rm ++ "," ++ imm)
     where
-        (len, rm, r) = modrm True w xs
+        (len, rm, r) = modrm seg True w xs
         imm = "0x" ++ hex (fromLE (w + 1) (drop len xs))
 
 -- Immediate to Accumulator
-disasmB _ (0,0,1,1,0,1,0,w) xs
+disasmB _ _ (0,0,1,1,0,1,0,w) xs
     | w == 0    = (2, "xor al," ++ imm)
     | otherwise = (3, "xor ax," ++ imm)
     where
         imm = "0x" ++ hex (fromLE (1 + w) xs)
 
 -- rep
-disasmB ip (1,1,1,1,0,0,1,z) (x:xs)
+disasmB ip seg (1,1,1,1,0,0,1,z) (x:xs)
     | z == 0    = (1 + len, "repne " ++ disasm')
     | otherwise = (1 + len, "rep " ++ disasm')
     where
@@ -592,46 +592,46 @@ disasmB ip (1,1,1,1,0,0,1,z) (x:xs)
         disasm' = snd $ disasm ip (x:xs)
 
 -- movs
-disasmB _ (1,0,1,0,0,1,0,w) xs
+disasmB _ _ (1,0,1,0,0,1,0,w) xs
     | w == 0    = mne1 "movsb"
     | otherwise = mne1 "movsw"
 
 -- cmp
-disasmB _ (1,0,1,0,0,1,1,w) xs
+disasmB _ _ (1,0,1,0,0,1,1,w) xs
     | w == 0    = mne1 "cmpsb"
     | otherwise = mne1 "cmpsw"
 
 -- scas
-disasmB _ (1,0,1,0,1,1,1,w) xs
+disasmB _ _ (1,0,1,0,1,1,1,w) xs
     | w == 0    = mne1 "scasb"
     | otherwise = mne1 "scasw"
 
 -- lods
-disasmB _ (1,0,1,0,1,1,0,w) xs
+disasmB _ _ (1,0,1,0,1,1,0,w) xs
     | w == 0    = mne1 "lodsb"
     | otherwise = mne1 "lodsw"
 
 -- stos
-disasmB _ (1,0,1,0,1,0,1,w) xs
+disasmB _ _ (1,0,1,0,1,0,1,w) xs
     | w == 0    = mne1 "stosb"
     | otherwise = mne1 "stosw"
 
 -- call
 -- Direct within Segment
-disasmB ip (1,1,1,0,1,0,0,0) xs =
+disasmB ip seg (1,1,1,0,1,0,0,0) xs =
     (len, "call word " ++ imm)
     where
         len = 3
         imm = "0x" ++ hex ((fromLE 2 xs + ip + len) .&. 0xffff)
 
 -- Indirect within Segment
-disasmB _ (1,1,1,1,1,1,1,1) xs
+disasmB _ seg (1,1,1,1,1,1,1,1) xs
     | r == 2 = (1 + len, "call " ++ rm)
     where
-        (len, rm, r) = modrm True 1 xs
+        (len, rm, r) = modrm seg True 1 xs
 
 -- Direct Intersegment
-disasmB ip (1,0,0,1,1,0,1,0) xs =
+disasmB ip seg (1,0,0,1,1,0,1,0) xs =
     (5, "call word " ++ immseg ++ ":" ++ immoff)
     where
         immseg = "0x" ++ hex (fromLE 2 (drop 2 xs))
@@ -639,30 +639,30 @@ disasmB ip (1,0,0,1,1,0,1,0) xs =
 
 -- Indirect Intersegment
 -- mod=11は実行不可能
-disasmB _ (1,1,1,1,1,1,1,1) xs
+disasmB _ seg (1,1,1,1,1,1,1,1) xs
     | r == 3 = (1 + len, "call word far " ++ rm)
     where
-        (len, rm, r) = modrm False 1 xs
+        (len, rm, r) = modrm seg False 1 xs
 
 -- jmp
 -- Direct within Segment
-disasmB ip (1,1,1,0,1,0,0,1) xs =
+disasmB ip seg (1,1,1,0,1,0,0,1) xs =
     (len, "jmp word " ++ imm)
     where
         len = 3
         imm = "0x" ++ hex ((fromLE 2 xs + ip + len) .&. 0xffff)
 
 -- Direct within Segment-Short
-disasmB ip (1,1,1,0,1,0,1,1) xs = rel8 "jmp short" ip xs
+disasmB ip seg (1,1,1,0,1,0,1,1) xs = rel8 "jmp short" ip xs
 
 -- Indirect within Segment
-disasmB _ (1,1,1,1,1,1,1,1) xs
+disasmB _ seg (1,1,1,1,1,1,1,1) xs
     | r == 4 = (1 + len, "jmp " ++ rm)
     where
-        (len, rm, r) = modrm True 1 xs
+        (len, rm, r) = modrm seg True 1 xs
 
 -- Direct Intersegment
-disasmB ip (1,1,1,0,1,0,1,0) xs =
+disasmB ip seg (1,1,1,0,1,0,1,0) xs =
     (5, "jmp word " ++ immseg ++ ":" ++ immoff)
     where
         immseg = "0x" ++ hex (fromLE 2 (drop 2 xs))
@@ -670,185 +670,161 @@ disasmB ip (1,1,1,0,1,0,1,0) xs =
 
 -- Indirect Intersegment
 -- mod=11は実行不可能
-disasmB _ (1,1,1,1,1,1,1,1) xs
+disasmB _ seg (1,1,1,1,1,1,1,1) xs
     | r == 5 = (1 + len, "jmp word far " ++ rm)
     where
-        (len, rm, r) = modrm False 1 xs
+        (len, rm, r) = modrm seg False 1 xs
 
 -- ret
 -- Within Segment
-disasmB _ (1,1,0,0,0,0,1,1) xs = mne1 "ret"
+disasmB _ _ (1,1,0,0,0,0,1,1) xs = mne1 "ret"
 
 -- Within Seg Adding Immed to SP
-disasmB _ (1,1,0,0,0,0,1,0) xs =
+disasmB _ _ (1,1,0,0,0,0,1,0) xs =
     (3, "ret " ++ imm)
     where
         imm = "0x" ++ hex (fromLE 2 xs)
 
 -- Intersegment
-disasmB _ (1,1,0,0,1,0,1,1) xs = mne1 "retf"
+disasmB _ _ (1,1,0,0,1,0,1,1) xs = mne1 "retf"
 
 -- Intersegment Adding Immediate to SP
-disasmB _ (1,1,0,0,1,0,1,0) xs =
+disasmB _ _ (1,1,0,0,1,0,1,0) xs =
     (3, "retf " ++ imm)
     where
         imm = "0x" ++ hex (fromLE 2 xs)
 
 -- je/jz
-disasmB ip (0,1,1,1,0,1,0,0) xs = rel8 "jz" ip xs
+disasmB ip seg (0,1,1,1,0,1,0,0) xs = rel8 "jz" ip xs
 
 -- jl/jnge
-disasmB ip (0,1,1,1,1,1,0,0) xs = rel8 "jl" ip xs
+disasmB ip seg (0,1,1,1,1,1,0,0) xs = rel8 "jl" ip xs
 
 -- jle/jng
-disasmB ip (0,1,1,1,1,1,1,0) xs = rel8 "jng" ip xs
+disasmB ip seg (0,1,1,1,1,1,1,0) xs = rel8 "jng" ip xs
 
 -- jb/jnae(jcはエイリアス)
-disasmB ip (0,1,1,1,0,0,1,0) xs = rel8 "jc" ip xs
+disasmB ip seg (0,1,1,1,0,0,1,0) xs = rel8 "jc" ip xs
 
 -- jbe/jna
-disasmB ip (0,1,1,1,0,1,1,0) xs = rel8 "jna" ip xs
+disasmB ip seg (0,1,1,1,0,1,1,0) xs = rel8 "jna" ip xs
 
 -- jp/jpe
-disasmB ip (0,1,1,1,1,0,1,0) xs = rel8 "jpe" ip xs
+disasmB ip seg (0,1,1,1,1,0,1,0) xs = rel8 "jpe" ip xs
 
 -- jo
-disasmB ip (0,1,1,1,0,0,0,0) xs = rel8 "jo" ip xs
+disasmB ip seg (0,1,1,1,0,0,0,0) xs = rel8 "jo" ip xs
 
 -- js
-disasmB ip (0,1,1,1,1,0,0,0) xs = rel8 "js" ip xs
+disasmB ip seg (0,1,1,1,1,0,0,0) xs = rel8 "js" ip xs
 
 -- jne/jnz
-disasmB ip (0,1,1,1,0,1,0,1) xs = rel8 "jnz" ip xs
+disasmB ip seg (0,1,1,1,0,1,0,1) xs = rel8 "jnz" ip xs
 
 -- jnl/jge
-disasmB ip (0,1,1,1,1,1,0,1) xs = rel8 "jnl" ip xs
+disasmB ip seg (0,1,1,1,1,1,0,1) xs = rel8 "jnl" ip xs
 
 -- jnle/jg
-disasmB ip (0,1,1,1,1,1,1,1) xs = rel8 "jg" ip xs
+disasmB ip seg (0,1,1,1,1,1,1,1) xs = rel8 "jg" ip xs
 
 -- jnb/jae
-disasmB ip (0,1,1,1,0,0,1,1) xs = rel8 "jnc" ip xs
+disasmB ip seg (0,1,1,1,0,0,1,1) xs = rel8 "jnc" ip xs
 
 -- jnbe/ja
-disasmB ip (0,1,1,1,0,1,1,1) xs = rel8 "ja" ip xs
+disasmB ip seg (0,1,1,1,0,1,1,1) xs = rel8 "ja" ip xs
 
 -- jnp/jpo
-disasmB ip (0,1,1,1,1,0,1,1) xs = rel8 "jpo" ip xs
+disasmB ip seg (0,1,1,1,1,0,1,1) xs = rel8 "jpo" ip xs
 
 -- jno
-disasmB ip (0,1,1,1,0,0,0,1) xs = rel8 "jno" ip xs
+disasmB ip seg (0,1,1,1,0,0,0,1) xs = rel8 "jno" ip xs
 
 -- jns
-disasmB ip (0,1,1,1,1,0,0,1) xs = rel8 "jns" ip xs
+disasmB ip seg (0,1,1,1,1,0,0,1) xs = rel8 "jns" ip xs
 
 -- loop
-disasmB ip (1,1,1,0,0,0,1,0) xs = rel8 "loop" ip xs
+disasmB ip seg (1,1,1,0,0,0,1,0) xs = rel8 "loop" ip xs
 
 -- loopz/loope
-disasmB ip (1,1,1,0,0,0,0,1) xs = rel8 "loope" ip xs
+disasmB ip seg (1,1,1,0,0,0,0,1) xs = rel8 "loope" ip xs
 
 -- loopnz/loopne
-disasmB ip (1,1,1,0,0,0,0,0) xs = rel8 "loopne" ip xs
+disasmB ip seg (1,1,1,0,0,0,0,0) xs = rel8 "loopne" ip xs
 
 -- jcxz
-disasmB ip (1,1,1,0,0,0,1,1) xs = rel8 "jcxz" ip xs
+disasmB ip seg (1,1,1,0,0,0,1,1) xs = rel8 "jcxz" ip xs
 
 -- int
 -- Type Specified
-disasmB ip (1,1,0,0,1,1,0,1) (x:_) =
+disasmB ip seg (1,1,0,0,1,1,0,1) (x:_) =
     (2, "int " ++ imm)
     where
         imm = "0x" ++ hex x
 
 -- Type 3
-disasmB _ (1,1,0,0,1,1,0,0) xs = mne1 "int3"
+disasmB _ _ (1,1,0,0,1,1,0,0) xs = mne1 "int3"
 
 -- into
-disasmB _ (1,1,0,0,1,1,1,0) xs = mne1 "into"
+disasmB _ _ (1,1,0,0,1,1,1,0) xs = mne1 "into"
 
 -- iretw
-disasmB _ (1,1,0,0,1,1,1,1) xs = mne1 "iretw"
+disasmB _ _ (1,1,0,0,1,1,1,1) xs = mne1 "iretw"
 
 -- clc
-disasmB _ (1,1,1,1,1,0,0,0) xs = mne1 "clc"
+disasmB _ _ (1,1,1,1,1,0,0,0) xs = mne1 "clc"
 
 -- cmc
-disasmB _ (1,1,1,1,0,1,0,1) xs = mne1 "cmc"
+disasmB _ _ (1,1,1,1,0,1,0,1) xs = mne1 "cmc"
 
 -- stc
-disasmB _ (1,1,1,1,1,0,0,1) xs = mne1 "stc"
+disasmB _ _ (1,1,1,1,1,0,0,1) xs = mne1 "stc"
 
 -- cld
-disasmB _ (1,1,1,1,1,1,0,0) xs = mne1 "cld"
+disasmB _ _ (1,1,1,1,1,1,0,0) xs = mne1 "cld"
 
 -- std
-disasmB _ (1,1,1,1,1,1,0,1) xs = mne1 "std"
+disasmB _ _ (1,1,1,1,1,1,0,1) xs = mne1 "std"
 
 -- cli
-disasmB _ (1,1,1,1,1,0,1,0) xs = mne1 "cli"
+disasmB _ _ (1,1,1,1,1,0,1,0) xs = mne1 "cli"
 
 -- sti
-disasmB _ (1,1,1,1,1,0,1,1) xs = mne1 "sti"
+disasmB _ _ (1,1,1,1,1,0,1,1) xs = mne1 "sti"
 
 -- hlt
-disasmB _ (1,1,1,1,0,1,0,0) xs = mne1 "hlt"
+disasmB _ _ (1,1,1,1,0,1,0,0) xs = mne1 "hlt"
 
 -- wait
-disasmB _ (1,0,0,1,1,0,1,1) xs = mne1 "wait"
+disasmB _ _ (1,0,0,1,1,0,1,1) xs = mne1 "wait"
 
 -- lock
-disasmB _ (1,1,1,1,0,0,0,0) xs = mne1 "lock"
+disasmB _ _ (1,1,1,1,0,0,0,0) xs = mne1 "lock"
 
 -- segment override prefix
-disasmB ip (0,0,1,s,r,1,1,0) xs
-    | ope == "8c" = (5, "mov [" ++ reg1 ++ ":" ++ immoff ++ "]," ++ reg2)
-    | ope == "8d" = (5, "mov [" ++ reg1 ++ ":" ++ immoff ++ "]," ++ reg2)
-    | ope == "8e" = (5, "mov " ++ reg2 ++ ",[" ++ reg1 ++ ":" ++ immoff ++ "]")
+disasmB ip seg (0,0,1,s,r,1,1,0) (x:xs) =
+    (fst asm + 1, snd asm)
     where
-        ope    = hex (xs !! 0)
-        reg1   = sreg !! getReg 0 s r
-        immoff = "0x" ++ hex (fromLE 2 (drop 2 xs))
-        bit2   = xs !! 1
-        reg2   = sreg !! (bit2 `shiftR` 3 .&. 0xff)
-
--- segment override prefix
-disasmB ip (0,0,1,s,r,1,1,0) xs
-    | ope == "a1" = (4, "mov ax,[" ++ reg1 ++ ":" ++ immoff ++ "]")
-    | ope == "a2" = (4, "mov [" ++ reg1 ++ ":" ++ immoff ++ "],al")
-    | ope == "a3" = (4, "mov [" ++ reg1 ++ ":" ++ immoff ++ "],ax")
-    where
-        ope    = hex (xs !! 0)
-        reg1   = sreg !! getReg 0 s r
-        immoff = "0x" ++ hex (fromLE 2 (drop 1 xs))
-
--- segment override prefix
-disasmB ip (0,0,1,s,r,1,1,0) xs
-    | ope == "8f" = (5, "pop word [" ++ reg1 ++ ":" ++ immoff ++ "]")
-    | ope == "ff" = (5, "push word [" ++ reg1 ++ ":" ++ immoff ++ "]")
-    where
-        ope    = hex (xs !! 0)
-        reg1   = sreg !! getReg 0 s r
-        immoff = "0x" ++ hex (fromLE 2 (drop 2 xs))
+       seg = sreg !! getReg 0 s r ++ ":"
+       asm = disasmB ip seg (getBits x) xs
 
 -- pushaw
-disasmB _ (0,1,1,0,0,0,0,0) xs = mne1 "pushaw"
+disasmB _ _ (0,1,1,0,0,0,0,0) xs = mne1 "pushaw"
 
 -- push word
-disasmB ip (0,1,1,0,1,0,0,0) xs =
+disasmB ip seg (0,1,1,0,1,0,0,0) xs =
     (3, "push word " ++ imm)
     where
         imm = "0x" ++ hex (fromLE 2 xs)
 
 -- popaw
-disasmB _ (0,1,1,0,0,0,0,1) xs = mne1 "popaw"
+disasmB _ _ (0,1,1,0,0,0,0,1) xs = mne1 "popaw"
 
-disasmB _ x xs =
+disasmB _ _ x xs =
     (1, "db 0x" ++ hex (getByte x))
 
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
-modrm prefix w (x:xs) = (len, s, reg)
+modrm seg prefix w (x:xs) = (len, s, reg)
     where
         (len, s) = f mode rm
         mode =  x `shiftR` 6
@@ -857,12 +833,12 @@ modrm prefix w (x:xs) = (len, s, reg)
         pfx | prefix && w == 0 = "byte "
             | prefix && w == 1 = "word "
             | otherwise        = ""
-        f 0 6  = (3, pfx ++ "[0x" ++ hex (fromLE 2 xs) ++ "]")
-        f 0 rm = (1, pfx ++ "[" ++ regad !! rm ++ "]")
-        f 1 rm = (2, pfx ++ "[" ++ regad !! rm ++ disp ++ "]")
+        f 0 6  = (3, pfx ++ "[" ++ seg ++ "0x" ++ hex (fromLE 2 xs) ++ "]")
+        f 0 rm = (1, pfx ++ "[" ++ seg ++ regad !! rm ++ "]")
+        f 1 rm = (2, pfx ++ "[" ++ seg ++ regad !! rm ++ disp ++ "]")
             where
                 disp = disp8 (xs !! 0)
-        f 2 rm = (3, pfx ++ "[" ++ regad !! rm ++ disp ++ "]")
+        f 2 rm = (3, pfx ++ "[" ++ seg ++ regad !! rm ++ disp ++ "]")
             where
                 disp = disp16 (fromLE 2 xs)
         f 3 rm = (1, regs !! w !! rm)

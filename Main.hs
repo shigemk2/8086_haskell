@@ -94,11 +94,11 @@ testDisAsm = TestList
     , "disp16 2" ~: disp16 0x7fff ~?= "+0x7fff"
     , "disp16 3" ~: disp16 0x8000 ~?= "-0x8000"
     , "disp16 4" ~: disp16 0xffff ~?= "-0x1"
-    , "disAsmB 0" ~: disasmB 0 (1,0,1,1,1,0,0,0) [0, 0] ~?= (3, "mov ax,0x0")
-    , "disAsmB 1" ~: disasmB 0 (1,0,0,0,1,0,1,1) [0, 0] ~?= (2, "mov ax,[bx+si]")
-    , "disAsmB 2" ~: disasmB 0 (1,0,0,0,1,0,0,1) [0, 0] ~?= (2, "mov [bx+si],ax")
-    , "disAsmB 3" ~: disasmB 0 (1,0,0,0,1,0,0,0) [0, 0] ~?= (2, "mov [bx+si],al")
-    , "disAsmB 4" ~: disasmB 0 (1,0,0,0,1,0,0,0) [2, 0] ~?= (2, "mov [bp+si],al")
+    , "disAsmB 0" ~: disasmB 0 "" (1,0,1,1,1,0,0,0) [0, 0] ~?= (3, "mov ax,0x0")
+    , "disAsmB 1" ~: disasmB 0 "" (1,0,0,0,1,0,1,1) [0, 0] ~?= (2, "mov ax,[bx+si]")
+    , "disAsmB 2" ~: disasmB 0 "" (1,0,0,0,1,0,0,1) [0, 0] ~?= (2, "mov [bx+si],ax")
+    , "disAsmB 3" ~: disasmB 0 "" (1,0,0,0,1,0,0,0) [0, 0] ~?= (2, "mov [bx+si],al")
+    , "disAsmB 4" ~: disasmB 0 "" (1,0,0,0,1,0,0,0) [2, 0] ~?= (2, "mov [bp+si],al")
     , "88-8b mod=00 1" ~: disasm' "8900" ~?= "mov [bx+si],ax"
     , "88-8b mod=00 2" ~: disasm' "8909" ~?= "mov [bx+di],cx"
     , "88-8b mod=00 3" ~: disasm' "8912" ~?= "mov [bp+si],dx"
