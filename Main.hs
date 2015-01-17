@@ -533,7 +533,11 @@ testDisAsm = TestList
     , "34-35 w=0" ~: disasm' "3412"   ~?= "xor al,0x12"
     , "34-35 w=1" ~: disasm' "351234" ~?= "xor ax,0x3412"
     -- rep
-    , "f2-f3 z=0" ~: disasm' "f20000" ~?= "repne add [bx+si],al"
+    , "f2-f3 z=0 0" ~: disasm' "f20000" ~?= "repne add [bx+si],al"
+    , "f2-f3 z=0 1" ~: disasm' "f3a6" ~?= "repe cmpsb"
+    , "f2-f3 z=0 2" ~: disasm' "f3a7" ~?= "repe cmpsw"
+    , "f2-f3 z=0 3" ~: disasm' "f3ae" ~?= "repe scasb"
+    , "f2-f3 z=0 4" ~: disasm' "f3af" ~?= "repe scasw"
     , "f2-f3 z=1" ~: disasm' "f30000" ~?= "rep add [bx+si],al"
     -- movs
     , "a4-a5 w=0" ~: disasm' "a4" ~?= "movsb"
