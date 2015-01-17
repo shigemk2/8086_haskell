@@ -594,8 +594,12 @@ disasmB _ _ (0,0,1,1,0,1,0,w) xs
 
 -- rep
 disasmB ip seg (1,1,1,1,0,0,1,z) (x:xs)
-    | z == 0    = (1 + len, "repne " ++ disasm')
-    | otherwise = (1 + len, "rep " ++ disasm')
+    | z == 1 && hex x == "a6" = (1 + len, "repe " ++ disasm')
+    | z == 1 && hex x == "a7" = (1 + len, "repe " ++ disasm')
+    | z == 1 && hex x == "ae" = (1 + len, "repe " ++ disasm')
+    | z == 1 && hex x == "af" = (1 + len, "repe " ++ disasm')
+    | z == 0                  = (1 + len, "repne " ++ disasm')
+    | otherwise               = (1 + len, "rep " ++ disasm')
     where
         len    = fst $ disasm ip (x:xs)
         disasm' = snd $ disasm ip (x:xs)
