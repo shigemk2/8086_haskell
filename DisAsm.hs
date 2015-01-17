@@ -841,6 +841,9 @@ disasmB ip (0,1,1,0,1,0,0,0) xs =
 -- popaw
 disasmB _ (0,1,1,0,0,0,0,1) xs = mne1 "popaw"
 
+disasmB _ x xs =
+    (1, "db 0x" ++ hex (getByte x))
+
 regad = ["bx+si", "bx+di", "bp+si", "bp+di", "si", "di", "bp", "bx"]
 
 modrm prefix w (x:xs) = (len, s, reg)
@@ -871,6 +874,18 @@ getBits :: Int -> (Int,Int,Int,Int,Int,Int,Int,Int)
 getBits x = (b 7, b 6, b 5, b 4, b 3, b 2, b 1, b 0)
     where
         b n = (x `shiftR` n) .&. 1
+
+getByte :: (Int,Int,Int,Int,Int,Int,Int,Int) -> Int
+getByte (a,b,c,d,e,f,g,h) = y
+    where
+        a' = a `shiftL` 7
+        b' = b `shiftL` 6
+        c' = c `shiftL` 5
+        d' = d `shiftL` 4
+        e' = e `shiftL` 3
+        f' = f `shiftL` 2
+        g' = g `shiftL` 1
+        y  = a'.|.b'.|.c'.|.d'.|.e'.|.f'.|.g'.|.h
 
 getReg :: Int -> Int -> Int -> Int
 getReg r e g =
