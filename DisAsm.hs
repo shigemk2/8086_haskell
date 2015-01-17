@@ -213,6 +213,9 @@ disasmB _ _ (1,0,0,1,1,1,0,0) xs = mne1 "pushfw"
 -- popf
 disasmB _ _ (1,0,0,1,1,1,0,1) xs = mne1 "popfw"
 
+disasmB _ _ (0,0,0,0,0,0,0,0) [] =
+    (1, "db 0x00")
+
 -- add
 -- Reg./Memory with Register to Either
 disasmB _ seg (0,0,0,0,0,0,d,w) xs
