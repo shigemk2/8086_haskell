@@ -180,8 +180,8 @@ disasmB _ _ (1,1,1,0,0,1,1,w) (x:_)
 -- out
 -- Variable Port
 disasmB _ _ (1,1,1,0,1,1,1,w) xs
-    | w == 0    = (1, "out al,dx")
-    | otherwise = (1, "out ax,dx")
+    | w == 0    = (1, "out dx,al")
+    | otherwise = (1, "out dx,ax")
 
 -- xlat
 disasmB _ _ (1,1,0,1,0,1,1,1) xs = mne1 "xlatb"
